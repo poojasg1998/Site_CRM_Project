@@ -1,0 +1,503 @@
+html {
+  font-size: clamp(13px, 3vw, 18px);
+}
+
+* {
+  font-family: "poppins";
+}
+.date-range-wrapper {
+  padding: 20px 10px;
+}
+.title {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1.143rem;
+}
+
+.date-inputs {
+  display: flex;
+  gap: 12px;
+}
+.date-box {
+  flex: 1;
+  background: #f6f9fc;
+  border-radius: 0.57rem; /* 8px */
+  padding: 0.714rem; /* 10px */
+}
+
+.date-box label {
+  font-size: 0.857rem; /* 12px */
+  color: #8a8a8a;
+  display: block;
+  margin-bottom: 0.286rem; /* 4px */
+}
+
+.date-box span {
+  font-size: 1rem; /* 14px */
+  color: #000;
+}
+.error-text {
+  font-size: 0.857rem; /* 12px */
+  color: red;
+}
+.confirm-btn {
+  --border-radius: 24px;
+  --background: #0b7ab2;
+  min-height: 5px !important;
+  width: 100%;
+  padding: 0 10px;
+  font-family: "Poppins";
+}
+ion-datetime {
+  width: 100%;
+  max-width: 100%;
+  --background: #ffffff;
+}
+
+ion-datetime::part(calendar) {
+  width: 100% !important;
+  height: 100% !important;
+}
+.active_btn {
+  ion-icon {
+    color: #ffffff !important;
+  }
+}
+
+ion-modal {
+  --backdrop-opacity: 1.4;
+}
+.filterButtons {
+  border: 1px solid #0b7ab2;
+  color: #282828;
+  font-family: "Poppins";
+  text-transform: capitalize;
+  margin: 0;
+  color: #0b7ab2;
+  border: 1px solid #0b7ab2;
+  font-size: 1rem; /* 14px */
+  border-radius: 0.286rem; /* 4px */
+  min-height: 2.286rem; /* 32px */
+}
+
+// UPDATE CODE
+.datefilter-div {
+  margin: 5px;
+}
+.datefilter-div ion-col {
+  border-radius: 50px;
+  background-color: white;
+  font-size: 0.75rem !important;
+}
+.datefilter-div ion-icon {
+  border-radius: 20px;
+  font-size: 1.375rem;
+  color: #515151;
+  --ionicon-stroke-width: 14px;
+}
+
+.break-card {
+  background: linear-gradient(93.86deg, #0b7ab2 -0.35%, #2196f3 100%);
+
+  color: #fff;
+  border-radius: 10px;
+  padding: 2px;
+}
+
+.break-title {
+  display: flex;
+  align-items: center;
+  gap: 0.429rem; /* 6px */
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.break-subtitle {
+  font-size: 0.65rem;
+  opacity: 0.9;
+  margin: 2px 0 0;
+}
+
+.timer-box {
+  display: inline-block;
+  font-size: 0.876rem;
+  font-weight: 300;
+  display: inline-block;
+  color: #ffffff;
+  border: 0.6px solid #ffffff;
+  padding: 0.143rem 0.571rem; /* 2px 8px */
+  font-size: 0.857rem; /* 12px */
+  border-radius: 0.286rem;
+}
+
+.break-btn {
+  margin-top: 6px;
+  --color: #1c90e4;
+  font-size: 13px;
+  text-transform: none;
+  background: #ffffff;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+// card-details
+.checkin-card {
+  background: white;
+  margin: 10px;
+  border-left: 4px solid #0b7ab2;
+  border-radius: 2px;
+}
+
+.checkin-time-col {
+  display: flex;
+  align-items: center;
+}
+.checkin-time-text {
+  font-size: 16px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+}
+.checkin-status-col {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.checkin-status-text {
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+}
+.photo-icon-wrapper {
+  width: 10vw;
+  /* Or any size you want */
+  height: 10vw;
+  /* Same as width to force square */
+  border-radius: 50%;
+  /* Makes it a circle */
+  overflow: hidden;
+  /* Clips overflow */
+  margin-left: 5px;
+}
+.date ion-icon,
+.time ion-icon,
+.location-icon ion-icon {
+  padding-right: 8px;
+  font-size: 20px;
+  color: #0b7ab2;
+}
+.location-icon {
+  font-size: 20px;
+}
+
+.location-text {
+  font-size: 12px;
+  font-family: "Poppins", sans-serif;
+}
+.break-label {
+  display: block;
+  font-size: 0.5rem; /* ~11px */
+  color: #005192;
+  font-weight: 500;
+  background: #d9f2ff;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.break-badge {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 2px 8px;
+  font-size: 0.68rem;
+  color: #4caf50;
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.exceedbreak-badge {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 2px 8px;
+  font-size: 0.68rem;
+  color: #ff5d5d;
+  border: 0.6px solid #ff5d5d;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.break-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: #559d00; /* green line */
+}
+.exceedbreak-line {
+  flex: 1;
+  height: 1px;
+  background: #ff5d5d;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #559d00;
+  border-radius: 50%;
+}
+.exceedbreak-dot {
+  width: 8px;
+  height: 8px;
+  background: #ff5d5d;
+
+  border-radius: 50%;
+}
+.location-row {
+  span {
+    font-size: 0.78rem;
+    color: #383838;
+  }
+}
+ion-modal#check-inAlertModal,
+.custom-checkin-modal .modal-wrapper {
+  --height: auto;
+  --width: 100%;
+  --offset-y: 0px;
+  align-items: flex-start;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+ion-modal#check-inAlertModal h1 {
+  margin: 20px 20px 10px 20px;
+}
+
+ion-modal#check-inAlertModal ion-icon {
+  margin-right: 6px;
+  width: 48px;
+  height: 48px;
+  padding: 4px 0;
+  color: #aaaaaa;
+}
+
+ion-modal#check-inAlertModal .wrapper {
+  margin-bottom: 10px;
+}
+
+.mainHeading span {
+  font-family: "Poppins";
+  font-size: 20px;
+}
+.check_in {
+  background: rgba(93, 182, 58, 1);
+  color: white;
+  border-radius: 2px;
+  padding: 2px 10px;
+}
+
+.icon-box {
+  background-color: rgba(255, 255, 255, 1);
+  color: #0b7ab2;
+  font-size: 25px;
+  border-radius: 2px;
+  height: 100%;
+}
+
+.text-box span {
+  color: rgba(255, 255, 255, 1);
+  font-family: "Poppins";
+  font-size: 22px;
+}
+.retake_button ion-row {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 25px;
+  border: 1px solid white;
+  width: 109px;
+  margin: 5px;
+}
+.retake_button ion-col {
+  padding: 2px;
+}
+.retake_button {
+  position: relative;
+  top: 0;
+  height: 60%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+.retake_button span {
+  font-size: 18px;
+  font-family: "Poppins";
+  padding-right: 5px;
+}
+.iconColor_fontSize {
+  color: rgba(11, 122, 178, 1);
+  font-size: 1.25rem;
+}
+
+.time {
+  font-size: 0.7rem;
+}
+
+.date span,
+time span {
+  color: rgba(65, 65, 65, 1);
+  font-size: 5vw;
+}
+.address {
+  font-size: 4vw;
+  color: rgba(65, 65, 65, 1);
+}
+.location-icon {
+  display: flex;
+}
+.location-icon span {
+  padding-top: 5px;
+}
+.check_inNowBtn ion-button {
+  color: rgba(255, 255, 255, 1);
+  font-family: "Poppins";
+  font-size: 6vw;
+}
+.faceframe span {
+  color: rgba(137, 137, 137, 1);
+  font-family: "Poppins";
+  font-size: 1.125rem;
+  text-align: center;
+}
+.faceframe ion-col {
+  padding: 10px 0;
+}
+
+.check-outBtn span {
+  background: rgba(217, 101, 112, 1);
+  border-radius: 2px;
+  padding: 5px 20px;
+  color: white;
+  font-family: 12px;
+  font-family: "Poppins";
+}
+.logo::part(image) {
+  border-radius: 3px !important;
+  width: 30px;
+  height: 30px;
+}
+.check-outBtn {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.loader {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 999;
+  opacity: 0.8;
+  background-color: black !important ;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+// #photoCaptureModal {
+//   height: 100%;
+// }
+.endbreak {
+  background: #2d2d2d;
+  color: rgba(11, 122, 178, 1);
+  border-radius: 4px;
+  font-weight: 500;
+}
+.date-row {
+  color: #00467e;
+  background: #e1f2ff;
+}
+
+ion-modal.profileModal {
+  --backdrop-opacity: 0.8 !important;
+  --width: 90vw;
+  --min-width: 250px;
+  --max-width: 320px;
+  --height: auto;
+  --border-radius: 0.375rem;
+  --box-shadow: 0 1.75rem 3rem rgba(0, 0, 0, 0.4);
+  padding: 0.625rem;
+  // ion-header {
+  //   box-shadow: none;
+  //   border-bottom: 1px solid rgba(11, 122, 178, 1);
+  // }
+}
+.loggedName,
+.logout {
+  font-size: 1rem;
+}
+.loggedName {
+  color: rgba(11, 122, 178, 1);
+}
+.closeicon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ion-modal.checkInPreviewModal {
+  --height: auto;
+  --border-radius: 4px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  padding: 20px;
+}
+.checkin-title {
+  color: rgba(10, 96, 0, 1);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.checkin-header {
+  background: rgba(196, 255, 189, 1);
+}
+.title-text {
+  padding-right: 5px;
+}
+
+.checkin-icon {
+  width: 25px;
+}
+
+.close-icon ion-icon {
+  font-size: 32px;
+}
+
+.checkin-image-container {
+  height: 55vw;
+}
+
+.checkin-image {
+  object-fit: fill;
+  width: 100%;
+  height: 100%;
+}
+
+.checkin-content {
+  padding: 5px;
+}
+.location-icon {
+  font-size: 20px;
+}
+.closeimgIcon {
+  position: absolute;
+  right: 0;
+  color: white;
+  font-size: 33px;
+}

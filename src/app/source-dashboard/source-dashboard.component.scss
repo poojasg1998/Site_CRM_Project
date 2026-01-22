@@ -1,0 +1,567 @@
+/* --- Shared Variables (For quick color changes) --- */
+$card-border: #e0e0e0;
+$fixed-row-bg: #f5f5f5;
+$done-row-bg: #e6ffe6;
+$blue-title: #0b7ab2;
+
+/* --- Main Structure & Layout --- */
+* {
+  font-family: "Poppins";
+}
+.main-content {
+  --background: #f6f6f6;
+  --padding-top: 2px;
+}
+html {
+  font-size: clamp(14px, 4vw, 18px);
+}
+
+// UPDATE CODE
+.datefilter-div {
+  margin: 10px 5px;
+}
+.datefilter-div ion-col {
+  border-radius: 50px;
+  background-color: white;
+}
+.datefilter-div ion-icon {
+  border-radius: 20px;
+  font-size: 1.375rem;
+  color: #515151;
+  --ionicon-stroke-width: 14px;
+}
+.date-range-wrapper {
+  padding: 20px 10px;
+}
+.title {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.date-inputs {
+  display: flex;
+  gap: 12px;
+}
+
+.date-box {
+  flex: 1;
+  background: #f6f9fc;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.date-box label {
+  font-size: 0.875rem;
+  color: #8a8a8a;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.date-box span {
+  font-size: 0.875rem;
+  color: #000;
+}
+
+.confirm-btn {
+  --border-radius: 24px;
+  --background: #0b7ab2;
+  min-height: 5px !important;
+  width: 100%;
+  padding: 0 10px;
+}
+
+::ng-deep.confirm-btn::part(native) {
+  padding: 12px;
+}
+.error-text {
+  font-size: 0.875rem;
+  font-family: "Poppins";
+  color: red;
+}
+ion-datetime {
+  width: 100%;
+  max-width: 100%;
+  --background: #ffffff;
+}
+
+ion-datetime::part(calendar) {
+  width: 100% !important;
+  height: 100% !important;
+}
+.custom-datefilterIcon.active_btn {
+  ion-icon {
+    color: white;
+  }
+}
+.source-drop .p-dropdown {
+  border: 0.6px solid #9ed3fb !important;
+  background: #f3faff !important;
+  width: 100% !important;
+}
+p-dropdown.source-drop .p-inputwrapper span {
+  padding: 6px !important;
+  font-size: 0.875rem !important;
+  font-family: "Poppins" !important;
+  color: $blue-title !important;
+}
+
+p-dropdown.source-drop .p-dropdown-item {
+  padding: 5px !important;
+  font-size: 0.875rem;
+}
+::ng-deep .p-element .p-dropdown-item {
+  padding: 5px !important;
+  font-size: 0.875rem;
+}
+
+p-dropdown.source-drop .p-inputwrapper .p-dropdown-trigger chevrondownicon {
+  width: 12px;
+  color: #0b7ab2;
+}
+
+.stats-card {
+  border-radius: 14px;
+  box-shadow: none;
+  padding: 6px;
+  box-shadow: 0px 2px 3.1px 0px #959da533;
+  border-radius: 6px;
+  border: 1px solid #ffffff;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+p {
+  font-size: 0.714rem;
+}
+h2 {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.icon-circle {
+  ion-img {
+    width: 30px;
+  }
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  ion-icon {
+    font-size: 18px;
+    color: #4da3ff;
+  }
+}
+
+/* INACTIVE CARD */
+.inactive-card {
+  background: #fff6f6;
+  border: 1px solid #f0dcdc;
+}
+
+.inactive-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+
+  p {
+    font-size: 0.714rem;
+    margin: 0;
+    color: #a77777;
+  }
+
+  h4 {
+    font-size: 15px;
+    margin-top: 4px;
+    font-weight: 600;
+    color: #7a4a4a;
+  }
+}
+.left-bottom-sec {
+  border-radius: 0 4px 0 4px;
+  border: 1px solid;
+  border-left: none !important;
+  border-bottom: none !important;
+}
+.left-top-sec {
+  border-radius: 4px 0 4px 0;
+  border-left: none !important;
+  border-top: none !important;
+}
+
+.right-bottom-sec {
+  border-radius: 4px 0 4px;
+  border: 1px solid;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+.right-top-sec {
+  border-radius: 0 4px 0 4px;
+  border-right: none !important;
+  border-top: none !important;
+}
+.midle-bottom-sec {
+  border-radius: 4px 4px 0 0;
+}
+.active-card {
+  .total_card {
+    border: 1px solid #02abff;
+    background: #c3eaff;
+    .text_color {
+      color: #0b7ab2;
+    }
+  }
+  .touched_card {
+    border: 1px solid #a87773;
+    background: #ffedeb;
+    .text_color {
+      color: #a87773;
+    }
+  }
+  .allVisits_card {
+    border: 1px solid #8576ff;
+    background: #d8d3ff;
+    .text_color {
+      color: #8576ff;
+    }
+  }
+  .activeLeads_card {
+    border: 1px solid #d2b84d;
+    background: #fffae2;
+    .text_color {
+      color: #d2b84d;
+    }
+  }
+  .bookingrequest_card {
+    border: 1px solid #f3883d;
+    background: #ffcba6;
+    .text_color {
+      color: #f3883d;
+    }
+  }
+  .closedLeads_card {
+    border: 1px solid #38a03c;
+    background: #cdf3c5;
+    .text_color {
+      color: #38a03c;
+    }
+  }
+}
+.stats-card-col {
+  .total_card {
+    background: linear-gradient(84.03deg, #ffffff 32.95%, #e5f6fe 104.6%);
+    .card_footer {
+      p,
+      h2 {
+        color: #004e76;
+      }
+    }
+    .active-col {
+      border: 1px solid #02abff;
+      background: #c3eaff;
+    }
+  }
+  .touched_card {
+    background: linear-gradient(81.85deg, #ffffff 48.93%, #ffe4e1 106.84%);
+    .card_footer {
+      p,
+      h2 {
+        color: #73322d;
+      }
+    }
+    .active-col {
+      border: 0.6px solid #a87773;
+      background: #ffedeb;
+    }
+  }
+
+  .allVisits_card {
+    background: linear-gradient(86.98deg, #ffffff 47.96%, #dbd8ff 113.29%);
+    .card_footer {
+      p,
+      h2 {
+        color: #0f0082;
+      }
+    }
+    .active-col {
+      border: 0.6px solid #8576ff;
+      background: #d8d3ff;
+    }
+  }
+  .activeLeads_card {
+    background: linear-gradient(81.86deg, #ffffff 47.83%, #ffe371 237.55%);
+    .card_footer {
+      p,
+      h2 {
+        color: #5d4100;
+      }
+    }
+    .active-col {
+      background: #fffae2;
+      border: 0.6px solid #d2b84d;
+    }
+  }
+  .bookingrequest_card {
+    background: linear-gradient(83deg, #ffffff 32.52%, #ffb884 147.32%);
+    .card_footer {
+      p,
+      h2 {
+        color: #944004;
+      }
+    }
+    .active-col {
+      background: #ffcba6;
+      border: 0.6px solid #f3883d;
+    }
+  }
+  .closedLeads_card {
+    background: linear-gradient(84.03deg, #ffffff 32.95%, #d3ffc9 104.6%);
+    .card_footer {
+      p,
+      h2 {
+        color: #73322d;
+      }
+    }
+    .active-col {
+      background: #cdf3c5;
+      border: 0.6px solid #38a03c;
+    }
+  }
+}
+.total_lead_heading {
+  border: 0.8px solid #ade4ff;
+  background: #ebf8ff;
+  span {
+    color: #0b7ab2;
+  }
+}
+.lead-card {
+  border-radius: 4px;
+}
+
+.section {
+  line-height: 1.2;
+}
+
+.label {
+  font-weight: 300;
+  font-style: Light;
+  font-size: 0.714rem;
+  color: #0b7ab2;
+  margin-bottom: 4px;
+}
+
+.value {
+  font-weight: 300;
+  font-style: Light;
+  font-size: 0.875rem;
+  margin-bottom: 1px;
+  color: #303030;
+}
+
+.sub-value {
+  font-weight: 300;
+  font-size: 0.875rem;
+  color: #8d8d8d;
+}
+
+.bottom-row {
+  gap: 5px;
+  ion-button {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+.history_modal_header {
+  ion-icon {
+    font-size: 24px;
+    background: #ffffff;
+    border: 0.5px solid #d9d9d9;
+    border-radius: 4px;
+  }
+  .historyName {
+    font-weight: 400;
+    font-size: 1.125rem;
+    color: #004467;
+  }
+  background: linear-gradient(180deg, #ffffff 0%, #f3f3f3 100%);
+}
+.history-btn {
+  background: #c7ecff;
+  color: #004467;
+  font-size: 0.875rem;
+  text-transform: none;
+  border-top-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.history-btn ion-icon {
+  margin-left: 6px;
+  font-size: 18px;
+}
+
+.freshLead-btn {
+  background: #054362;
+  color: #ffffff;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  font-size: 0.875rem !important;
+}
+
+.date-header {
+  background: #dff0ff;
+  color: #1c6ea4;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 12px 0;
+  border-radius: 4px;
+}
+
+.timeline-item {
+  display: flex;
+  position: relative;
+  // flex-direction: column;
+}
+
+.timeline-left {
+  width: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #666;
+  border-radius: 50%;
+}
+
+.line {
+  flex: 1;
+  width: 1px;
+  background: #ddd;
+}
+
+.timeline-right {
+  flex: 1;
+}
+
+.time {
+  font-size: 0.714rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+.timeline-item:last-child {
+  .line {
+    display: none;
+  }
+}
+
+.text {
+  font-size: 0.875rem;
+  color: #222;
+}
+
+.remarks {
+  font-size: 0.714rem;
+  color: #888;
+  padding-bottom: 0.875rem;
+}
+ion-modal::part(content) {
+  border-radius: 16px 16px 0 0 !important;
+  overflow: hidden;
+}
+.nodataFound {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.opacity50 {
+  opacity: 50%;
+}
+.unique_duplicate_ctn {
+  display: flex;
+  align-items: end;
+  gap: 5px;
+  justify-content: end;
+  border: 1px solid #1c6ea4;
+  border-radius: 20px;
+  padding: 2px;
+  p {
+    font-size: 0.714rem;
+    color: #1c6ea4;
+    padding: 2px 4px;
+  }
+}
+.rightBorder {
+  border-right: 1px solid #1c6ea4;
+  border-radius: 20px;
+  background-color: #0b7ab2 !important;
+  color: white !important;
+}
+.leftBorder {
+  border-right: 1px solid #1c6ea4;
+  border-radius: 20px;
+  background-color: #0b7ab2;
+  color: white !important;
+}
+ion-modal {
+  --backdrop-opacity: 0.8;
+}
+.filteredChips ion-button {
+  color: #0b7ab2;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 400;
+  word-wrap: break-word;
+  border: 0.5px #0b7ab2 solid;
+  border-radius: 4px;
+  text-transform: capitalize;
+  height: 26px;
+  min-height: 26px;
+}
+
+.junckVisitsBorder {
+  .closedLeads_card {
+    border: 1px solid #f3883d;
+  }
+  .active-col {
+    background: #ffcba6 !important;
+    border: 0.6px solid #f3883d !important;
+    border-left: none !important;
+    border-bottom: none !important;
+  }
+
+  // ion-col {
+  //   background: #ffcba6;
+  // }
+}
+.junckVisitsBorder .total_lead_heading {
+  background: #ffcba6 !important;
+  .text_color {
+    color: #f3883d !important;
+  }
+}
+.call_ctn_data {
+  background: #ebf8ff;
+  border: 0.4px solid #257cc2;
+  border-radius: 45px;
+  width: 100%;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.card-count {
+  position: absolute;
+  right: 0px;
+  background: #9d9d9d;
+  padding: 0px 4px;
+  color: white;
+  font-size: 0.8rem;
+}

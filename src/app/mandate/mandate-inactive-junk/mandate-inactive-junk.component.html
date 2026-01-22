@@ -1,0 +1,881 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+<app-header *ngIf="!isOnCallDetailsPage && !isCheckbox"></app-header>
+<ion-header *ngIf="!isOnCallDetailsPage && isCheckbox">
+
+  <ion-row *ngIf="isCheckbox" style="margin-top: 5px;border-bottom: 1px solid rgba(32, 34, 36, 0.7);">
+    <ion-col size="2" class="content_center" (click)="showSpinner=true; onBackicon()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-col>
+    <ion-col size="2" class="ion-text-left">{{ temporaryLeadIds.length}}</ion-col>
+    <ion-col size="9" size="8" class="ion-text-left">
+      <span class="font-size16-familyPoppins">Leads Selected</span>
+    </ion-col>
+  </ion-row>
+</ion-header>
+
+<ion-row *ngIf="!isCheckbox" class="selectOption content_center marginTop10"
+  style="overflow-x: auto; white-space: nowrap;box-shadow: 0 -10px 33px rgb(0 0 0 / 0.1);border-radius: 78px">
+  <div style="display: inline-flex; width: 100%;">
+    <ion-col (click)="onInactiveJunkTab('inactive')" class="center-text font-weight500"
+      style="padding: 3px;display: flex;">
+      <div class="font-size12-familyPoppins content_center"
+        [ngClass]="filteredParams.status == 'inactive'?'leftBorder':''"
+        style="padding: 4px;border-radius: 78px;width: 100%;">Inactive Leads</div>
+    </ion-col>
+
+    <ion-col (click)="onInactiveJunkTab('junkleads')" class="center-text font-weight500"
+      style="padding: 3px;display: flex;">
+      <div class="font-size12-familyPoppins content_center"
+        [ngClass]="filteredParams.status == 'junkleads'?'rightBorder':''"
+        style="padding: 4px;border-radius: 78px; width: 100%;"> Junk Leads </div>
+    </ion-col>
+
+    <ion-col (click)="onInactiveJunkTab('junkvisits')" class="center-text font-weight500"
+      style="padding: 3px;display: flex;">
+      <div class="font-size12-familyPoppins content_center"
+        [ngClass]="filteredParams.status == 'junkvisits'?'rightBorder':''"
+        style="padding: 4px;border-radius: 78px; width: 100%;"> Junk Visits</div>
+    </ion-col>
+  </div>
+</ion-row>
+
+
+<ion-row class="filteredChips" *ngIf="!isCheckbox">
+  <div style="display: flex; overflow-x: scroll; padding: 10px 5px;">
+    <span *ngIf="filteredParams.executid && !filteredParams.executid?.includes(localStorage.getItem('UserId')) ">
+      <span *ngFor="let executive of mandateExecutives">
+        <ion-button *ngIf="filteredParams.executid?.includes(executive.id)" fill="clear"
+          (click)="removeExecutive(executive.id)">
+          {{executive.name}}
+          <ion-icon slot="end" name="close"></ion-icon>
+        </ion-button>
+      </span>
+    </span>
+
+    <ion-button fill="clear" *ngIf="filteredParams.source" (click)="this.filteredParams.source = '';addQueryParams()">
+      {{filteredParams.source == 'GR - Microsite'?'GR - campaign':filteredParams.source}}
+      <ion-icon slot="end" name="close"></ion-icon>
+    </ion-button>
+
+    <span *ngIf="filteredParams.propid && localStorage.getItem('PropertyId') != '28773'">
+      <span *ngFor="let prop of propertyList">
+        <ion-button *ngIf="prop.property_idfk===filteredParams.propid" fill="clear"
+          (click)="this.filteredParams.propid='';addQueryParams()">
+          {{prop.property_info_name}}
+          <ion-icon slot="end" name="close"></ion-icon>
+        </ion-button>
+      </span>
+    </span>
+  </div>
+</ion-row>
+
+<ion-content #mainscrollContainer (ionScroll)="onScroll($event)" scrollEvents="true">
+  <!-- CARD DETAILS -->
+  <ion-item-sliding *ngFor="let lead of leads_detail;let i=index" (ionSwipe)="onSwipe($event,lead)">
+    <ion-item lines="none">
+      <div class="lead-info">
+        <div class="card-count">
+          <span>
+            {{ i + 1 | number:'2.0' }}
+          </span>
+        </div>
+        <ion-row>
+          <ion-col [size]="isManual || i<temporaryLeadIds.length?1:''" *ngIf="isCheckbox" class="content_center">
+            <ion-checkbox *ngIf="isManual || i < temporaryLeadIds.length" #freshleadsCheckboxes
+              [id]="lead.LeadID + ' ' + lead.ExecId" (ionChange)="checkedLeads($event)" name="programming"
+              [disabled]="!isManual && i<temporaryLeadIds.length"
+              [checked]="temporaryLeadIds && temporaryLeadIds.includes(lead.LeadID)"
+              class="form-check-input"></ion-checkbox>
+          </ion-col>
+          <ion-col [size]="isManual || i<temporaryLeadIds.length?11:12"
+            (click)="navigateToDetailsPage(lead.LeadID,lead.RMID,lead)">
+            <ion-row class="info-row-heading">
+              <ion-col size="6">
+                <div>Lead Name</div>
+                <div> <span class="info-row-value">{{lead.CustomerName}}</span></div>
+              </ion-col>
+              <ion-col size="6">
+                <div>Mobile No</div>
+                <div>
+                  <span *ngIf="localStorage.getItem('Name') !== 'demo'" class="info-row-value">
+                    {{lead.number}}
+                  </span>
+                  <span *ngIf="localStorage.getItem('Name') == 'demo'" class="info-row-value">
+                    xxxxxxxxxx
+                  </span>
+                </div>
+              </ion-col>
+              <ion-col size="6">
+                <div>Source</div>
+                <div><span class="info-row-value">{{lead.source?lead.source:'--'}}</span></div>
+              </ion-col>
+              <ion-col size="6">
+                <div>Property</div>
+                <div><span class="info-row-value">{{lead.propertyname?lead.propertyname:'--'}}</span></div>
+              </ion-col>
+
+              <ion-col size="6">
+                <div>Stage</div>
+                <div>
+                  <span class="info-row-value" *ngIf="filteredParams.status == 'inactive'">{{lead.Leadphase}}
+                    <span *ngIf="filteredParams.status  == 'inactive'"> - {{lead.followup_categories}}</span>
+                  </span>
+                  <span class="info-row-value"
+                    *ngIf="lead.laststage != 'Final Negotiation' && filteredParams.status != 'inactive'">{{lead.laststage}}</span>
+                  <span class="info-row-value" *ngIf="lead.laststage == 'Final Negotiation'">{{" FN"}}</span>
+                  <span class="info-row-value" *ngIf="lead.stagestatus == '1'">{{' Fix'}}</span>
+                  <span class="info-row-value" *ngIf="lead.stagestatus == '2'">{{' Refix'}}</span>
+                  <span class="info-row-value" *ngIf="lead.stagestatus == '3'">{{' Done'}}</span>
+                </div>
+              </ion-col>
+              <ion-col size="6" *ngIf="filteredParams.status=='inactive'">
+                <div>Last Updated</div>
+                <div>
+                  <span class="info-row-value">
+                    {{" "+ lead.lastupdated | date:'dd-MMM-yyyy, hh:mm a' }}
+                  </span>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="assignies-row">
+          <div class="assignies-wrapper" *ngIf="lead?.latestvisit &&  lead?.latestvisit?.length != 0">
+            <ng-container *ngFor="let visits of lead?.latestvisit; let i = index">
+              <div class="assignies-col" *ngIf="i<2">
+                <span class="name">{{ visits.Executivename }}</span>
+                <span class="assign-date" *ngIf="i === 0">
+                  {{ lead.assigneddate | date:'dd MMM, yyyy ,hh:mma' }}
+                </span>
+              </div>
+
+              <div class="horizontal-line" *ngIf="i === 0">
+              </div>
+            </ng-container>
+            <span *ngIf="lead?.latestvisit?.length>2" class="d-flex" style="align-items: center;">
+              <div class="horizontal-line">
+              </div>
+              <div class="assign-count" [id]="'assign-count-' + i">
+                <span>{{lead?.latestvisit?.length}}</span>
+              </div>
+            </span>
+
+            <ion-popover [trigger]="'assign-count-' + i" triggerAction="click" class="assigned-exec-count">
+              <ng-template>
+
+                <ng-container *ngFor="let visits of lead?.latestvisit; let i = index">
+                  <div class="assigned-exe-col">
+                    <span class="name">{{ visits.Executivename }}</span>
+                  </div>
+
+                  <div class="virtical-line" *ngIf="i != lead?.latestvisit?.length-1">
+                  </div>
+
+                  <div class="mt-1" *ngIf="i == lead?.latestvisit?.length-1">
+                    <span class="name" style="color: #555555;">
+                      {{ lead.assigneddate | date:'dd MMM, yyyy ,hh:mma' }}</span>
+                  </div>
+                </ng-container>
+              </ng-template>
+            </ion-popover>
+          </div>
+          <div *ngIf="lead?.latestvisit?.length == 0 || !lead?.latestvisit" class="assignies-wrapper m-0">
+            <div class="assignto-text">
+              <span>Assigned to</span>
+            </div>
+            <div class="assignies-col bg-transparent">
+              <span class="name fs-6">{{ lead?.Executivename }}</span>
+              <span class="assign-date">
+                {{ lead.assigneddate | date:'dd MMM, yyyy ,hh:mma' }}
+              </span>
+            </div>
+          </div>
+        </ion-row>
+
+        <ion-row *ngIf="localStorage.getItem('Name') != 'demo'">
+          <ion-col size="7" [id]="'inactive-latest-remark-trigger-' + i"
+            class="d-flex align-item-center justify-content-center latest_remark_col">
+            <span>Latest Remark</span>
+            <ion-img class="pl-1" src="../../assets/CRMimages/chat-bubble.svg"></ion-img>
+          </ion-col>
+          <ion-popover [trigger]="'inactive-latest-remark-trigger-' + i" triggerAction="click"
+            class="latest-remark-popover">
+            <ng-template>
+              <div style="padding: 4px;border: 1px solid #546D7E;border-radius: 4px;">
+                <p
+                  *ngIf="lead.visitremarks !=='got this new lead Admin'&& lead.visitremarks != 'got this lead from Admin' ">
+                  {{lead.visitremarks}}</p>
+                <p *ngIf="lead.manualremarks">
+                  {{lead.manualremarks}}</p>
+                <p style="font-size: 12px;font-style: italic;font-weight: 600;text-align: center;"
+                  *ngIf="((lead.manualremarks == null || lead.manualremarks == '') && (lead.visitremarks == null || lead.visitremarks == 'got this lead from Admin' || lead.visitremarks == 'got this new lead Admin'))">
+                  No Remarks</p>
+              </div>
+            </ng-template>
+          </ion-popover>
+
+          <!-- <ion-col size="1.5" class="d-flex align-item-center justify-content-center">
+            <a (click)="this.outboundCall(lead)" class="ion-text-start call-icon">
+              <ion-img src="../../assets/CRMimages/call-icon.svg"></ion-img>
+            </a>
+          </ion-col>
+          <ion-col size="1.5" class="d-flex align-item-center justify-content-center">
+            <a href="https://wa.me/+91{{lead.number}}" class="whatsapp-icon">
+              <ion-img src="../../assets/CRMimages/what'sapp-icon.svg"></ion-img>
+            </a>
+          </ion-col>
+          <ion-col size="1.5" class="d-flex align-item-center justify-content-center">
+            <a (click)="onplayButton(lead)" class="play_icon">
+              <ion-img src="../../assets/CRMimages/play-icon.svg"></ion-img>
+            </a>
+          </ion-col>
+          <ion-col [id]="'visits-click-trigger-' + i" size="1.5"
+            class="info-icon d-flex align-item-center justify-content-center">
+            <ion-img src="../../assets/CRMimages/info-apps-icon.svg"></ion-img>
+          </ion-col> -->
+        </ion-row>
+        <span *ngIf="lead.suggestedprop?.[0]?.propid === '16793'">
+          <p [innerHTML]="grSitaraPropertyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+        <span *ngIf="lead.suggestedprop?.[0]?.propid === '1830'">
+          <p [innerHTML]="grSamskruthiProperyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+        <ion-popover [trigger]="'visits-click-trigger-' + i" triggerAction="click"
+          style="--max-width:150px;padding: 10px;">
+          <ng-template>
+            <div class="dropdown" style="padding: 5px;">
+              <div
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'info')"> <ion-img class="pr-3"
+                  src="../../assets/CRMimages/info_icon.svg"></ion-img><span
+                  class="font-size14-familyPoppins">Information</span></div>
+              <div
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'location')"><ion-img class="pr-2"
+                  src="../../assets/CRMimages/location_icon.svg"></ion-img><span
+                  class="font-size14-familyPoppins">Location</span></div>
+              <div
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'brochure')"> <ion-img class="pr-2"
+                  src="../../assets/CRMimages/brochureIcon.svg"></ion-img><span
+                  class="font-size14-familyPoppins">Documents</span></div>
+            </div>
+          </ng-template>
+        </ion-popover>
+
+
+
+        <!-- <span *ngIf="lead.suggestedprop?.[0]?.propid === '16793' ">
+          <p [innerHTML]="grSitaraPropertyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+        <span *ngIf="lead.suggestedprop?.[0]?.propid === '1830' ">
+          <p [innerHTML]="grSamskruthiProperyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+        <div class="latest-remark" *ngIf="!(filteredParams.status === 'pending')">
+          <ion-row class="font-size12-family-wight300-colorGray latest-remark">
+            <ion-accordion-group style="width:100%">
+              <ion-accordion value="first" class="latestRemark">
+                <ion-item slot="header" class="custom-ion-item" style="--background: #f4f5f8 ;padding: 0;">
+                  <ion-label style="flex-grow: 1;padding-left: 5px;">Latest Remark</ion-label>
+                </ion-item>
+
+                <div slot="content" style="border-top: 0.75px #ECECEC solid;">
+                  <p *ngIf="lead.visitremarks !=='got this new lead Admin'">{{lead.visitremarks}}</p>
+                  <p>{{lead.manualremarks}}</p>
+                  <p *ngIf="lead.manualremarks === null">{{lead.remarks}}</p>
+                </div>
+              </ion-accordion>
+            </ion-accordion-group>
+          </ion-row>
+        </div>
+
+        <ion-row class="custom-row-style" style="height: 39px;"
+          [ngStyle]="{ height: localStorage.getItem('Role') === '1' ? '33px' : '35px' }">
+          <ion-col size="7" class="paddingZero">
+            <ion-row class="center-vertically" *ngIf="localStorage.getItem('Role') == '1'">
+              <span class="custom-text">Assigned to </span>
+              <span class="highlight-text" style="padding:0 0 0 2px"> {{lead.Executivename +" "}}</span>
+            </ion-row>
+          </ion-col>
+
+          <ion-col size="5" class="content_center">
+            <div style="display: flex;" *ngIf="localStorage.getItem('Name') !== 'demo'">
+              <a href="tel:{{lead.number}}" class="ion-text-start" style="padding-right: 8px;">
+                <ion-img src="../../assets/CRMimages/call-icon.svg" class="call-icon"></ion-img>
+              </a>
+
+              <a href="https://wa.me/+91{{lead.number}}">
+                <ion-img src="../../assets/CRMimages/what'sapp-icon.svg" class="whatsapp-icon"></ion-img>
+              </a>
+              <a [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="ion-text-start" style="padding-left: 8px;" (click)="sendWhatsApp(lead,'info')">
+                <ion-img src="../../assets/CRMimages/info_icon1.svg" class="call-icon"></ion-img>
+              </a>
+              <a class="ion-text-start"
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                style="padding-left: 8px;" (click)="sendWhatsApp(lead,'location')">
+                <ion-img src="../../assets/CRMimages/location_icon1.svg" class="call-icon"></ion-img>
+              </a>
+              <a class="ion-text-start"
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                style="padding-left: 8px;" (click)="sendWhatsApp(lead,'brochure')">
+                <ion-img src="../../assets/CRMimages/brochureIcon1.svg" class="call-icon"></ion-img>
+              </a>
+            </div>
+
+            <div style="display: flex;" *ngIf="localStorage.getItem('Name') == 'demo'">
+              <a class="ion-text-start" style="padding-right: 8px;">
+                <ion-img src="../../assets/CRMimages/call-icon.svg" class="call-icon"></ion-img>
+              </a>
+              <a>
+                <ion-img src="../../assets/CRMimages/what'sapp-icon.svg" class="whatsapp-icon">
+                </ion-img>
+              </a>
+              <a class="ion-text-start" style="padding-left: 8px;">
+                <ion-img src="../../assets/CRMimages/info_icon1.svg" class="call-icon"></ion-img>
+              </a>
+              <a class="ion-text-start" style="padding-left: 8px;">
+                <ion-img src="../../assets/CRMimages/location_icon1.svg" class="call-icon"></ion-img>
+              </a>
+              <a class="ion-text-start" style="padding-left: 8px;">
+                <ion-img src="../../assets/CRMimages/brochureIcon1.svg" class="call-icon"></ion-img>
+              </a>
+            </div>
+          </ion-col>
+
+        </ion-row> -->
+      </div>
+    </ion-item>
+
+    <!-- <span *ngIf="localStorage.getItem('Name') != 'demo'">
+      <span>
+        <ion-item-options side="end">
+          <ion-img src="../../assets/CRMimages/phone-call.svg" style="width:45px;padding: 10px;" class="call-icon">
+          </ion-img>
+        </ion-item-options>
+        <ion-item-options side="start">
+          <ion-img src="../../assets/CRMimages/whatsapp_icon.svg" style="width:52px;padding: 10px;"
+            class="call-icon"></ion-img>
+        </ion-item-options>
+      </span>
+    </span> -->
+  </ion-item-sliding>
+
+  <!-- If leads detail empty -->
+  <ion-row *ngIf="(leads_detail && leads_detail.length===0)"
+    class="textStyle ion-justify-content-center ion-align-items-center">
+    <ion-col class="ion-text-center"><span>No Leads Found...</span></ion-col>
+  </ion-row>
+
+  <!-- Load More Scroll -->
+  <ion-infinite-scroll *ngIf="showInfiniteScroll" [disabled]="false" threshold="100px" #infiniteScroll
+    (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+
+
+
+<!-- REASSIGN ICON -->
+<ion-icon *ngIf="isAdmin && !isCheckbox " class="addleadicon" name="sync" (click)="onReassign()"
+  expand="block"></ion-icon>
+
+<!-- REASIGN LEADS COUNT SELECTION BUTTONS-->
+<div class="leadassignedbottom">
+  <div *ngIf="isCheckbox" class="assigningLead">
+    <ion-row class="assigncountleads">
+      <ion-col (click)="onSelectLeadCount('manual')" [ngClass]="isManual?'active_text_borederColor':''"
+        class="content_center font-size12-familyPoppins paddingZero">
+        <span>Manual</span>
+      </ion-col>
+
+      <ion-col [ngClass]="temporaryLeadIds.length === (10)?'active_text_borederColor':''"
+        class="font-size12-familyPoppins content_center font-weight400 paddingZero" (click)="onSelectLeadCount(10)">10
+        Leads</ion-col>
+      <ion-col [ngClass]="temporaryLeadIds.length === 25?'active_text_borederColor':''"
+        class="font-size12-familyPoppins content_center font-weight400 paddingZero" (click)="onSelectLeadCount(25)">25
+        Leads</ion-col>
+      <ion-col [ngClass]="temporaryLeadIds.length === 50?'active_text_borederColor':''"
+        class="font-size12-familyPoppins content_center font-weight400 paddingZero" (click)="onSelectLeadCount(50)">50
+        Leads</ion-col>
+
+      <ion-col
+        [ngClass]="!isManual && (temporaryLeadIds.length != 10 && temporaryLeadIds.length != 25 && temporaryLeadIds.length != 50)?'active_text_borederColor':''">
+        <ion-select (ionChange)="onSelectLeadCount($event.detail.value)"
+          [interfaceOptions]="{ cssClass: 'custom-popover-height' }" style="min-height:20px"
+          class="always-flip font-size12-familyPoppins" [(ngModel)]="selectedCount" toggleIcon="caret-down-sharp"
+          interface="popover" placeholder="More">
+          <ion-select-option value="75" class="font-size12-familyPoppins">75 Leads</ion-select-option>
+          <ion-select-option value="100" class="font-size12-familyPoppins">100 Leads</ion-select-option>
+          <ion-select-option value="150" class="font-size12-familyPoppins">150 Leads</ion-select-option>
+        </ion-select>
+      </ion-col>
+    </ion-row>
+    <ion-row style="margin-top: 5px;">
+      <ion-col class="ion-text-right" (click)="openAssignLeadsModal()">
+        <span class="assignLeadbutton"> Assign Selected Leads<ion-icon name="checkmark-outline"></ion-icon>
+        </span>
+      </ion-col>
+    </ion-row>
+  </div>
+</div>
+
+<!-- ASSIGNED LEAD MODAL-->
+<ion-modal id="assignLeads-modal" #assignLeadsModal trigger="open-custom-dialog" [backdropDismiss]="false">
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+    <ion-row class="assignTaskHeading">
+      <ion-col size="10">Assign the task</ion-col>
+      <ion-col size="2" class="content_center" (click)="onassignleadModaldismiss()"><ion-icon
+          name="close"></ion-icon></ion-col>
+    </ion-row>
+    <ion-row *ngIf="checkedLeadsDetail.length === 1" style="background-color: #FFF3F7"
+      class="ion-justify-content-center">
+      <ion-img style="width: 135px;height: 135px;" src="../../assets/CRMimages/assignLead.png"></ion-img>
+    </ion-row>
+
+    <div style="margin: 0px 15px 10px 15px;">
+      <ion-row>
+        <ion-col style="padding: 0;">
+          {{checkedLeadsDetail.length === 1?'Leads Detail': ('Total Leads'+checkedLeadsDetail.length)}}</ion-col>
+      </ion-row>
+
+      <ion-content class="data-row"
+        [ngClass]="{'single-lead': checkedLeadsDetail.length === 1, 'multiple-leads': checkedLeadsDetail.length > 1}">
+        <div *ngFor="let assignedLead of checkedLeadsDetail">
+          <ion-row style="width: 100%;">
+            <ion-col>Lead Name</ion-col>
+            <ion-col>Project</ion-col>
+            <ion-col *ngIf="!isRM">Mobile Number</ion-col>
+            <ion-col>Visit Source</ion-col>
+          </ion-row>
+          <ion-row style="width: 100%;">
+            <ion-col>{{assignedLead.CustomerName}}</ion-col>
+            <ion-col>{{assignedLead.propertyname}}</ion-col>
+            <ion-col *ngIf="localStorage.getItem('Name') != 'demo' && !isRM">{{assignedLead.number}}</ion-col>
+            <ion-col *ngIf="localStorage.getItem('Name') == 'demo'  && !isRM">xxxxxxxxxx</ion-col>
+            <ion-col>{{assignedLead.source}}</ion-col>
+          </ion-row>
+        </div>
+      </ion-content>
+
+      <form>
+        <ion-row>
+          <ion-col class="paddingBottomLeft">
+            <span class="font-size14-familyPoppins">
+              Select Property
+            </span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col id="teamSelectDropdown">
+            <p-dropdown class="teamSelectDropdown" [options]="propertyList" [(ngModel)]="selectedProperty"
+              optionLabel="property_info_name" name="selectedProperty" (onChange)="onPropertySelect($event)"
+              placeholder="Select a Team" appendTo="body" />
+          </ion-col>
+        </ion-row>
+
+        <span>
+          <ion-row>
+            <ion-col class="paddingBottomLeft">
+              <span class="font-size14-familyPoppins">Assign Executive Team</span>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col id="teamSelectDropdown">
+              <p-dropdown class="teamSelectDropdown" [(ngModel)]="selectedExecTeam" [options]="execTeam"
+                optionLabel="name" appendTo="body" (onChange)="onExecTeamSelect($event)" placeholder="Select a Team"
+                name="selectedExecTeam" />
+            </ion-col>
+          </ion-row>
+        </span>
+
+        <ion-row>
+          <ion-col class="paddingBottomLeft">
+            <span class="font-size14-familyPoppins">
+              Select Executives
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row id="executiveDropdown">
+          <p-multiSelect class="exeSelection teamSelectDropdown" [options]="executives"
+            [(ngModel)]="selectedExecutiveName" optionLabel="name" name="selectedExecutiveNames"
+            placeholder="Select Executives" display="chip" appendTo="body">
+          </p-multiSelect>
+        </ion-row>
+
+        <ion-row class="randomleadAssign" *ngIf="temporaryLeadIds.length!==1">
+          <ion-col size="10">
+            <span>
+              Random Leads Assigns
+            </span>
+          </ion-col>
+          <ion-col size="2">
+            <ion-toggle [disabled]="temporaryLeadIds.length===1"
+              (ionChange)="toggle_random_assign($event)"></ion-toggle>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <ion-button (click)="assignLead()" fill="clear" style="width: 100%;"
+              class="font-size14-familyPoppins bg_textColor"> Assign </ion-button>
+          </ion-col>
+        </ion-row>
+      </form>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- TO VIEW ASSIGNED LEAD COUNTS -->
+<ion-modal #viewAssignLeadDetail id="viewAssignLeadDetail" (willDismiss)="onWillDismiss($event)"
+  [backdropDismiss]="false">
+  <ng-template>
+    <ion-header>
+      <ion-row class="assignTaskHeading1">
+        <ion-col size="10">Re-Assign Leads Details</ion-col>
+        <ion-col size="2" class="content_center" style="align-items:end;flex-direction: column-reverse;"
+          (click)="onViewAssignLeadDetailClose();"><ion-icon name="close"></ion-icon></ion-col>
+      </ion-row>
+    </ion-header>
+
+    <!-- <ion-row class="table-header" *ngIf="localStorage.getItem('RoleType') !== '1'">
+        <ion-col class="table-cell">Name</ion-col>
+        <ion-col class="table-cell">Fresh Assigned</ion-col>
+        <ion-col class="table-cell">Re-Assigned</ion-col>
+        <ion-col class="table-cell">Not Assigned</ion-col>
+      </ion-row>
+      <ion-row class="table-header" *ngIf="localStorage.getItem('RoleType') === '1'">
+        <ion-col class="table-cell" size="6">Executives</ion-col>
+        <ion-col class="table-cell" size="3">Assigned</ion-col>
+        <ion-col class="table-cell" size="3">Existing</ion-col>
+      </ion-row>
+
+      <span *ngIf="localStorage.getItem('RoleType') !== '1'">
+        <ion-row *ngFor="let reassign of reassignedResponseInfo; let i = index">
+          <ion-col class="table-cell" style="border-left: 1px solid #4398c3;">{{reassign.execname}}</ion-col>
+          <ion-col class="table-cell">{{reassign.fresh}}</ion-col>
+          <ion-col class="table-cell">{{reassign.reassigned}}</ion-col>
+          <ion-col class="table-cell">{{reassign.exsiting}}</ion-col>
+        </ion-row>
+      </span>
+      <ion-row *ngIf="localStorage.getItem('RoleType') === '1'">
+        <ion-col class="table-cell content_center" size="6"
+          style="border-left: 1px solid #4398c3;">{{reassignedResponseInfo[0].fromexecname}}<ion-icon
+            name="arrow-forward"></ion-icon>{{reassignedResponseInfo[0].toexecname}}</ion-col>
+        <ion-col class="table-cell" size="3">{{reassignedResponseInfo[0].assignedleadscount}}</ion-col>
+        <ion-col class="table-cell" size="3">{{reassignedResponseInfo[0].existingleadscount}}</ion-col>
+      </ion-row> -->
+
+    <ion-content>
+      <!-- <ion-grid class="p-2" *ngFor="let reassign of reassignedResponseInfo">
+        <div class="header">
+          <span class="name">{{reassign.execname}}</span>
+        </div>
+        <div style="border:1px solid #EEEEEE !important" class="m-0">
+          <ion-grid class="p-0">
+            <ion-row>
+              <ion-col size="4" class="p-0">
+                <div class="assigned-title">Assigned</div>
+              </ion-col>
+              <ion-col class="p-0">
+                <div class="not-assigned-title">Not Assigned</div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="4" class="assigned-col p-0">
+                <div>
+                  <span>Total</span>
+                  <p>{{reassign.fresh + reassign.reassignedLeads + reassign.reassignedVisits}}</p>
+                </div>
+                <div>
+                  <span>Leads</span>
+                  <p>{{reassign.fresh + reassign.reassignedLeads}}</p>
+                </div>
+                <div>
+                  <span>Overdue Visits</span>
+                  <p>{{reassign.reassignedVisits}}</p>
+                </div>
+              </ion-col>
+
+              <ion-col class="not-assigned-col p-0 d-flex">
+                <div class="not-assigned-left-div w-100">
+                  <div>
+                    <span>Already in Fresh</span>
+                    <p>{{reassign.alreadyinfresh}}</p>
+                  </div>
+                  <div>
+                    <span>Already in Active</span>
+                    <p>{{reassign.alreadyinactive}}</p>
+                  </div>
+                  <div>
+                    <span>Overload Limit</span>
+                    <p>{{reassign.leads_skipped_executive_capacity}}</p>
+                  </div>
+                </div>
+                <div class="not-assigned-right-div w-100">
+                  <div class="w-100 h-100 d-flex flex-column align-items-start justify-content-center">
+                    <span>GR Swara Leads</span>
+                    <p>{{reassign.gr_swara_leads_skipped}}</p>
+                  </div>
+                  <div class="w-100 h-100 d-flex flex-column align-items-start justify-content-center">
+                    <span>Active Visits</span>
+                    <p>{{reassign.reassignedVisitExist}}</p>
+                  </div>
+                </div>
+
+              </ion-col>
+            </ion-row>
+
+
+            <ion-row class="untouched-title">
+              <ion-col class="d-flex align-item-center justify-content-center">
+                <div class="unto-item">
+                  <span>Untouched </span>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row class="untouched-row">
+              <ion-col size="6">
+                <div class="untouched-div">
+                  <span> Leads</span>
+                  <p>{{reassign.untouched_leads}}</p>
+                </div>
+              </ion-col>
+
+              <ion-col size="6">
+                <div class="untouched-div">
+                  <span> Visits</span>
+                  <p>{{reassign.untouched_visits}}</p>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+
+      </ion-grid> -->
+      <ion-grid>
+        <ion-row class="table-header">
+          <ion-col class="table-cell" size="3.5">Name</ion-col>
+          <ion-col class="table-cell" size="2">Fresh</ion-col>
+          <ion-col class="table-cell" size="1.5">Re-Asgn</ion-col>
+          <ion-col class="table-cell" size="3">NotAsgn</ion-col>
+          <ion-col class="table-cell" size="2">Untchd</ion-col>
+        </ion-row>
+
+        <div *ngFor="let item of reassignedResponseInfo" style="border-left:1px solid #4398c3;">
+          <ion-row>
+            <ion-col class="table-cell" size="3.5">{{item.execname}}</ion-col>
+            <ion-col class="table-cell" size="2">{{item.fresh}}</ion-col>
+            <ion-col class="table-cell" size=1.5>{{item.reassigned}}</ion-col>
+            <ion-col class="table-cell" size=3>
+              <div>
+                {{'Others- ' +item.exsiting}}
+              </div>
+              <div>{{'Gr-Swara- '+item.gr_swara_leads_skipped}}</div>
+            </ion-col>
+            <ion-col class="table-cell" size=2>{{item.totalleads}}</ion-col>
+          </ion-row>
+        </div>
+      </ion-grid>
+      <!-- <div *ngFor="let item of reassignedResponseInfo" class="mb-1">
+                <ion-row class="table-header">
+      
+                  <ion-col class="table-cell content_center" style="border-left: 1px solid #4398c3;">{{item.execname}}
+                  </ion-col>
+      
+      
+                </ion-row>
+                <ion-row>
+                  <ion-col class="table-cell">Fresh Assigned</ion-col>
+                  <ion-col class="table-cell">
+                    {{item.fresh}}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="table-cell">Re-Assigned</ion-col>
+                  <ion-col class="table-cell">
+                    {{item.reassigned}}
+      
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="table-cell">Not Assigned</ion-col>
+                  <ion-col class="table-cell">
+                    <div>
+                      {{'Others - ' +item.exsiting}}
+                    </div>
+                    <div>{{'Gr-Swara - '+item.gr_swara_leads_skipped}}</div>
+      
+      
+      
+                  </ion-col>
+                </ion-row>
+      
+                <ion-row>
+                  <ion-col class="table-cell">Untouched Leads</ion-col>
+                  <ion-col class="table-cell">{{item.totalleads}}</ion-col>
+                </ion-row>
+      
+              </div> -->
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+
+<!-- FILTER MODAL -->
+<ion-modal #filterModal>
+  <ng-template>
+    <ion-header class="header_footerHeight">
+      <ion-row>
+        <ion-col size="2" class="content_center" (click)="filterModal.dismiss()">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="content_center">Filters</ion-col>
+        <ion-col size="2" class="content_center" (click)="this.tempFilteredValues = {};reset_filter()">
+          <ion-icon name="refresh"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+
+    <div style="height: 100%;">
+      <ion-row class="split-layout">
+        <div class="left-column">
+          <ion-row *ngIf="!localStorage.getItem('ranavPropId')"
+            [ngClass]="isLeftFilterActive=='property'?'bg_textColor':''" class="content_center borderBottom_background"
+            (click)="onFilterValues('property')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Property </span>
+            </ion-col>
+          </ion-row>
+          <ion-row [ngClass]="isLeftFilterActive=='source'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('source')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Source </span>
+            </ion-col>
+          </ion-row>
+          <ion-row [ngClass]="isLeftFilterActive=='executive'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('executive')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Executive</span>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="right-column">
+          <!-- SOURCE FILTER -->
+          <span *ngIf="isLeftFilterActive=='source'">
+            <ion-searchbar [(ngModel)]="sourceSearchTerm" (ionInput)="setFilteredSource()"></ion-searchbar>
+            <ion-content style="height:70vh ;" #sourceScrollContent>
+              <ion-row class="filterButtons" (click)="onFilterSelection('source','all')"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues?.source === ''}">
+                <span>All</span></ion-row>
+              <ion-row class="filterButtons" *ngFor="let source of sourceList1"
+                (click)="onFilterSelection('source',source.source)" [id]="source.source"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues?.source === source.source}">
+                <span>{{source.source == 'GR - Microsite'?'GR - campaign':source.source}}</span>
+              </ion-row>
+            </ion-content>
+          </span>
+
+          <!--  PROPERY FILTER -->
+          <span *ngIf="isLeftFilterActive=='property'">
+            <ion-content style="height:80vh;">
+              <ion-searchbar [(ngModel)]="propertySearchTerm" (ionInput)="setFilteredProperty()">
+              </ion-searchbar>
+              <ion-row class="filterButtons" *ngFor="let property of propertyList1"
+                (click)="onFilterSelection('property',property.property_idfk)"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues?.propid === property.property_idfk}">
+                <span>{{property.property_info_name}}</span>
+              </ion-row>
+            </ion-content>
+          </span>
+
+          <!-- EXECUTIVE FILTER -->
+          <span *ngIf="isLeftFilterActive=='executive'">
+            <ion-searchbar [(ngModel)]="executiveSearchTerm" (ionInput)="setFilteredExecutive()">
+            </ion-searchbar>
+            <ion-content style="height:70vh;" #executiveScrollContent>
+              <ion-row class="filterButtons" (click)="onFilterSelection('executive','all')"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues?.executid === ''}">
+                <ion-col> <span>All</span> </ion-col>
+              </ion-row>
+              <ion-row *ngFor="let executive of mandateExecutives1" [id]="executive.id"
+                (click)="onFilterSelection('executive',executive.id)"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues.executid?.includes(executive.id)}">
+                <span class="filterButtons">{{executive.name}}</span>
+              </ion-row>
+            </ion-content>
+          </span>
+        </div>
+      </ion-row>
+    </div>
+    <ion-footer class="header_footerHeight">
+      <ion-row>
+        <ion-col class="content_center font-size14-familyPoppins" (click)="filterModal.dismiss();confirmSelection()">
+          <ion-button fill="clear" class="showresultButton">Show Results</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Sub Filter for Inactive Counts-->
+<ion-row style="box-shadow: 0px -4px 6.6px 0px #0000002E;margin-top:10px" *ngIf="!isCheckbox">
+  <ion-col size="10">
+    <div class="inactiveCounter" [appCenterActiveButton]="filteredParams.counter">
+      <div [ngClass]="filteredParams.counter== '1'?'textBorderColor':''" (click)="onInactiveButtonClick('1')"
+        [id]="'id-1'" class="custom-col center-text font-weight500">Inactive-I{{"("+inactive_junkCount.inactive_I +
+        ")"}}</div>
+
+      <div [ngClass]="filteredParams.counter== '2'?'textBorderColor':''" (click)="onInactiveButtonClick('2')"
+        [id]="'id-2'" class="custom-col center-text font-weight500">Inactive-II{{"("+inactive_junkCount.inactive_II +
+        ")"}}</div>
+
+      <div [ngClass]="filteredParams.counter== '3'?'textBorderColor':''" (click)="onInactiveButtonClick('3')"
+        [id]="'id-3'" class="custom-col center-text font-weight500">Inactive-III{{"("+inactive_junkCount.inactive_III +
+        ")"}}</div>
+
+      <div [ngClass]="filteredParams.counter== '4'?'textBorderColor':''" (click)="onInactiveButtonClick('4')"
+        [id]="'id-4'" class="custom-col center-text font-weight500">Inactive-IV{{"("+inactive_junkCount.inactive_IV +
+        ")"}}</div>
+
+      <div [ngClass]="filteredParams.counter== 'final'?'textBorderColor':''" (click)="onInactiveButtonClick('final')"
+        [id]="'id-final'" class="custom-col center-text font-weight500">Final
+        Inactive{{"("+inactive_junkCount.finalInactive + ")"}}</div>
+    </div>
+  </ion-col>
+  <ion-col size="2">
+    <ion-img class="ion-filter-icon" src="../../assets/CRMimages/filter.svg" (click)="navigateToFilter()"
+      *ngIf="!isCheckbox"> </ion-img>
+  </ion-col>
+</ion-row>
+
+<app-common-footer *ngIf="!isCheckbox"></app-common-footer>

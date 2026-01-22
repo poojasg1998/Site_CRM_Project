@@ -1,0 +1,398 @@
+<ion-loading #loader class="loader" trigger="open-loading"></ion-loading>
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+<ion-header>
+  <ion-toolbar class="ion-text-center header">
+    <ion-row>
+      <ion-col size="10">
+        <ion-row>
+          <ion-col class="d-flex">
+            <ion-img style="width: 30px;" src="../../assets/CRMimages/whatsapp_icon.svg"></ion-img>
+            <span style="font-size: 20px; color: #39ae41;" class="pl-1">WhatsApp </span>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col size="2" (click)="openEndMenu()" class="content_center">
+        <ion-icon name="menu" class="menu_icon"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+
+<ion-row>
+  <ion-col class="paddingZero">
+    <ion-searchbar (ionInput)="searchClient($event)" [(ngModel)]="filteredParams.chatListSearch"
+      class="font-size12-familyPoppins font-weight400 mainSearch" placeholder="Search a name / mobile number"
+      (ionClear)="clearSearch()">
+    </ion-searchbar>
+  </ion-col>
+</ion-row>
+
+<!-- CHAT FILTER -->
+<ion-row>
+  <div class="chat_filters">
+    <ion-col size="2" (click)="onChatFilterSelected('all')" class="content_center">
+      <div [ngClass]="filteredParams.selectedChat == 'all'?'bg_textColor':'inactive_bg_textColor'"
+        class="content_center"><span class="font-size12-familyPoppins">All</span></div>
+    </ion-col>
+
+    <ion-col size="3" (click)="onChatFilterSelected('unread')" class="content_center">
+      <div [ngClass]="filteredParams.selectedChat == 'unread'?'bg_textColor':'inactive_bg_textColor'"
+        class="content_center"><span class="font-size12-familyPoppins">Unread</span></div>
+    </ion-col>
+
+    <ion-col class="pointerEvent" class="content_center">
+      <div [ngClass]="filteredParams.selectedChat == 'exec'?'bg_textColor':'inactive_bg_textColor'"
+        style=" padding: 1px !important;">
+        <p-dropdown appendTo="body" class="exec" [options]="execList" optionLabel="Name"
+          placeholder="Select a Executive" (onChange)="onExecutive($event)" [(ngModel)]="selectedExec" />
+        <!-- <p-dropdown class="teamSelectDropdown" [options]="team" optionLabel="Name" 
+            (onChange)="onAssignTeamSelect($event)" [(ngModel)]="selectedTeam" placeholder="Select a Team" name="teamSelect" appendTo="body"/> -->
+      </div>
+    </ion-col>
+  </div>
+</ion-row>
+
+<ion-content>
+  <!-- CHAT LISTING SECTION -->
+  <ion-row class="borderBottom" *ngFor="let chat of allChats1"
+    (click)="!hasCommonId(allChats,allChats1)?whatsAppNumberCheck(chat): openChat_previewModal(chat)">
+    <ion-col size="2" class="content_center profile-wrapper">
+      <div class="profile-image-wrapper">
+        <ion-img src="../../assets/CRMimages/client_chat_profile_icon.svg"></ion-img>
+      </div>
+    </ion-col>
+    <ion-col size="10" class="chat-message-preview">
+      <ion-row>
+        <ion-col size="9" class="center-vertically"><span class="ellipse_span">{{chat.customer_name}}</span></ion-col>
+        <ion-col size="3" class="content_center">
+          <span>{{chat.latest_message_time | date:'hh:mm a'}}
+          </span>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="0.5" class="content_center">
+        </ion-col>
+        <ion-col size="9" class="center-vertically">
+          <span class="latest_message_content">
+            {{chat.latest_message_content}}
+          </span>
+        </ion-col>
+        <ion-col *ngIf="chat.unreadcount" size="2" class="content_center">
+          <div class="unreadChat_count">{{chat.unreadcount?chat.unreadcount:''}}</div>
+        </ion-col>
+      </ion-row>
+    </ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="allChats1?.length == 0">
+    <ion-col class="content_center">
+      <span class="font-size16-familyPoppins font-colorgreen">No Active Chats</span>
+    </ion-col>
+  </ion-row>
+</ion-content>
+<app-common-footer></app-common-footer>
+
+<!-- INDIVIDUAL CHAT OVERVIEW -->
+<ion-modal #chat_preview trigger="open-modal"
+  [isOpen]="this.filteredParams.isIndividualChatId !='' || isIndividualChatModal ">
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+
+    <ion-header>
+      <ion-toolbar *ngIf="!isOnetoOneChatSearch" style="border-bottom: 0.5px solid #E4E4E4">
+        <ion-buttons slot="start" (click)="onIndividualChatBack()">
+          <ion-icon style="font-size: 24px;" name="chevron-back-outline"></ion-icon>
+        </ion-buttons>
+
+        <ion-row>
+          <ion-col size="2" class="content_center">
+            <ion-img src="../../assets/CRMimages/client_chat_profile_icon.svg"></ion-img>
+          </ion-col>
+          <ion-col size="10" class="chat-message-preview center-vertically">
+            <ion-row style="width: 100%;">
+              <ion-col size="9">
+                <div>
+                  <div class="ellipse_span">
+                    <span>{{selectedChat && selectedChat!='' && selectedChat!=undefined?selectedChat?.customer_name:
+                      allChats1?.[0]?.customer_name}}</span>
+                  </div>
+                </div>
+              </ion-col>
+              <ion-col size="1.5" class="content_center">
+                <ion-icon name="call-outline" style="color: #000000;"></ion-icon>
+              </ion-col>
+              <ion-col size="1.5" class="verticleEllipsis content_center" id="search">
+                <ion-icon name="ellipsis-vertical"></ion-icon>
+              </ion-col>
+              <ion-popover trigger="search" side="bottom" alignment="center" class="newAndselect_popover">
+                <ng-template>
+                  <ion-row>
+                    <ion-col (click)="onOnetoOneChatSearch()">
+                      <span> Search </span>
+                    </ion-col>
+                  </ion-row>
+                </ng-template>
+              </ion-popover>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+      </ion-toolbar>
+
+      <ion-toolbar *ngIf="isOnetoOneChatSearch">
+        <div style="display: flex;align-items: center;border-bottom: 0.5px solid #E4E4E4">
+          <ion-icon name="arrow-back" style="font-size: 24px;"
+            (click)="isOnetoOneChatSearch= false;oneToOneChatSearch='';  this.currentMatchIndex = -1;">
+          </ion-icon>
+          <ion-searchbar class="addMemberSearch" [(ngModel)]="oneToOneChatSearch" [showClearButton]="'never'"
+            [showCancelButton]="false" (ionInput)="onOneToOneSearchChange()" placeholder="Search ...">
+          </ion-searchbar>
+
+          <ion-icon style="padding: 0 5px;" name="chevron-up-outline" (click)="navigateMatch('prev')"></ion-icon>
+          <ion-icon style="padding: 0 5px;" name="chevron-down-outline" (click)="navigateMatch('next')"></ion-icon>
+        </div>
+      </ion-toolbar>
+      <ion-row *ngIf=" one2oneChats?.['executives']">
+        <ion-col class="font-size14-familyPoppins">
+          <div style="display: flex; align-items: center; flex-wrap: wrap;">
+            <span style="margin-right: 8px;" classs="font-size12-familyPoppins">Assignees :</span>
+            <ion-radio-group [(ngModel)]="selectedExec" (ionChange)="onExecChange($event)"
+              style="display: flex; gap: 12px;">
+              <label *ngFor="let assignee of one2oneChats?.['executives']"
+                style="display: flex; align-items: center; gap: 4px;">
+                <span classs="font-size12-familyPoppins" style="color:#1DC9A0">{{ assignee.exec_name }}</span>
+                <ion-radio [value]="assignee.exec_id"></ion-radio>
+              </label>
+            </ion-radio-group>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+
+    <ion-content class="bg-img" #chat_previewIon_content scrollEvents="true" (ionScroll)="onScroll($event)">
+      {{data|json}}
+      {{this.recordedAudioFile|json}}
+      <div *ngFor="let msg of one2oneChats?.['details']; let i = index; trackBy: trackByMsgId" [attr.data-index]="i"
+        [attr.data-id-index]="msg.item_id"
+        [ngClass]="{'selected-match': ((currentMatchIndex !== -1 && matchedIndexes[currentMatchIndex] === i) ) }">
+        <!-- SENDER -->
+        <ion-item-sliding *ngIf="this.filteredParams.isIndividualChatId == msg.sender_id">
+          <ion-item style="--background: none;" lines="none">
+            <ion-row>
+              <ion-col size="12" class="chat-align ">
+                <div class="chat-wrapper">
+                  <span aria-hidden="true" data-icon="tail-in" class="_amk7">
+                    <svg viewBox="0 0 8 13" height="13" width="8" preserveAspectRatio="xMidYMid meet" version="1.1"
+                      x="0px" y="0px" style="color:white">
+                      <path opacity="0.13" d="M1.533,3.568L8,12.193V1H2.812 C1.042,1,0.474,2.156,1.533,3.568z">
+                      </path>
+                      <path fill="currentColor" d="M1.533,2.568L8,11.193V0L2.812,0C1.042,0,0.474,1.156,1.533,2.568z">
+                      </path>
+                    </svg>
+                  </span>
+                  <div class="received-chat-card">
+                    <ion-row>
+                      <ion-col *ngIf="msg.content" #messageContainer>
+                        <div class="message-text" [title]="msg.content" style="white-space: normal;">
+                          <ng-container *ngFor="let part of msg.content | lineBreaks">
+                            <span *ngIf="part.isPhoneNumber" [innerHTML]="part.text | highlight:oneToOneChatSearch"
+                              class="highlight-number" appLongPress (longPress)="onCopyMessage(part.text)"
+                              (click)="onNumberClick(part.text);">
+                            </span>
+                            <span *ngIf="!part.isPhoneNumber"
+                              [innerHTML]="part.text| highlight:oneToOneChatSearch"></span>
+                          </ng-container>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="timestamp">
+                        <span *ngIf="msg.edited=='1'" style="padding-right:5px;">Edited</span>
+                        <span>{{msg.created_at |
+                          date: 'hh:mm a'}}</span>
+                      </ion-col>
+                    </ion-row>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-item>
+        </ion-item-sliding>
+
+        <!-- RECEIVER -->
+        <ion-item-sliding *ngIf="this.filteredParams.execid == msg.sender_id">
+          <ion-item style="--background: none;" lines="none">
+            <ion-row class="sender-message-bubble">
+              <ion-col size="12" class="chat-align">
+                <div class="chat-wrapper">
+                  <span>
+                    <svg viewBox="0 0 8 13" height="13" width="8" preserveAspectRatio="xMidYMid meet"
+                      style="position: absolute; top: 0;right: 2px;color: #d9fdd3;">
+                      <path opacity="0.13" d="M5.188,1H0v11.193l6.467-8.625 C7.526,2.156,6.958,1,5.188,1z"></path>
+                      <path fill="currentColor" d="M5.188,0H0v11.193l6.467-8.625C7.526,1.156,6.958,0,5.188,0z"></path>
+                    </svg>
+                  </span>
+                  <div class="send-chat-card" [photoGalleryGroup]>
+                    <!-- Image File  -->
+                    <ion-img [photoGallery]="'https://chat.right2shout.in' +  msg.attachment_path "
+                      *ngIf="msg.attachment_name?.toLowerCase().endsWith('.jpg') || msg.attachment_name?.toLowerCase().endsWith('.jpeg') || msg.attachment_name?.toLowerCase().endsWith('.png')"
+                      [src]="'https://chat.right2shout.in' + msg.attachment_path" style="width: 150px;"></ion-img>
+
+                    <!--  PDF File -->
+                    <a *ngIf="msg.attachment_name?.toLowerCase().endsWith('.pdf')"
+                      [href]="'https://chat.right2shout.in/'+msg.attachment_path" class="content_center"
+                      (click)="downloadFileFromUrl(msg.attachment_path,msg.attachment_name)" id="canvasId">
+                      <ion-img style="width: 26px;" src="../../assets/CRMimages/pdfred.png"></ion-img>
+                      <span *ngIf="msg.attachment_name?.toLowerCase().endsWith('.pdf')"
+                        class="font-size12-familyPoppins">
+                        {{msg.attachment_name}}</span>
+                    </a>
+
+                    <!-- video File -->
+                    <video #videoPlayer id="myVideo" (touchstart)="goFullScreen()"
+                      *ngIf="msg.attachment_path && msg.attachment_name?.toLowerCase().endsWith('.mp4')" controls=""
+                      height="100%" width="200">
+                      <source type="video/mp4" [src]="'https://chat.right2shout.in' +  msg.attachment_path"
+                        type="video/mp4"> Your browser
+                      does not support the video tag.
+                    </video>
+
+                    <ion-row class="audio_row" *ngIf="msg.attachment_name?.toLowerCase().endsWith('.mp3')">
+                      <ion-col class="d-flex">
+                        <!-- Play button -->
+                        <button (click)="togglePlay(audio)" class="play-btn">
+                          <ion-icon [name]="isPlaying ? 'pause' : 'play'"></ion-icon>
+                        </button>
+
+                        <ion-range class="audioRange" [value]="currentTime" [min]="0" [max]="duration" step="1"
+                          (ionChange)="seekAudio($event,audio)"></ion-range>
+                      </ion-col>
+                      <!-- Hidden audio -->
+                      <audio #audio (loadedmetadata)="setDuration(audio)" (timeupdate)="updateProgress(audio)"
+                        (ended)="audioEnded()">
+                        <source [src]="'https://chat.right2shout.in' + msg.attachment_path" type="audio/mpeg" />
+                      </audio>
+                    </ion-row>
+
+
+
+                    <!-- <ion-button color="primary" (click)="startRecording()" [disabled]="isRecording">
+                      Start Recording
+                    </ion-button>
+
+                    <ion-button color="danger" (click)="stopRecording()" [disabled]="!isRecording">
+                      Stop Recording
+                    </ion-button>
+
+                    <ion-button color="success" (click)="playAudio()" [disabled]="!recordedAudio">
+                      Play Recorded Audio
+                    </ion-button>
+
+                    <div *ngIf="isRecording" class="recording-indicator">
+                      Recording...
+                    </div>
+
+                    <audio *ngIf="audioUrl" [src]="audioUrl" controls></audio> -->
+
+                    <ion-row>
+                      <ion-col *ngIf="msg.content" #messageContainer>
+                        <div class="message-text" [title]="msg.content" style="white-space: normal;">
+                          <ng-container *ngFor="let part of msg.content | lineBreaks">
+                            <span *ngIf="part.isPhoneNumber" [innerHTML]="part.text | highlight:oneToOneChatSearch"
+                              class="highlight-number" appLongPress (longPress)="onCopyMessage(part.text)"
+                              (click)="onNumberClick(part.text);">
+                            </span>
+                            <span *ngIf="!part.isPhoneNumber"
+                              [innerHTML]="part.text| highlight:oneToOneChatSearch"></span>
+                          </ng-container>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col size="5" class="timestamp p-0 " style="justify-content: center;"
+                        *ngIf="msg.attachment_name?.toLowerCase().endsWith('.mp3')">{{ currentTime | date:'mm:ss'
+                        }}</ion-col>
+                      <ion-col class="timestamp center-vertically">
+                        <span *ngIf="msg.edited=='1' " style="padding-right:5px;">Edited</span>
+                        <span>{{msg.created_at | date: 'hh:mm a'}}</span>
+                        <ion-img *ngIf="msg.item_id !=''" style="width: 18px;padding-left: 4px;"
+                          src="../../assets/CRMimages/double-tick-read.svg"></ion-img>
+                        <ion-icon *ngIf="msg.item_id ==''" name="time-outline"
+                          style="color: rgb(11, 122, 178);font-size: 14px; padding-left: 5px;">
+                        </ion-icon>
+                      </ion-col>
+                    </ion-row>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-item>
+        </ion-item-sliding>
+      </div>
+
+      <!-- Scroll to bottom icon -->
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!isAtBottom">
+        <ion-fab-button (click)="scrollMoveToBottom()"
+          style="font-size: 23px; width: 40px;height: 40px;--background: #ffffff;">
+          <i class="fas fa-angle-double-down" style="color: rgba(0, 0, 0, .6);"></i>
+        </ion-fab-button>
+      </ion-fab>
+    </ion-content>
+
+    <ion-footer class="bg-img">
+      <ion-row>
+        <ion-col size="10" *ngIf="!isHolding">
+          <ion-row style="width: 100%;" class="message-row" id=messageRow>
+            <ion-col (click)="toggleEmojiPicker()" size="2" [class.grow]="checkTextareaHeight()" size="1.5"
+              class="content_center paddingZero">
+              <ion-img src="../../assets/CRMimages/whatsapp_imoji_icon.svg"></ion-img>
+            </ion-col>
+
+            <ion-col [size]="message==''?7:8.5" class="paddingZero content_center">
+              <ion-textarea rows="1" [(ngModel)]="message" #messageInput (ionInput)="checkTextareaHeight()"
+                autoGrow="true" class="font-size14-familyPoppins" placeholder="Message"></ion-textarea>
+            </ion-col>
+
+            <ion-col size="1.5" [class.grow]="checkTextareaHeight()" class="content_center">
+              <input type="file" #fileInput (change)="handleFile($event)" multiple style="display: none" />
+              <ion-icon (click)="fileInput.click()" style="font-size: 22px;" name="attach-outline"></ion-icon></ion-col>
+
+            <ion-col *ngIf="message==''" size="1.5" [class.grow]="checkTextareaHeight()"
+              class="content_center"><ion-icon style="font-size: 22px;" name="camera-outline"></ion-icon></ion-col>
+          </ion-row>
+        </ion-col>
+        <!-- <p>
+          Name: {{ recordedAudioFile?.name }} <br>
+          Size: {{ recordedAudioFile?.size }} bytes <br>
+          Type: {{ recordedAudioFile?.type }}
+        </p> -->
+        <!-- {{this.recordedAudio}} -->
+        <ion-col [ngClass]="{'slide-in-left': isHolding}" *ngIf="isHolding">
+          <div class="pl-4">
+            <span class="font-size12-familyPoppins">{{ formattedTime }}</span>
+          </div>
+          <div class="recordCancel-slide" [style.transform]="'translateX(' + translateX + 'px)'">
+            <ion-icon style="color: rgba(0, 0, 0, .6);" name="chevron-back-outline"></ion-icon>
+            <span class="font-size12-familyPoppins">Slide to cancel</span>
+          </div>
+        </ion-col>
+        <ion-col size="2" class="content_center" [ngClass]="{'pointerEvent': removePointerEvent()&& message != ''}">
+          <i *ngIf="message != ''" (click)="sendMessage()" class="fa fa-paper-plane"></i>
+          <ion-icon id="recorder_icon" *ngIf="message == ''" name="mic" class="mic"
+            [style.transform]="'translateX(' + translateX + 'px) scale(' + (isHolding ? 2 : 1) + ')'"
+            (mousedown)="onPress($event)" (mousemove)="onMove($event)" (mouseup)="onRelease()"
+            (mouseleave)="onRelease()" (touchstart)="onPress($event)" (touchmove)="onMove($event)"
+            (touchend)="onRelease()" (touchcancel)="onRelease()"></ion-icon>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="showEmojiPicker">
+        <ion-col>
+          <emoji-mart [showPreview]="false" (emojiSelect)="addEmoji($event)"></emoji-mart>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

@@ -1,0 +1,7 @@
+{
+  "name": "Site CRM",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

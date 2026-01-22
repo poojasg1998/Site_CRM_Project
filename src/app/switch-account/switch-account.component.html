@@ -1,0 +1,55 @@
+<app-header></app-header>
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+<ion-content>
+
+  <ion-card class="exec_acc_switch" *ngFor="let exec of executiveNames">
+    <ion-row>
+      <ion-col class="d-flex flex-column justify-content-start">
+        <span class="name">{{exec.name}}</span>
+        <span class="role">{{exec.RoleName}}</span>
+      </ion-col>
+      <ion-col size="4" class="d-flex align-items-center justify-content-end"
+        (click)="selectedAcc = exec; switchAccountModal.present()">
+        <div class="switch_btn">
+          <span class="pr-2">Switch</span><ion-img src="../../assets/CRMimages/switch_account_icon1.svg"></ion-img>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+</ion-content>
+
+<ion-modal #switchAccountModal class="switchAccountModal">
+  <ng-template>
+    <ion-header>
+      <ion-row>
+        <ion-col class="d-flex align-items-center justify-content-center">
+          <span class="pr-1"> Confirm Switch</span>
+          <ion-img src="../../assets/CRMimages/switch_pop_icon.svg"></ion-img>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+    <div class="text-center d-flex flex-column p-2">
+      <span class="switch_header">
+        You’re about to switch accounts You will leave your Admin account and continue as
+      </span>
+      <span class="name_role mt-1">
+        Kiran - R.M Team Leader
+      </span>
+      <span class="warning_text  mt-2">
+        Do You Want To Proceed ?
+      </span>
+    </div>
+    <ion-footer>
+      <ion-row class="close-confirm-btn">
+        <ion-col size="4"
+          class="d-flex align-items-center justify-content-center close_btn"><span>Close</span></ion-col>
+        <ion-col class="d-flex align-items-center justify-content-center switch_btn" (click)="onSwitch_acc()"><span>Yes,
+            Switch
+            Account</span></ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+<app-common-footer></app-common-footer>

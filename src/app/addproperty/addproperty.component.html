@@ -1,0 +1,280 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<app-header *ngIf="!isOnCallDetailsPage"></app-header>
+
+
+<ion-row *ngIf="isAdmin && isOnCallDetailsPage" class="property-management" [appCenterActiveButton]="type"
+  style="padding:4px 0; box-shadow: -4px 0px 10px 0 rgba(99, 99, 99, 0.2);">
+  <ion-col class="content_center custom-col" [id]="'id-property'" (click)="onProperty_CP_request('property');">
+    <span class="font-size12-familyPoppins">Add Property</span>
+  </ion-col>
+  <ion-col class="content_center custom-col" [id]="'id-cp'" (click)="onProperty_CP_request('cp')">
+    <span class="font-size12-familyPoppins">CP Registration</span>
+  </ion-col>
+  <ion-col class="content_center custom-col" [id]="'id-builders'" (click)="onProperty_CP_request('builders')">
+    <span class="font-size12-familyPoppins">Mandate Requests</span>
+  </ion-col>
+</ion-row>
+
+<ion-content *ngIf="!isOnCallDetailsPage" #mainscrollContainer (ionScroll)="onScroll($event)" scrollEvents="true">
+  <!-- PROPERTY LIST SECTION -->
+  <span *ngIf="type==='property'">
+    <div class="lead-info" *ngFor="let prop of addedpropertylists;let i=index">
+      <ion-row class="info-row-heading">
+        <ion-col size="7">
+          <div> Name</div>
+          <div><span class="info-row-value">{{prop.name}}</span></div>
+        </ion-col>
+        <ion-col size="5" class="ion-text-end">
+          <div>Added Date</div>
+          <div><span class="info-row-value">{{prop.date | date: 'dd MMM yyyy'}}</span></div>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <ion-row>
+      <ion-col class="content_center">
+        <span *ngIf="addedpropertylists.length===0" class="font-size14-familyPoppins">No properties added</span>
+      </ion-col>
+    </ion-row>
+  </span>
+
+  <!-- CP LIST SECTION -->
+  <span *ngIf="type=='cp'">
+    <div class="lead-info" *ngFor="let cplist of cpLists;let i=index">
+      <ion-row class="info-row-heading1">
+        <ion-col size="8">
+          <div> Name</div>
+          <div><span class="info-row-value1">{{cplist.CP_NAME}}</span></div>
+        </ion-col>
+        <ion-col size="4" class="ion-text-start">
+          <div> Number</div>
+          <div><span class="info-row-value1">{{cplist.CP_NUMBER}}</span></div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="info-row-heading1">
+        <ion-col size="8">
+          <div> Username</div>
+          <div>
+            <span class="info-row-value1">{{cplist.CP_MAIL}}</span>
+          </div>
+        </ion-col>
+        <ion-col class="ion-text-start" size="4">
+          <div> Password</div>
+          <div>
+            <span class="info-row-value1">{{cplist.CP_PASSWORD}}</span>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="info-row-heading1">
+        <ion-col>
+          <div> RERA No </div>
+          <div>
+            <span class="info-row-value1">{{cplist.rera}}</span>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="info-row-heading1">
+        <ion-col>
+          <div> GST No </div>
+          <div>
+            <span class="info-row-value1">{{cplist.gst}}</span>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="info-row-heading1">
+        <ion-col size="8">
+          <div> Registered On</div>
+          <div>
+            <span class="info-row-value1">{{cplist.CREATED_DATE | date: 'dd MMM yyyy'}}</span>
+          </div>
+        </ion-col>
+        <ion-col class="ion-text-start" size="4">
+          <div> Registered By</div>
+          <div>
+            <span class="info-row-value1">{{cplist.addedby}}</span>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="(cpLists && cpLists.length===0)"
+        class="textStyle ion-justify-content-center ion-align-items-center">
+        <ion-col class="ion-text-center"><span>No CPLeads Found...</span></ion-col>
+      </ion-row>
+    </div>
+  </span>
+
+  <!-- MANDATE REQUEST SECTION -->
+  <span *ngIf="type=='builders'">
+    <div class="lead-info" *ngFor="let requestlist of mandateRequestLists;let i=index">
+      <ion-row class="info-row-heading1">
+        <ion-col>
+          <div>Name</div>
+          <div><span class="info-row-value1">{{requestlist.BuilderName}}</span></div>
+        </ion-col>
+        <ion-col class="ion-text-end">
+          <div>Number</div>
+          <div><span class="info-row-value1">{{requestlist.MobileNo}}</span></div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="info-row-heading1">
+        <ion-col>
+          <div>Mail</div>
+          <div><span class="info-row-value1">{{requestlist.BuilderMail}}</span></div>
+        </ion-col>
+        <ion-col class="ion-text-end">
+          <div>Requested Date </div>
+          <div><span class="info-row-value1">{{requestlist.CREATED_DATE | date: 'dd MMM yyyy'}}</span></div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="info-row-heading1">
+        <ion-col>
+          <div> Property Name</div>
+          <div><span class="info-row-value1">{{requestlist.PropertyName}}</span></div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="info-row-heading1">
+        <ion-col>
+          <div>Remarks </div>
+          <div><span class="info-row-value1">{{requestlist.Remarks}}</span></div>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <ion-row *ngIf="(mandateRequestLists && mandateRequestLists.length===0)"
+      class="textStyle ion-justify-content-center ion-align-items-center">
+      <ion-col class="ion-text-center"><span>No Request Found...</span></ion-col>
+    </ion-row>
+
+  </span>
+
+  <ion-infinite-scroll *ngIf="showInfiniteScroll" [disabled]="false" threshold="100px" #infiniteScroll
+    (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+
+<!-- ADD PROPERTY MODAL -->
+<ion-modal id="addPropertyModal1" #addPropertyModal trigger="open-custom-dialog">
+  <ng-template>
+    <div class="wrapper">
+      <ion-row style="background: #0B7AB2;color: white;">
+        <ion-col size="10">
+          <span class="font-size20-familyPoppins">Add Property</span>
+        </ion-col>
+        <ion-col size="2" class="content_center" (click)="propertiesbybuilder=null; addPropertyModal.dismiss()">
+          <span><ion-icon name="close" style="font-size: 20px;"></ion-icon></span>
+        </ion-col>
+      </ion-row>
+      <div style="margin: 10px;">
+        <ion-row>
+          <ion-col class="no-padding-bottom">
+            <span class="font-size12-familyPoppins">Select Builder</span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="no-padding-top">
+            <ng-multiselect-dropdown [(ngModel)]="selectedBuilder" (onSelect)="getpropertiesbybuilder()" #dropdown
+              (onDeSelect)="deSelectSuggProp($event)" [placeholder]="'Select Properties'" [settings]="dropdownSettings"
+              [data]="builderlist"></ng-multiselect-dropdown>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col class="no-padding-bottom">
+            <span class="font-size12-familyPoppins">Select Properties</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col class="no-padding-top">
+            <ng-multiselect-dropdown [(ngModel)]="selectedProperty" (onSelectAll)="onSelectSuggProp($event)" #dropdown
+              (onDeSelect)="deSelectSuggProp($event)" [placeholder]="'Select Properties'" [settings]="dropdownSettings1"
+              [data]="propertiesbybuilder"></ng-multiselect-dropdown>
+          </ion-col>
+        </ion-row>
+      </div>
+      <ion-row class="addPropertybutton">
+        <ion-col style="display: flex;" class="ion-justify-content-center">
+          <ion-button (click)="addproperties()" fill="clear">Add Properties</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ng-template>
+</ion-modal>
+
+
+
+<!-- ADD CP MODAL -->
+<ion-modal #addCpModal [backdropDismiss]="false">
+  <ng-template>
+    <ion-row style="background: #0B7AB2;color: white;">
+      <ion-col size="10">
+        <span class="font-size20-familyPoppins">Add CP</span>
+      </ion-col>
+      <ion-col size="2" class="content_center" (click)="addCpModal.dismiss()">
+        <span><ion-icon name="close" style="font-size: 20px;"></ion-icon></span>
+      </ion-col>
+    </ion-row>
+    <form name="form" method="POST" class="addCpForm">
+      <div class="row">
+        <div class="col-sm-6 form-group headingdesign">
+          <label class="heads font-size14-familyPoppins">CP Name*</label>
+          <input class="form-control font-size12-familyPoppins" id="custname" placeholder="Enter the Name" type="text"
+            required>
+        </div>
+
+        <div class="col-sm-6 form-group headingdesign">
+          <label class="heads font-size14-familyPoppins">Contact Person*</label>
+          <input class="form-control font-size12-familyPoppins" id="contactperson" placeholder="Enter the Name"
+            type="text" required>
+        </div>
+
+        <div class="col-sm-6 form-group headingdesign">
+          <label class="heads font-size14-familyPoppins">CP Number*</label>
+          <input class="form-control font-size12-familyPoppins" id="custnum" placeholder="Enter the Number" type="text"
+            required>
+        </div>
+
+        <div class="col-sm-6 form-group headingdesign">
+          <label class="heads font-size14-familyPoppins">CP Mail*</label>
+          <input class="form-control font-size12-familyPoppins" id="custmail" placeholder="Enter the Email" type="text"
+            required>
+        </div>
+
+        <div class="col-sm-6 form-group headingdesign">
+          <label class="heads font-size14-familyPoppins">Secondary Mail(Optional)</label>
+          <input class="form-control font-size12-familyPoppins" id="custmailsecondary" placeholder="Enter the Email"
+            type="text">
+        </div>
+
+        <div class="col-sm-6 form-group headingdesign">
+          <label class="heads font-size14-familyPoppins">GST No.</label>
+          <input class="form-control font-size12-familyPoppins" id="gstno" placeholder="Enter the GST Number"
+            type="text" required>
+        </div>
+
+        <div class="col-sm-6 form-group headingdesign">
+          <label class="heads font-size14-familyPoppins">RERA No.</label>
+          <input class="form-control font-size12-familyPoppins" id="rerano" placeholder="Enter the RERA Number"
+            type="text" required>
+        </div>
+
+        <div class="col-12 addcpbutton">
+          <button (click)="addnewcp()" class="btn heads font-size14-familyPoppins">ADD CP</button>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</ion-modal>
+
+<ion-icon *ngIf="(type=='cp' || type=='property') && !isOnCallDetailsPage && !sharedService.isBottom" name="add-circle"
+  class="addicon" (click)="onAddIcon()"></ion-icon>
+
+<app-common-footer></app-common-footer>

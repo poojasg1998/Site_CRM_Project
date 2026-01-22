@@ -1,0 +1,607 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<ion-header *ngIf="!isPhotoModalOpen && !ischeck_in_AlertModal">
+  <ion-row>
+    <ion-col size="1"></ion-col>
+    <ion-col class="d-flex  align-items-center justify-content-center">My Attendance</ion-col>
+    <ion-col size="2" class="font-size12-familyPoppins content_center" (click)="logOut()">
+      <ion-icon name="power" style="color: #b75861;width: 29px;font-size: 2rem;"></ion-icon>
+
+    </ion-col>
+  </ion-row>
+</ion-header>
+<!-- <app-check-in-out-photo-capture></app-check-in-out-photo-capture> -->
+<ion-row style="margin: 0 5px;">
+
+  <ion-col size="1.2" class="px-0 d-flex align-items-center justify-content-start">
+    <ion-icon name="person-circle" style="border-radius: 30px;
+                    color: rgba(11, 122, 178, 1);
+                    width: 34px;
+                    font-size: 2rem;"></ion-icon>
+  </ion-col>
+  <ion-col size="4.8" class="d-flex align-items-center justify-content-start loggedName pe-0">
+    <span style="   white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;">{{loggedName}}</span>
+
+  </ion-col>
+  <ion-col size="6" class="d-flex align-items-center justify-content-end"
+    *ngIf="todayDate.toLocaleDateString('en-CA') == filteredParams.fromdate">
+    <div>
+      <span style="color: rgba(110, 111, 115, 1);font-size:22px">
+        {{todayDate.toLocaleDateString('en-CA') == filteredParams.fromdate?timer:employeePunchData[0].workingHours}}
+      </span>
+    </div>
+  </ion-col>
+
+</ion-row>
+<!-- <ion-row
+  *ngIf="todayDate.toLocaleDateString('en-CA') == filteredParams.fromdate && lastBreakData?.['type'] == 'Check-Out'"
+  style="margin: 0 5px;">
+  <ion-col>
+    <div>
+      <span style="font-size:1.1rem" class="font-colorBlue">
+        {{ 'You have worked: ' + lastBreakData?.['duration'] + ' hrs' }}
+      </span>
+    </div>
+  </ion-col>
+</ion-row> -->
+
+
+
+<div class="mb-1 datefilter-div" *ngIf="!isPhotoModalOpen && !ischeck_in_AlertModal">
+  <ion-row>
+    <ion-col style="border: 0.5px solid #e6e6e6; border-radius: 20px; padding: 2px !important;">
+      <ion-row>
+        <ion-col size="3" (click)="selectDateFilter('today')" class="d-flex  align-items-center justify-content-center"
+          [ngClass]="filteredParams.isDateFilter == 'today' ? 'active_btn': ''">
+          <span>Today </span><i class="fi fi-tr-calendar"></i>
+        </ion-col>
+        <ion-col (click)="selectDateFilter('yesterday')" class="d-flex align-items-center justify-content-center"
+          [ngClass]="filteredParams?.isDateFilter == 'yesterday'?'active_btn':''">
+          <span>Yesterday</span>
+        </ion-col>
+        <ion-col (click)="selectDateFilter('lastsevenDay')" class="d-flex align-items-center justify-content-center"
+          [ngClass]="filteredParams?.isDateFilter == 'lastsevenDay'?'active_btn':''">
+          <span>Last 7 days</span>
+        </ion-col>
+      </ion-row>
+    </ion-col>
+    <ion-col [ngClass]="filteredParams?.isDateFilter == 'custom'?'active_btn':'normal_btn'"
+      (click)="selectDateFilter('custom')"
+      class="d-flex align-items-center justify-content-center custom-datefilterIcon normal_btn p-2px" size="1.5">
+      <span class="d-flex align-items-center justify-content-center">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </span>
+    </ion-col>
+    <ion-col (click)="reset()" class="refresh-icon normal_btn d-flex align-items-center justify-content-center p-0"
+      size="1.2">
+      <ion-icon name="sync-outline"></ion-icon>
+    </ion-col>
+  </ion-row>
+</div>
+
+<ion-row *ngIf="filteredParams.isDateFilter == 'custom'" style="margin: 0px 0 5px 6px; background-color: #f9f9f9">
+  <ion-col class="paddingZero d-flex align-items-center">
+    <span class="font-size12-familyPoppins filterButtons d-flex align-items-center justify-content-center px-1"
+      (click)="removeDateFilter()">
+      {{ filteredParams.fromdate + " to " + filteredParams.todate }}
+      <ion-icon slot="end" name="close" style="font-size: 20px; color: #0b7ab2">
+      </ion-icon>
+    </span>
+
+    <!-- <ion-button class="filterButtons" fill="clear" style="margin: 0">
+      <span class="font-size12-familyPoppins">
+        {{ filteredParams.fromdate + " to " + filteredParams.todate }}</span>
+      <ion-icon slot="end" name="close" style="font-size: 20px; color: #0b7ab2"></ion-icon>
+    </ion-button> -->
+  </ion-col>
+</ion-row>
+<ion-content>
+  <!-- *ngIf="isBetween1110And1145() || isBetween12And3() || isBetween335And415()" -->
+  <!-- (lastBreakData?.['break_time'] == '3' && lastBreakData?.['break_status'] != 'completed') -->
+  <ion-card class="break-card"
+    *ngIf="(lastBreakData?.['type'] != 'Check-Out' && filteredParams.isDateFilter == 'today') && 
+   ( lastBreakData?.['break_time'] != '3' || (lastBreakData?.['break_time'] == '3' && lastBreakData?.['status'] != 'Completed'))">
+    <ion-row class="align-center">
+      <ion-col size="7.5">
+        <h6 class="break-title">
+
+          <ion-img *ngIf="(isBetween930And1145() &&((lastBreakData?.['break_time'] == '1' && lastBreakData?.['status'] !=
+          'Completed') || (lastBreakData?.['type'] == 'Check-In'))
+          )" src="../../assets/CRMimages/morningbreak_icon.svg"></ion-img>
+          <ion-img *ngIf="(isBetween1145And3() && ((lastBreakData?.['break_time'] == '2' &&
+          lastBreakData?.['status'] != 'Completed' ) || (lastBreakData?.['type'] == 'Check-In'))) ||
+          (lastBreakData?.['break_time'] == '1' &&
+          lastBreakData?.['status'] == 'Completed' ) " src="../../assets/CRMimages/lunchbreak_icon.svg"></ion-img>
+          <ion-img *ngIf="(isAfter3() &&(( lastBreakData?.['break_time'] == '3' &&
+          lastBreakData?.['status'] != 'Completed') || (lastBreakData?.['type'] ==
+          'Check-In')))||(lastBreakData?.['break_time'] == '2' &&
+          lastBreakData?.['status'] == 'Completed' )" src="../../assets/CRMimages/eveningbreak_icon.svg"></ion-img>
+
+
+          {{(isBetween930And1145() &&((lastBreakData?.['break_time'] == '1' && lastBreakData?.['status'] !=
+          'Completed') || (lastBreakData?.['type'] == 'Check-In'))
+          )?'Morning Break':(isBetween1145And3() && ((lastBreakData?.['break_time'] == '2' &&
+          lastBreakData?.['status'] != 'Completed' ) || (lastBreakData?.['type'] == 'Check-In'))) ||
+          (lastBreakData?.['break_time'] == '1' &&
+          lastBreakData?.['status'] == 'Completed' ) ?
+          'Lunch Break':(isAfter3() &&(( lastBreakData?.['break_time'] == '3' &&
+          lastBreakData?.['status'] != 'Completed') || (lastBreakData?.['type'] ==
+          'Check-In')))||(lastBreakData?.['break_time'] == '2' &&
+          lastBreakData?.['status'] == 'Completed' ) ?'Evening Break':''}}
+
+          <!-- {{(isBetween930And1145() && lastBreakData?.['break_time'] == '1' && lastBreakData?.['status'] != 'Completed'
+          )?'Morning Break':(isBetween1145And3()) ?'Lunch Break':isAfter3()?'Evening Break':
+          ''}} -->
+        </h6>
+        <p class="break-subtitle">
+          <!-- {{isBetween930And1145()?'Available from 11:15 AM - 11:30 AM':isAfter3()?'Available from 3:45 PM - 4:00 PM':
+          isBetween1145And3?'Available from 1:00 PM - 3:00 PM (only 30 min)':''
+          }} -->
+
+          {{(isBetween930And1145() &&( (lastBreakData?.['break_time'] == '1' && lastBreakData?.['status'] !=
+          'Completed') || (lastBreakData?.['type'] == 'Check-In'))
+          )?'Available from 11:15 AM - 11:30 AM':
+          (isBetween1145And3() && ((lastBreakData?.['break_time'] == '2' &&
+          lastBreakData?.['status'] != 'Completed' ) || (lastBreakData?.['type'] == 'Check-In'))) ||
+          (lastBreakData?.['break_time'] == '1' &&
+          lastBreakData?.['status'] == 'Completed' )?
+          'Available from 1:00 PM - 3:00 PM (only 30 min)':(isAfter3() &&(( lastBreakData?.['break_time'] == '3' &&
+          lastBreakData?.['status'] != 'Completed') || (lastBreakData?.['type'] ==
+          'Check-In')))||(lastBreakData?.['break_time'] == '2' &&
+          lastBreakData?.['status'] == 'Completed' )?'Available from 3:45 PM - 4:00 PM':''
+          }}
+        </p>
+      </ion-col>
+
+      <ion-col size="4.5" class="text-end">
+        <div class="timer-box">{{breakTimer}}</div>
+      </ion-col>
+    </ion-row>
+
+    <!-- {{!(isBetween1110And1145() || isBetween12And3() || isBetween335And415())}} -->
+    <!-- [disabled]="!(isBetween1110And1145() || isBetween12And3() || isBetween335And415())" -->
+
+    <!-- [disabled]="!canTakeBreak()" -->
+    <ion-button [disabled]="!canTakeBreak()" expand="block" fill="clear" class="break-btn" (click)="onbreak('1')"
+      *ngIf="lastBreakData?.['end'] != 'Still on Break'">
+      Take Break
+    </ion-button>
+    <!-- [disabled]="!(isBetween1110And1145() || isBetween12And3() || isBetween335And415())" -->
+    <ion-button expand="block" fill="clear" class="endbreak" (click)="onbreak('0')"
+      *ngIf="lastBreakData?.['end'] == 'Still on Break'">
+      End Break
+    </ion-button>
+  </ion-card>
+  <span *ngIf="!isPhotoModalOpen && !ischeck_in_AlertModal">
+    <div *ngFor="let data of employeePunchData">
+      <ion-row
+        *ngIf="data.item_type == 'message_date' && ((filteredParams.isDateFilter == 'today' && todayDate.toLocaleDateString('en-CA') != data.timestamp) || filteredParams.isDateFilter != 'today'  ) && filteredParams.isDateFilter != 'yesterday'  "
+        class="date-row">
+        <ion-col class="d-flex align-center justify-content-center">
+          <span>
+            {{data.login}}
+          </span>
+        </ion-col>
+      </ion-row>
+      <ion-card class="break-timeline-card p-0" *ngFor="let breakdata of data.Break_data">
+        <!-- Timeline Row -->
+        <ion-row>
+          <ion-col *ngIf="breakdata.type != 'Check-Out'"
+            [size]="breakdata.type != 'Check-In' && breakdata.type != 'Check-Out'?'4':'6'"
+            class="pb-0 d-flex align-items-center justify-content-start ">
+            <div class="photo-icon-wrapper ms-0 mr-1" style="background: #ffffff"
+              (click)="onViewCheckInModal(breakdata,true)" *ngIf="breakdata.start_selfie_img">
+              <ion-img class="phoion-imgto-icon"
+                [src]="breakdata.start_selfie_img? 'https://lead247-laravel-api.right2shout.in/selfie-img/' + breakdata.start_selfie_img : '../../assets/CRMimages/no-img.svg'"></ion-img>
+            </div>
+            <ion-icon *ngIf="!breakdata.start_selfie_img" name="time-outline" class="iconColor_fontSize "
+              style="font-size: 16px;"></ion-icon>
+            <span class="time">{{breakdata.start|date:'hh:mm a'}}</span>
+          </ion-col>
+
+          <ion-col *ngIf="breakdata.type == 'Check-Out'"
+            [size]="breakdata.type != 'Check-In' && breakdata.type != 'Check-Out'?'3':'6'"
+            class="py-0 d-flex align-items-center justify-content-start ">
+            <ion-icon *ngIf="!breakdata.break_time" name="time-outline" class="iconColor_fontSize "
+              style="font-size: 16px;"></ion-icon>
+            <span class="time">
+
+              {{breakdata.end|date:'hh:mm a'}}</span></ion-col>
+          <ion-col size="4" class="d-flex align-items-center pb-0 px-0"
+            *ngIf=" breakdata.type != 'Check-In'&& breakdata.type != 'Check-Out'">
+            <span
+              [ngClass]="((isExceededMinutes(breakdata.start,breakdata.end,15) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded15Min())) && (breakdata.break_time == '1' || breakdata.break_time == '3')) || ((isExceededMinutes(breakdata.start,breakdata.end) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded30Min())) && (breakdata.break_time == '2'))?'exceedbreak-dot':'dot'"></span>
+            <!-- {{breakdata['end'] == 'Still on Break'}} {{isBreakExceeded15Min()}} -->
+            <span
+              [ngClass]="((isExceededMinutes(breakdata.start,breakdata.end,15) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded15Min())) && (breakdata.break_time == '1' || breakdata.break_time == '3')) || ((isExceededMinutes(breakdata.start,breakdata.end) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded30Min())) && (breakdata.break_time == '2'))?'exceedbreak-line':'line'"></span>
+            <span class="break-label">
+              {{breakdata.break_time == '1'?'Morning Time':breakdata.break_time == '2'?
+              'Lunch Time':'Evening Time'}}
+            </span>
+            <span
+              [ngClass]="((isExceededMinutes(breakdata.start,breakdata.end,15) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded15Min())) && (breakdata.break_time == '1' || breakdata.break_time == '3')) || ((isExceededMinutes(breakdata.start,breakdata.end) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded30Min())) && (breakdata.break_time == '2'))?'exceedbreak-line':'line'"></span>
+            <span
+              [ngClass]="((isExceededMinutes(breakdata.start,breakdata.end,15) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded15Min())) && (breakdata.break_time == '1' || breakdata.break_time == '3')) || ((isExceededMinutes(breakdata.start,breakdata.end) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded30Min())) && (breakdata.break_time == '2'))?'exceedbreak-dot':'dot'"></span>
+          </ion-col>
+          <ion-col *ngIf="breakdata.type != 'Check-In'&& breakdata.type != 'Check-Out'"
+            [size]="breakdata.type != 'Check-In'&& breakdata.type != 'Check-Out'?'4':'6'"
+            class="pb-0 d-flex align-items-center justify-content-end">
+            <span class="time">{{breakdata.end != 'Still on Break'?(breakdata.end |date:'hh:mm a'):breakTimer}}</span>
+            <div class="photo-icon-wrapper" style="background: #ffffff" (click)="onViewCheckInModal(breakdata,false)">
+              <ion-img class="phoion-imgto-icon"
+                [src]="breakdata.end_selfie_img? 'https://lead247-laravel-api.right2shout.in/selfie-img/' + breakdata.end_selfie_img : '../../assets/CRMimages/no-img.svg'"></ion-img>
+            </div>
+          </ion-col>
+
+          <ion-col *ngIf="breakdata.type == 'Check-In'" class="checkin-status-col">
+            <span class="checkin-status-text text_color_green">
+              <!-- Check-In -->
+              {{todayDate.toLocaleDateString('en-CA') == filteredParams.fromdate?'Check-In':'Checked-In'}}
+            </span>
+            <div class="photo-icon-wrapper" style="background: #ffffff">
+              <ion-img class="phoion-imgto-icon"
+                [src]="breakdata.selfie_img? 'https://lead247-laravel-api.right2shout.in/selfie-img/' + breakdata.selfie_img : '../../assets/CRMimages/no-img.svg'"></ion-img>
+            </div>
+          </ion-col>
+          <ion-col *ngIf="breakdata.type == 'Check-Out'" class="checkin-status-col">
+            <span class="checkin-status-text text_color_red"> {{todayDate.toLocaleDateString('en-CA') ==
+              filteredParams.fromdate?'Check-Out':'Checked-Out'}}</span>
+            <div class="photo-icon-wrapper" style="background: #ffffff">
+              <ion-img class="phoion-imgto-icon"
+                [src]="breakdata.end_selfie_img? 'https://lead247-laravel-api.right2shout.in/selfie-img/' + breakdata.end_selfie_img: '../../assets/CRMimages/no-img.svg'"></ion-img>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="breakdata.type != 'Check-In'&& breakdata.type != 'Check-Out'">
+          <ion-col class="content_center pt-0">
+            <!-- {{isBreakExceeded30Min()}} -->
+            <span
+              [ngClass]="((isExceededMinutes(breakdata.start,breakdata.end,15) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded15Min())) && (breakdata.break_time == '1' || breakdata.break_time == '3')) || ((isExceededMinutes(breakdata.start,breakdata.end) || (breakdata['end'] == 'Still on Break'&& isBreakExceeded30Min())) && (breakdata.break_time == '2')) ?'exceedbreak-badge':'break-badge'">
+              {{breakdata.end != 'Still on Break'? formattedDuration(breakdata.duration)+" Mins Taken":breakTimer}}
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="location-row">
+          <ion-col size="1" class="d-flex align-items-center justify-content-center">
+            <ion-icon name="location-outline"></ion-icon>
+          </ion-col>
+          <ion-col size="11" class="d-flex align-items-center justify-content-center">
+            <span>
+              {{breakdata.address}}
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <!-- Location -->
+        <div class="location-row">
+        </div>
+      </ion-card>
+    </div>
+  </span>
+
+  <ion-row *ngIf="employeePunchData.length == 0">
+    <ion-col class="d-flex align-items-center justify-content-center">
+      <span class="font-size12-familyPoppins">No Data Found...!</span>
+    </ion-col>
+  </ion-row>
+
+
+
+
+  <!-- <div *ngFor="
+      let checkStatus of checkInOutDetails;
+      let i = index;
+      let isFirst = first">
+
+    <div class="checkin-card" *ngFor="let allChecks of checkStatus.all_checks; let i = index">
+      <ion-row>
+        <ion-col class="checkin-time-col">
+          <ion-icon name="time-outline" class="time-icon font-colorBlue"></ion-icon>
+          <span class="checkin-time-text">
+            {{
+            allChecks.created_at | date : "hh:mm a"
+            }}
+          </span>
+        </ion-col>
+        <ion-col *ngIf="allChecks['check_status'] == '1'" class="checkin-status-col">
+          <span class="checkin-status-text text_color_green">Check-In</span>
+          <div class="photo-icon-wrapper" style="background: #ffffff">
+            <ion-img class="phoion-imgto-icon" [src]="
+                    allChecks.selfie_img
+                      ? 'https://lead247-laravel-api.right2shout.in/selfie-img/' +
+                        allChecks.selfie_img
+                      : '../../assets/CRMimages/no-img.svg'
+                  "></ion-img>
+          </div>
+        </ion-col>
+        <ion-col *ngIf="allChecks['check_status'] == '0'" class="d-flex ion-justify-content-end"
+          style="align-items: center">
+          <span class="font-size14-familyPoppins text_color_red" *ngIf="allChecks.auto_checkOut == '1'">Auto
+            Check-Out</span>
+          <span class="font-size14-familyPoppins text_color_red" *ngIf="allChecks.auto_checkOut == '0'">
+            Check-Out</span>
+          <div style="
+                  padding: 2px;
+                  margin-left: 5px;
+                  background: rgba(255, 240, 242, 1);
+                ">
+            <ion-img style="width: 20px" src="../assets/CRMimages/check_out-icon.svg"></ion-img>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="1">
+          <ion-icon name="location-outline" class="location-icon font-colorBlue"></ion-icon>
+        </ion-col>
+        <ion-col class="paddingZero">
+          <span class="location-text">
+            {{ allChecks.address }}
+          </span>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div> -->
+</ion-content>
+
+<ion-modal #dashboard_custDate_modal [breakpoints]="[0.3]" [initialBreakpoint]="0.3"
+  [backdropDismiss]="!(dateRange?.fromdate && dateRange?.todate)"
+  (ionModalDidDismiss)="onCustomDateModalDismiss($event)">
+  <ng-template>
+
+    <div class="modal-container">
+      <!-- CONTENT -->
+      <div class="date-range-wrapper">
+        <h3 class="title">Select date range</h3>
+        <div class="date-inputs">
+          <div class="date-box" (click)="openFromDate()">
+            <label>From</label>
+            <span>{{ dateRange?.fromdate ? ('' + dateRange.fromdate).split('T')[0] : '' }}</span>
+          </div>
+          <div class="date-box" (click)="handleToDateClick()" [class.disabled]="!dateRange?.fromdate">
+            <label>To</label>
+            <span>{{ dateRange?.todate ? ('' + dateRange.todate).split('T')[0] : '' }}</span>
+          </div>
+        </div>
+
+        <p class="error-text" *ngIf="showFromDateError">
+          Please select From date first
+        </p>
+      </div>
+
+      <!-- STICKY FOOTER -->
+      <div>
+        <ion-button expand="block" class="confirm-btn" [disabled]="!(dateRange?.fromdate && dateRange?.todate)"
+          (click)="addQueryParams(); dashboard_custDate_modal.dismiss()">
+          Confirm
+        </ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+<ion-modal #dashboard_fromDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+  [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+  <ng-template>
+    <ion-datetime presentation="date" [(ngModel)]="dateRange.fromdate"
+      (ionChange)="selectDateFilter('customfromDate')"></ion-datetime>
+  </ng-template>
+</ion-modal>
+<ion-modal #dashboard_toDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+  [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+  <ng-template>
+    <ion-datetime presentation="date" [min]="dateRange.fromdate" [(ngModel)]="dateRange.todate"
+      (ionChange)="selectDateFilter('customtoDate')"></ion-datetime>
+  </ng-template>
+</ion-modal>
+
+<ion-modal id="check-inAlertModal" [isOpen]="ischeck_in_AlertModal" class="chickInModal" #check_in_AlertModal
+  [backdropDismiss]="false">
+  <ng-template>
+    <ion-row class="mainHeading">
+      <ion-col size="2" class="content_center">
+        <ion-img src="../../assets/CRMimages/logo.png" class="logo"></ion-img>
+      </ion-col>
+      <ion-col class="content_center">
+        <span>{{depId != '10006'?'Dashboard':''}}</span>
+      </ion-col>
+      <ion-col size="2" class="font-size12-familyPoppins content_center" (click)="logOut()">
+        <ion-icon name="power" style="color: #b75861;width: 29px;"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-row style="padding: 5px 0;">
+      <ion-col size="8">
+        <span class="font-size16-familyPoppins">You are not checked in </span>
+      </ion-col>
+      <ion-col size="4" class="content_ceneter" (click)="onCheck_inPhotoCapture()">
+        <div class="check_in">
+          <span class="font-size16-familyPoppins">Check-in</span>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ng-template>
+</ion-modal>
+
+<!-- Click_in Photo Capture Modal -->
+<ion-modal id="photoCaptureModal" [isOpen]="isPhotoModalOpen" #photoCaptureModal [backdropDismiss]="false">
+  <ng-template>
+    <ion-row class="mainHeading">
+      <ion-col size="1" class="content_center" (click)="this.isPhotoModalOpen = false">
+        <ion-icon name="arrow-back" style="font-size: 24px;"></ion-icon>
+      </ion-col>
+      <ion-col>
+        <span *ngIf="!capturedImage">Remote Attendance Punch</span>
+        <span *ngIf="capturedImage && break_status == '1'">Start Break</span>
+        <span *ngIf="capturedImage && break_status == '0'">End Break</span>
+      </ion-col>
+    </ion-row>
+
+    <div class="retake_button" [hidden]="!capturedImage">
+      <ion-img style="object-fit: fill; width: 100%; height: 100%;" [src]="capturedImage"></ion-img>
+      <ion-row class="activeSaveButton" (click)="takePicture($event);$event.stopPropagation()">
+        <ion-col class="content_center" style="padding: 2px;">
+          <span>Retake</span>
+          <ion-icon name="refresh-outline" style="font-size: 24px;"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <div style="padding: 5px;">
+      <span [hidden]="!capturedImage">
+        <ion-row>
+          <ion-col class="center-vertically date">
+            <ion-icon name="time-outline" class="iconColor_fontSize"></ion-icon>
+            <span class="font-size16-familyPoppins">
+              {{ todayDate | date: 'hh:mm a' }}
+            </span>
+          </ion-col>
+          <ion-col class="center-vertically time" style="justify-content: flex-end;">
+            <ion-icon name="calendar-outline" class="iconColor_fontSize"></ion-icon>
+            <span class="font-size16-familyPoppins">
+              {{todayDate | date: 'yyyy-MM-dd'}}
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="1" class="location-icon">
+            <span>
+              <ion-icon name="location-outline" class="iconColor_fontSize"></ion-icon>
+            </span>
+          </ion-col>
+          <ion-col class="address">
+            <span class="font-size14-familyPoppins">
+              {{address}}
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <div class="content_center loader" *ngIf="isFetchingLocation">
+          <span style="color: white;" class="font-size14-familyPoppins">Fetching your location, please wait...</span>
+        </div>
+
+        <div class="content_center loader" *ngIf="isCheckInInProgress">
+          <span style="color: white;" class="font-size14-familyPoppins">Processing your {{checkStatus}}...</span>
+        </div>
+
+
+        <ion-row class="check_inNowBtn">
+          <ion-col class="content_center">
+            <ion-button *ngIf="break_status == '1'" (click)="onCheckInOut('in')" class="activeSaveButton"
+              fill="clear">Start Break</ion-button>
+            <ion-button *ngIf="break_status == '0'" (click)="onCheckInOut('out')" class="activeSaveButton"
+              fill="clear">End
+              Break</ion-button>
+            <ion-button *ngIf="mainCheckout" (click)="onCheckInOut('out')" class="activeSaveButton"
+              fill="clear">Check-Out</ion-button>
+          </ion-col>
+        </ion-row>
+      </span>
+
+      <span [hidden]="capturedImage">
+        <ion-row class="faceframe">
+          <ion-col class="content_center">
+            <span>
+              Make sure your face is the centre of the frame
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="1"></ion-col>
+          <ion-col class="content_center activeSaveButton" (click)="takePicture($event);$event.stopPropagation()">
+            <span style="color: rgba(255, 255, 255, 1);font-family: 'Poppins';font-size:24px">Capture</span>
+            <ion-icon name="camera" style="color:white;font-size: 34px;padding-left: 5px;"></ion-icon>
+          </ion-col>
+          <ion-col size="1"></ion-col>
+        </ion-row>
+      </span>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- <ion-modal #profileModal class="profileModal">
+  <ng-template>
+    <ion-header>
+      <ion-row>
+        <ion-col></ion-col>
+        <ion-col size="2" class="closeicon" (click)="profileModal.dismiss()">
+          <ion-icon name="close" style="font-size: 1.6rem;"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+    <div>
+      <ion-row>
+        <ion-col class="d-flex align-items-center justify-content-start loggedName">
+          <ion-icon name="person-circle" style="    border-radius: 30px;
+              color: rgba(11, 122, 178, 1);
+              width: 34px;
+              font-size: 2rem;"></ion-icon> {{loggedName}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6" (click)="profileModal.dismiss();logOut()"
+          class="d-flex align-items-center justify-content-start logout">
+          <ion-icon name="power" style="color: #b75861;width: 34px;font-size: 1.8rem;"></ion-icon>Logout</ion-col>
+      </ion-row>
+    </div>
+  </ng-template>
+</ion-modal> -->
+
+
+
+<ion-modal #checkInPreviewModal class="checkInPreviewModal">
+  <ng-template>
+    <ion-header class="checkin-header">
+      <!-- <ion-row>
+        <ion-col class="checkin-title">
+          <span class="title-text">Check-In</span>
+          <ion-img class="checkin-icon" src="../../assets/CRMimages/check_in_icon1.svg"></ion-img>
+        </ion-col>
+        <ion-col size="2" class="content_center close-icon" (click)="checkInPreviewModal.dismiss()">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+      </ion-row> -->
+      <ion-icon name="close" class="closeimgIcon" (click)="checkInPreviewModal.dismiss()"></ion-icon>
+      <div class="checkin-image-container" style="background: #ffffff">
+        <ion-img class="checkin-image" [src]="checkInPreviewDetails.isStartimg == true?'https://lead247-laravel-api.right2shout.in/selfie-img/' +
+                checkInPreviewDetails.start_selfie_img:'https://lead247-laravel-api.right2shout.in/selfie-img/' +
+                checkInPreviewDetails.end_selfie_img       
+          "></ion-img>
+      </div>
+    </ion-header>
+
+    <div class="checkin-content">
+      <ion-row>
+        <ion-col class="center-vertically date">
+          <ion-icon name="time-outline" class="iconColor_fontSize"></ion-icon>
+          <span class="font-size16-familyPoppins">
+            {{checkInPreviewDetails.isStartimg == true?
+            ( checkInPreviewDetails.start | date : "hh:mm a"):(checkInPreviewDetails.end | date : "hh:mm a") }}
+          </span>
+        </ion-col>
+        <ion-col class="center-vertically time justify-end">
+          <ion-icon name="calendar-outline" class="iconColor_fontSize"></ion-icon>
+          <span class="font-size16-familyPoppins">
+            {{checkInPreviewDetails.isStartimg == true?
+            ( checkInPreviewDetails.start |date : "yyyy-MM-dd" ):(checkInPreviewDetails.end |date : "yyyy-MM-dd" ) }}
+          </span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="checkInPreviewDetails.address">
+        <ion-col size="1.4" class="location-icon pr-0">
+          <ion-icon name="location-outline" class="iconColor_fontSize"></ion-icon>
+        </ion-col>
+        <ion-col class="address">
+          <span class="font-size14-familyPoppins">
+            {{ checkInPreviewDetails.address }}
+          </span>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ng-template>
+</ion-modal>

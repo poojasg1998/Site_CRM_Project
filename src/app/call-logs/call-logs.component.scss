@@ -1,0 +1,215 @@
+@media (prefers-color-scheme: dark) {
+  .bg_textColor {
+    color: #e3f6ff !important;
+    background: #0b7ab280 !important;
+    border: 0.8px solid #1467a5 !important;
+  }
+  .highlight-number {
+    color: #54bfee !important;
+  }
+  .font-colorBlue {
+    color: #54bfee !important;
+  }
+  .active_text_borederColor {
+    border: 0.8px solid #1467a5 !important;
+    color: #e3f6ff !important;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .bg_textColor {
+    background: #0b7ab2 !important;
+    color: white !important ;
+  }
+  .highlight-number {
+    color: #0b7ab2;
+  }
+
+  .font-colorBlue {
+    color: #0b7ab2 !important;
+  }
+  .active_text_borederColor {
+    border: 1px solid #0b7ab2 !important;
+    color: #0b7ab2 !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-toolbar,
+  ion-footer,
+  ion-content {
+    --background: #000;
+    background: #000 !important;
+  }
+
+  .callStatus {
+    background: #000;
+  }
+
+  .callStatusCard {
+    ion-row ion-col:first-child span:first-child {
+      color: #f3f3f3;
+    }
+    ion-row ion-col:first-child span:nth-child(2) {
+      color: #019deb;
+    }
+    border: 0.6px solid #474747;
+    ion-row {
+      border-bottom: 0.6px solid #474747;
+    }
+  }
+  .call-item ion-col span {
+    color: #f3f3f3;
+  }
+  .call-icon {
+    background: green;
+  }
+  .call-item {
+    border: 0.6px solid #474747;
+  }
+  .callConfirmationModal ion-header span {
+    color: #f3f3f3;
+  }
+}
+@media (prefers-color-scheme: light) {
+  .callStatus {
+    background: #f7f7f8;
+  }
+  .call-icon {
+    color: #ffffff;
+  }
+  .call-icon {
+    background-color: #019deb;
+  }
+  .active_btn {
+    background: #0b7ab2;
+    box-shadow: 0px 0px 16px 0px #0000001f;
+    color: #ffffff !important;
+    span,
+    ion-icon {
+      color: #ffffff !important;
+    }
+  }
+  .normal_btn {
+    border: 1px solid #d8d8d8;
+    color: #5b6a83;
+    box-shadow: 0px 2px 10px 0px rgba(124, 124, 124, 0.2);
+  }
+}
+
+.call-item {
+  border-radius: 10px;
+}
+
+.call-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50px;
+  padding: 6px;
+}
+
+.callStatus {
+  padding-bottom: 5px;
+
+  position: sticky;
+  top: 0px;
+  z-index: 99;
+  ion-row {
+    gap: 5px;
+  }
+  ion-col {
+    font-size: 12px;
+    border-radius: 50px;
+    border: 0.8px solid #e4e4e4;
+  }
+  ion-icon {
+    font-size: 16px;
+    color: #0b7ab2;
+  }
+}
+.missed-call-icon {
+  background-color: red;
+  border-radius: 50px;
+  color: white;
+  padding: 2px 12px;
+  ion-img {
+    width: 14px;
+  }
+  span {
+    padding-left: 2px;
+    font-size: 10px;
+  }
+}
+.callStatusCard {
+  border-radius: 10px;
+}
+.pointerEvent {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.re-connect-div {
+  background: #0c6d00;
+  border-radius: 50px;
+  color: white;
+  padding: 4px 6px;
+}
+
+.dialed-call-div {
+  background: #0b7ab2;
+  border-radius: 50px;
+  color: white;
+  padding: 4px 6px;
+}
+
+ion-item.call-item {
+  --padding-start: 0;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+  --padding-end: 0;
+}
+
+.ellipsis {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.call-item {
+  border-radius: 10px;
+}
+ion-modal.callConfirmationModal {
+  --height: auto;
+  padding: 36px;
+  --border-radius: 4px;
+  --backdrop-opacity: 0.8;
+}
+.cancellCall-btn {
+  ion-row {
+    gap: 5px;
+  }
+  ion-col {
+    font-size: 12px;
+    border-radius: 4px;
+  }
+}
+
+.calender_icon {
+  position: fixed;
+  bottom: 70px;
+  right: 4px;
+  z-index: 99;
+  ion-icon {
+    font-size: 22px;
+    background: #c2c2cf;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #004a6f;
+    padding: 7px;
+    color: white;
+  }
+}

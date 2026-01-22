@@ -1,0 +1,741 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+<app-header *ngIf="!isOnCallDetailsPage"></app-header>
+
+<div *ngIf="!isOnCallDetailsPage">
+
+  <!-- <ion-row class="selectOption"  style="height: 45px;">
+    <ion-col size="2" class="ion-text-left content_center"  (click)="onBackButton()"> 
+      <ion-icon name="arrow-back">back</ion-icon>
+    </ion-col>
+    <ion-col size="8" class="content_center font-size14-familyPoppins" > 
+
+      <ion-row class="retailMandate" *ngIf="isAdmin">
+        <ion-col (click)="filteredParams.htype='retail';onHtype('retail')" class="content_center" [ngClass]="filteredParams.htype=='retail'?'activeHtype':''">
+          <div>
+            <span class="font-size16-familyPoppins">Retail</span>
+          </div>
+        </ion-col>
+        <ion-col (click)="filteredParams.htype='mandate';onHtype('mandate')" class="content_center" [ngClass]="filteredParams.htype=='mandate'?'activeHtype':''">
+          <div>
+            <span class="font-size16-familyPoppins">Mandate</span>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-col>
+    <ion-col size="2" class="content_center" (click)="initializeFilterParam();addQuerryParams();">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-col>
+  </ion-row> -->
+
+  <ion-row class="selectOption content_center">
+    <div *ngIf="this.filteredParams.type == 'notification'"
+      style="display: flex; overflow-x: scroll; padding: 10px 5px;" #scrollContainer>
+      <div
+        [ngClass]="this.filteredParams.status === 'scheduledtoday' || this.filteredParams.status === '' ?'textBorderColor':''"
+        class="custom-col center-text font-weight500" (click)="changeOption('scheduledtoday')">
+        Today's Scheduled Visits- {{' '+todayVisits.scheduledVisits}}</div>
+
+      <div [ngClass]="this.filteredParams.status === 'todaysfollowups' ?'textBorderColor':''"
+        class="custom-col center-text font-weight500" (click)="changeOption('todaysfollowups')">
+        Today's Followups- {{' '+todaysfollowups.todayFollowup}}</div>
+    </div>
+
+    <div *ngIf="filteredParams.todaysfollowups == '1'" style="display: flex; overflow-x: scroll; padding: 10px 5px;"
+      #scrollContainer>
+      <div
+        [ngClass]="this.filteredParams.status === 'todaysfollowups' || this.filteredParams.status === '' ?'textBorderColor':''"
+        class="custom-col center-text font-weight500" (click)="changeOption('todaysfollowups')">
+        Today's Followups- {{' '+todaysfollowups.todayFollowup}}</div>
+
+      <div [ngClass]="this.filteredParams.status === 'upcomingfollowups'?'textBorderColor':''"
+        class="custom-col center-text font-weight500" (click)="changeOption('upcomingfollowups')">
+        Upcoming Followups- {{' '+todaysfollowups.upcomingFollowup}}</div>
+    </div>
+
+    <div *ngIf="isTodayVisits" [appCenterActiveButton]="filteredParams.status"
+      style="display: flex; overflow-x: scroll; padding: 10px 5px;">
+      <div
+        [ngClass]="this.filteredParams.status === 'scheduledtoday' || this.filteredParams.status === '' ?'textBorderColor':''"
+        class="custom-col center-text font-weight500" [id]="'id-scheduledtoday'"
+        (click)="changeOption('scheduledtoday')">
+        Today's Scheduled Visits- {{' '+todayVisits.scheduledVisits}}</div>
+
+      <div [ngClass]="this.filteredParams.status === 'allvisits'?'textBorderColor':''"
+        class="custom-col center-text font-weight500" (click)="changeOption('allvisits')" [id]="'id-allvisits'">
+        Today Visited- {{' '+todayVisits.todayVisited}}</div>
+
+      <div [ngClass]="this.filteredParams.status === 'upcomingvisit'?'textBorderColor':''"
+        class="custom-col center-text font-weight500" (click)="changeOption('upcomingvisit')" [id]="'id-upcomingvisit'">
+        Upcoming Visits- {{' '+todayVisits.upcomingVisits}}</div>
+    </div>
+  </ion-row>
+
+  <ion-row class="filteredChips"
+    *ngIf="filteredParams.propid || (filteredParams.executid) || filteredParams.source || filteredParams.visits || filteredParams.stage  || filteredParams.fromDate">
+    <ion-col>
+      <ion-button *ngIf="filteredParams.propid && localStorage.getItem('PropertyId') != '28773'" fill="clear"
+        (click)="filteredParams.propid = '';addQuerryParams()">
+        <span *ngFor="let prop of propertyList">
+          <span *ngIf="prop.property_idfk == filteredParams.propid">
+            {{prop.property_info_name}}
+          </span>
+        </span>
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+
+      <!-- <ion-button *ngIf="filteredParams.executid && filteredParams.executid != localStorage.getItem('UserId')"
+        fill="clear" (click)="filteredParams.executid = '';addQuerryParams()">
+        <span *ngFor="let exec of mandateexecutives">
+          <span *ngIf="exec.id == filteredParams.executid">
+            {{exec.name}}
+          </span>
+        </span>
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button> -->
+
+      <span *ngIf="filteredParams.executid &&
+                              filteredParams.executid !== localStorage.getItem('UserId')">
+        <span *ngFor="let executive of mandateexecutives">
+          <ion-button *ngIf="filteredParams.executid?.includes(executive.id)" fill="clear"
+            (click)="removeExecutive(executive.id)">
+            {{executive.name}}
+            <ion-icon slot="end" name="close"></ion-icon>
+          </ion-button>
+        </span>
+      </span>
+
+      <ion-button *ngIf="filteredParams.source" fill="clear" (click)="filteredParams.source = '';addQuerryParams()">
+        {{filteredParams.source}}
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+
+      <ion-button *ngIf="filteredParams.visits" fill="clear" (click)="filteredParams.visits = '';addQuerryParams()">
+        {{filteredParams.visits == '1'?'Direct':filteredParams.visits == '2'?'Assigned':''}}
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+
+      <ion-button *ngIf="filteredParams.stage" fill="clear" (click)="filteredParams.stage = '';addQuerryParams()">
+        {{filteredParams.stage}}
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+
+      <ion-button
+        *ngIf="filteredParams.fromDate && filteredParams.toDate && filteredParams.status == 'upcomingfollowups'"
+        fill="clear" (click)="filteredParams.fromDate = '';
+        filteredParams.toDate='';filteredParams.fromTime='';filteredParams.toTime='';addQuerryParams()">
+        {{filteredParams.fromDate+","+filteredParams.fromTime+" "}} To {{"
+        "+filteredParams.toDate+","+filteredParams.toTime}}
+        <!-- {{filteredParams.fromDate+" "}} To {{" "+filteredParams.toDate}} -->
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</div>
+<ion-content *ngIf="!isOnCallDetailsPage" #mainscrollContainer (ionScroll)="onScroll($event)" scrollEvents="true">
+  <!-- LEADS INFORMATION CARD -->
+  <ion-item-sliding *ngFor="let lead of leads_detail,let i=index" #sliding (ionSwipe)="onSwipe($event,lead)">
+    <ion-item>
+      <!-- {{i}} -->
+      <div class="card-count">
+        <span>{{ i + 1 | number:'2.0' }}
+        </span>
+      </div>
+      <div style="width:100%" class="lead-info">
+        <div (click)="navigateToDetailsPage(lead.LeadID,lead.RMID,lead)">
+          <ion-row class="info-row-heading">
+            <ion-col size="6">
+              <div>Lead Name</div>
+              <div>
+                <span class="info-row-value">
+                  {{lead.CustomerName}}
+                </span>
+              </div>
+            </ion-col>
+
+            <ion-col size="6"
+              *ngIf="(!isRM || (isRM && ((lead.Leadphase == 'Fresh' && lead.followupreason == '8') || lead.Leadphase != 'Fresh' )))">
+              <div>Mobile Number</div>
+              <div>
+                <div *ngIf="localStorage.getItem('Name') !== 'demo'" style="width: 100%;display: flex;">
+                  {{lead.number}}
+                  <ion-img *ngIf="lead?.qualified_leads == '2'" style="width: 14px;padding-left: 2px;"
+                    src="../../assets/CRMimages/qualified.svg"></ion-img>
+                  <ion-img *ngIf="lead?.qualified_leads == '3'" style="width: 14px;padding-left: 2px;"
+                    src="../../assets/CRMimages/not_qualified.svg"></ion-img>
+                </div>
+                <span *ngIf="localStorage.getItem('Name') == 'demo'" class="info-row-value font-colorBlue">
+                  xxxxxxxxxx
+                </span>
+              </div>
+            </ion-col>
+
+            <ion-col size="6">
+              <div>Source</div>
+              <div>
+                <span class="info-row-value">
+                  {{lead.source}}
+                </span>
+              </div>
+            </ion-col>
+
+            <ion-col size="6">
+              <div>Property</div>
+              <div>
+                <span class="info-row-value">
+                  {{lead.propertyname}}
+                </span>
+              </div>
+            </ion-col>
+
+            <ion-col size="6">
+              <div>Visit Type</div>
+              <div>
+                <span class="info-row-value">
+                  {{lead.visitstatus == '0'?'Assigned':'Direct'}}
+                </span>
+              </div>
+            </ion-col>
+
+            <ion-col size="6">
+              <div>Stage</div>
+              <div>
+                <span class="info-row-value">
+                  {{lead.Leadphase == 'Final Negotiation'?'FN': lead.Leadphase}}
+                  <span
+                    *ngIf=" lead.stagestatus == '1' && lead.Leadphase != 'Closing Request Rejected' && lead.Leadphase != 'Deal Closing Requested' && lead.Leadphase != 'DCRR' && lead.Leadphase != 'Deal Closed' && lead.Leadphase != 'Junk' ">{{'Fix'}}</span>
+                  <span
+                    *ngIf=" lead.stagestatus == '2' && lead.Leadphase != 'Closing Request Rejected' && lead.Leadphase != 'Deal Closing Requested' && lead.Leadphase != 'DCRR' && lead.Leadphase != 'Deal Closed' && lead.Leadphase != 'Junk'">{{'Refix'}}</span>
+                  <span
+                    *ngIf=" lead.stagestatus == '3' && lead.Leadphase != 'Closing Request Rejected' && lead.Leadphase != 'Deal Closing Requested' && lead.Leadphase != 'DCRR' && lead.Leadphase != 'Deal Closed' && lead.Leadphase != 'Junk'">{{'Done'}}</span>
+                </span>
+              </div>
+            </ion-col>
+
+            <ion-col size="6">
+              <div>
+                {{!isTodayVisits && this.filteredParams.status === 'todaysfollowups'? "Today's Followup":'Next Action'}}
+              </div>
+              <div>
+                <span class="info-row-value">
+                  {{lead.nextactiondate}} {{''+ lead.nextactiontime}}
+                </span>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <span *ngIf="lead.suggestedprop[0].propid === '16793' ">
+          <p [innerHTML]="grSitaraPropertyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+        <span *ngIf="lead.suggestedprop[0].propid === '1830' ">
+          <p [innerHTML]="grSamskruthiProperyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+
+
+        <ion-row class="assignies-row">
+          <div class="assignies-wrapper" *ngIf="lead?.latestvisit &&  lead?.latestvisit?.length != 0">
+            <ng-container *ngFor="let visits of lead?.latestvisit; let i = index">
+              <div class="assignies-col" *ngIf="i<2">
+                <span class="name">{{ visits.Executivename }}</span>
+                <span class="assign-date" *ngIf="i === 0">
+                  {{ lead.assigneddate | date:'dd MMM, yyyy ,hh:mma' }}
+                </span>
+              </div>
+
+              <div class="horizontal-line" *ngIf="i === 0">
+              </div>
+            </ng-container>
+            <span *ngIf="lead?.latestvisit?.length>2" class="d-flex" style="align-items: center;">
+              <div class="horizontal-line">
+              </div>
+              <div class="assign-count" [id]="'assign-count-' + i">
+                <span>{{lead?.latestvisit?.length}}</span>
+              </div>
+            </span>
+
+            <ion-popover [trigger]="'assign-count-' + i" triggerAction="click" class="assigned-exec-count">
+              <ng-template>
+
+                <ng-container *ngFor="let visits of lead?.latestvisit; let i = index">
+                  <div class="assigned-exe-col">
+                    <span class="name">{{ visits.Executivename }}</span>
+                  </div>
+
+                  <div class="virtical-line" *ngIf="i != lead?.latestvisit.length-1">
+                  </div>
+
+                  <div class="mt-1" *ngIf="i == lead?.latestvisit.length-1">
+                    <span class="name" style="color: #555555;">
+                      {{ lead.assigneddate | date:'dd MMM, yyyy ,hh:mma' }}</span>
+                  </div>
+                </ng-container>
+              </ng-template>
+            </ion-popover>
+          </div>
+          <div *ngIf="lead?.latestvisit?.length == 0 || !lead?.latestvisit" class="assignies-wrapper m-0">
+            <div class="assignto-text">
+              <span>Assigned to</span>
+            </div>
+            <div class="assignies-col bg-transparent">
+              <span class="name fs-6">{{ lead.Executivename }}</span>
+              <span class="assign-date">
+                {{ lead.assigneddate | date:'dd MMM, yyyy ,hh:mma' }}
+              </span>
+            </div>
+          </div>
+        </ion-row>
+
+        <ion-row *ngIf="localStorage.getItem('Name') != 'demo'">
+          <ion-col [id]="'overdue-latest-remark-trigger-' + i"
+            class="d-flex align-item-center justify-content-center latest_remark_col">
+            <span>Latest Remark</span>
+            <ion-img class="pl-1" src="../../assets/CRMimages/chat-bubble.svg"></ion-img>
+          </ion-col>
+          <ion-popover [trigger]="'overdue-latest-remark-trigger-' + i" triggerAction="click"
+            class="latest-remark-popover">
+            <ng-template>
+              <div style="padding: 4px;border: 1px solid #546D7E;border-radius: 4px;">
+                <p style="font-size: 12px;font-weight: 600;"
+                  *ngIf="lead.visitremarks !=='got this new lead Admin'&& lead.visitremarks != 'got this lead from Admin' ">
+                  {{lead.visitremarks}}</p>
+                <hr
+                  *ngIf="lead.visitremarks !=='got this new lead Admin'&& lead.visitremarks != 'got this lead from Admin' && lead.manualremarks">
+                <p style="font-size: 12px;font-weight: 600;">
+                  {{lead.manualremarks}}</p>
+                <p style="font-size: 12px;font-style: italic;font-weight: 600;text-align: center;"
+                  *ngIf="(lead.manualremarks == null && (lead.visitremarks == null || lead.visitremarks == 'got this lead from Admin' || lead.visitremarks == 'got this new lead Admin'))">
+                  No Remarks</p>
+              </div>
+            </ng-template>
+          </ion-popover>
+
+          <ion-col size="1.5" class="d-flex align-item-center justify-content-center">
+            <a (click)="this.outboundCall(lead)" class="ion-text-start call-icon">
+              <ion-img src="../../assets/CRMimages/call-icon.svg"></ion-img>
+            </a>
+          </ion-col>
+          <ion-col size="1.5" class="d-flex align-item-center justify-content-center">
+            <a href="https://wa.me/+91{{lead.number}}" class="whatsapp-icon">
+              <ion-img src="../../assets/CRMimages/what'sapp-icon.svg"></ion-img>
+            </a>
+          </ion-col>
+          <ion-col size="1.5" class="d-flex align-item-center justify-content-center">
+            <a (click)="onplayButton(lead)" class="play_icon">
+              <ion-img src="../../assets/CRMimages/play-icon.svg"></ion-img>
+            </a>
+          </ion-col>
+          <ion-col [id]="'mandate-lead-stage-click-trigger-' + i" size="1.5"
+            class="info-icon d-flex align-item-center justify-content-center">
+            <ion-img src="../../assets/CRMimages/info-apps-icon.svg"></ion-img>
+          </ion-col>
+        </ion-row>
+        <span *ngIf="lead.suggestedprop?.[0]?.propid === '16793'">
+          <p [innerHTML]="grSitaraPropertyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+        <span *ngIf="lead.suggestedprop?.[0]?.propid === '1830'">
+          <p [innerHTML]="grSamskruthiProperyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+        <ion-popover [trigger]="'mandate-lead-stage-click-trigger-' + i" triggerAction="click"
+          style="--max-width:150px;padding: 10px;">
+          <ng-template>
+            <div class="dropdown" style="padding: 5px;">
+              <div
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'info')"> <ion-img class="pr-3"
+                  src="../../assets/CRMimages/info_icon.svg"></ion-img><span
+                  class="font-size14-familyPoppins">Information</span></div>
+              <div
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'location')"><ion-img class="pr-2"
+                  src="../../assets/CRMimages/location_icon.svg"></ion-img><span
+                  class="font-size14-familyPoppins">Location</span></div>
+              <div
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'brochure')"> <ion-img class="pr-2"
+                  src="../../assets/CRMimages/brochureIcon.svg"></ion-img><span
+                  class="font-size14-familyPoppins">Documents</span></div>
+            </div>
+          </ng-template>
+        </ion-popover>
+
+        <!-- <ion-row>
+          <ion-accordion-group style="width:100%">
+            <ion-accordion value="first" class="latestRemark">
+              <ion-item slot="header" class="custom-ion-item" style="--background: #f4f5f8">
+                <ion-label style="flex-grow: 1;">Latest Remark</ion-label>
+              </ion-item>
+              <div slot="content" style="border-top: 0.75px #ECECEC solid;">
+                <p *ngIf="lead.visitremarks !=='got this new lead Admin'">{{lead.visitremarks}}</p>
+                <p>{{lead.manualremarks}}</p>
+                <p *ngIf="lead.manualremarks === null">{{lead.remarks}}</p>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+        </ion-row>
+
+        <ion-row class="custom-row-style">
+          <ion-col size="7">
+            <span class="custom-text" style="margin: 0;">Assigned to </span>
+            <span class="highlight-text" style="padding:0 0 0 2px;"> {{lead.Executivename +" "}}</span>
+          </ion-col>
+          <ion-col size="5">
+            <div style="display: flex;justify-content: flex-end;" *ngIf="localStorage.getItem('Name') != 'demo'">
+              <a (click)="outboundCall(lead)" class="ion-text-start" style="padding-right: 8px;">
+                <ion-img src="../../assets/CRMimages/call-icon.svg" class="call-icon"></ion-img>
+              </a>
+
+              <a href="https://wa.me/+91{{lead.number}}">
+                <ion-img src="../../assets/CRMimages/what'sapp-icon.svg" class="whatsapp-icon"></ion-img>
+              </a>
+
+              <a (click)="onplayButton(lead)" class="playButton">
+                <ion-icon name="play" style="color: white;"></ion-icon>
+              </a>
+              <a [id]="'click-trigger-' + i" class="vertical_ellipse">
+                <ion-icon name="ellipsis-vertical" style="color: white;"></ion-icon>
+              </a>
+
+              <ion-popover [trigger]="'click-trigger-' + i" triggerAction="click"
+                style="--max-width:150px;padding: 10px;">
+                <ng-template>
+                  <div class="dropdown" style="padding: 5px;">
+                    <div
+                      [ngClass]="(lead.suggestedprop[0].propid !== '1830') && (lead.suggestedprop[0].propid !== '16793' )?'pointer_eventsNone':''"
+                      class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'info')"> <ion-img class="pr-3"
+                        src="../../assets/CRMimages/info_icon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Information</span></div>
+
+                    <div
+                      [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                      class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'location')"><ion-img class="pr-2"
+                        src="../../assets/CRMimages/location_icon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Location</span></div>
+
+                    <div
+                      [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                      class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'brochure')"> <ion-img
+                        class="pr-2" src="../../assets/CRMimages/brochureIcon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Documents</span></div>
+                  </div>
+                </ng-template>
+              </ion-popover>
+            </div>
+
+            <div style="display: flex;justify-content: flex-end;" *ngIf="localStorage.getItem('Name') == 'demo'">
+              <a class="ion-text-start" style="padding-right: 8px;">
+                <ion-img src="../../assets/CRMimages/call-icon.svg" class="call-icon"></ion-img>
+              </a>
+              <a>
+                <ion-img src="../../assets/CRMimages/what'sapp-icon.svg" class="whatsapp-icon"></ion-img>
+              </a>
+              <a class="playButton">
+                <ion-icon name="play" style="color: white;"></ion-icon>
+              </a>
+              <a [id]="'mandate-leadasign-click-trigger-' + i" class="vertical_ellipse">
+                <ion-icon name="ellipsis-vertical" style="color: white;"></ion-icon>
+              </a>
+
+              <ion-popover [trigger]="'mandate-leadasign-click-trigger-' + i" triggerAction="click"
+                style="--max-width:150px;padding: 10px;">
+                <ng-template>
+                  <div class="dropdown" style="padding: 5px;">
+                    <div class="d-flex" style="padding:0 6px"> <ion-img class="pr-3"
+                        src="../../assets/CRMimages/info_icon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Information</span></div>
+
+                    <div class="d-flex" style="padding:0 6px"><ion-img class="pr-2"
+                        src="../../assets/CRMimages/location_icon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Location</span></div>
+
+                    <div class="d-flex" style="padding:0 6px"> <ion-img class="pr-2"
+                        src="../../assets/CRMimages/brochureIcon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Documents</span></div>
+                  </div>
+                </ng-template>
+              </ion-popover>
+            </div>
+          </ion-col>
+        </ion-row> -->
+      </div>
+    </ion-item>
+
+    <span *ngIf="localStorage.getItem('Name') !== 'demo'">
+      <ion-item-options side="end">
+        <ion-img src="../../assets/CRMimages/phone-call.svg" style="width:45px;padding: 10px;"
+          class="call-icon"></ion-img>
+      </ion-item-options>
+
+      <ion-item-options side="start">
+        <ion-img src="../../assets/CRMimages/whatsapp_icon.svg" style="width:52px;padding: 10px;"
+          class="call-icon"></ion-img>
+      </ion-item-options>
+    </span>
+  </ion-item-sliding>
+
+  <!-- IF LEADS ARE NOT THERE -->
+  <ion-row *ngIf="(leads_detail && leads_detail.length===0)" class="ion-justify-content-center ion-align-items-center">
+    <ion-col class="ion-text-center"><span>No Leads Found...</span></ion-col>
+  </ion-row>
+
+  <ion-infinite-scroll *ngIf="showInfiniteScroll" [disabled]="false" threshold="100px" #infiniteScroll
+    (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+
+<!-- FILTER MODAL -->
+<ion-modal #filterModal>
+  <ng-template>
+    <ion-header class="header_footerHeight bottom_border content_center">
+      <ion-row style="width: 100%;">
+        <ion-col size="2" class="center-vertically" (click)="closeFilterModal()">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="content_center font-size16-familyPoppins">Filters</ion-col>
+        <ion-col size="2" class="reseticon" (click)="initializeFilterParam();">
+          <ion-icon name="refresh"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+    <div style="height: 100%;">
+      <ion-row class="split-layout">
+        <div class="left-column">
+          <ion-row *ngIf="(!localStorage.getItem('ranavPropId'))"
+            [ngClass]="isLeftFilterActive == 'property'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('property')">
+            <ion-col>
+              <span>Property</span>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="isAdmin || isCS" [ngClass]="isLeftFilterActive=='source'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('source')">
+            <ion-col>
+              <span>Source</span>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="isAdmin || localStorage.getItem('RoleType') === '1'"
+            [ngClass]="isLeftFilterActive=='executive'?'bg_textColor':''" class="content_center borderBottom_background"
+            (click)="onFilterValues('executive')">
+            <ion-col>
+              <span>Executive</span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row [ngClass]="isLeftFilterActive=='visitType'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('visitType')">
+            <ion-col>
+              <span>Visit Type</span>
+            </ion-col>
+          </ion-row>
+          <ion-row [ngClass]="isLeftFilterActive=='stage'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('stage')">
+            <ion-col>
+              <span>Stage</span>
+            </ion-col>
+          </ion-row>
+          <!-- this.filteredParams.fromDate && this.filteredParams.toDate == ''?'border_color_red':'' -->
+          <ion-row *ngIf="filteredParams.status == 'upcomingfollowups'"
+            [ngClass]="isLeftFilterActive=='date'?'bg_textColor':this.filteredParams.fromDate && this.filteredParams.toDate == ''?'text_color_red':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('date')">
+            <ion-col>
+              <span>Next Action Date</span>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="divider"></div>
+        <div class="right-column">
+          <div *ngIf="isLeftFilterActive=='property'" class="property">
+            <ion-content style="height:80vh;">
+              <ion-searchbar [(ngModel)]="propertySearchedName" (ionInput)="setFilteredProperty()">
+              </ion-searchbar>
+              <ion-row class="filterButtons" *ngFor="let property of propertyList1"
+                (click)="onFilterSelection('property',property.property_idfk)"
+                [ngClass]="{'backgroundLightColor': (filteredParams.propid === property.property_idfk || filteredParams.propid === property.property_info_name)}">
+                <span>{{property.property_info_name}}</span>
+              </ion-row>
+            </ion-content>
+          </div>
+
+          <div *ngIf="(isLeftFilterActive == 'executive')">
+            <ion-content style="height:80vh;">
+              <ion-searchbar [(ngModel)]="executiveSearchedName" (ionInput)="setFilteredExecutive()"></ion-searchbar>
+              <ion-row class="filterButtons" (click)="onFilterSelection('executive','all')"
+                [ngClass]="{'backgroundLightColor': filteredParams.executid === ''}">
+                <ion-col><span>All</span></ion-col>
+                <ion-col class="ion-text-end">
+                  <ion-toggle [checked]="filteredParams.active === '1'?true:false"
+                    (ionChange)="toggleActiveExecutive($event)">
+                  </ion-toggle>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngFor="let executive of mandateExecutives1"
+                (click)="onFilterSelection('executive',executive.id)"
+                [ngClass]="{'backgroundLightColor': filteredParams.executid.includes(executive.id)}">
+                <span class="filterButtons">{{executive.name}}</span>
+              </ion-row>
+            </ion-content>
+          </div>
+
+          <div *ngIf="isLeftFilterActive == 'source'">
+            <ion-searchbar [(ngModel)]="sourceSearchTerm" (ionInput)="setFilteredSource()"></ion-searchbar>
+            <ion-content style="height:70vh;" #sourceScrollContent>
+              <ion-row class="filterButtons" (click)="onFilterSelection('source','all')"
+                [ngClass]="{'backgroundLightColor': filteredParams.source === ''}">
+                <span>All</span>
+              </ion-row>
+              <ion-row class="filterButtons" *ngFor="let source of sourceList1"
+                (click)="onFilterSelection('source',source.source)" [id]="source.source"
+                [ngClass]="{'backgroundLightColor': filteredParams.source === source.source}">
+                <span>{{source.source}}</span>
+              </ion-row>
+            </ion-content>
+          </div>
+
+          <div *ngIf="isLeftFilterActive == 'visitType'">
+            <ion-row class="filterButtons" (click)="onFilterSelection('visitType','all')"
+              [ngClass]="{'backgroundLightColor': filteredParams.visits === ''}">
+              <span>All</span>
+            </ion-row>
+            <ion-row class="filterButtons" (click)="onFilterSelection('visitType','2')"
+              [ngClass]="{'backgroundLightColor': filteredParams.visits === '2'}">
+              <span>Assigned</span>
+            </ion-row>
+            <ion-row class="filterButtons" (click)="onFilterSelection('visitType','1')"
+              [ngClass]="{'backgroundLightColor': filteredParams.visits === '1'}">
+              <span>Direct</span>
+            </ion-row>
+          </div>
+
+          <div *ngIf="isLeftFilterActive == 'stage'">
+            <ion-row class="filterButtons" (click)="onFilterSelection('stage','Fresh')"
+              [ngClass]="{'backgroundLightColor': filteredParams.stage === 'Fresh'}">
+              <span>Fresh</span>
+            </ion-row>
+            <ion-row class="filterButtons" (click)="onFilterSelection('stage','USV')"
+              [ngClass]="{'backgroundLightColor': filteredParams.stage === 'USV'}">
+              <span>USV</span>
+            </ion-row>
+            <ion-row class="filterButtons" (click)="onFilterSelection('stage','RSV')"
+              [ngClass]="{'backgroundLightColor': filteredParams.stage === 'RSV'}">
+              <span>RSV</span>
+            </ion-row>
+            <ion-row class="filterButtons" (click)="onFilterSelection('stage','Final Negotiation')"
+              [ngClass]="{'backgroundLightColor': filteredParams.stage === 'Final Negotiation'}">
+              <span>FN</span>
+            </ion-row>
+          </div>
+
+          <ion-row *ngIf="isLeftFilterActive == 'date'">
+            <ion-row>
+              <ion-col class="font-size12-familyPoppins" style="padding-bottom: 0;">
+                Select Date Range
+              </ion-col>
+            </ion-row>
+            <ion-row style="width: 100%;">
+              <ion-col class=" filterIcon height35px">
+                <label for="fromdateCaleder" style="width: 100%;">
+                  <div class="date_range">
+                    <div><span>{{daterange('from')}}</span></div>
+                    <div>
+                      <ion-img src="../assets/CRMimages/calendar-edit-outline.png"></ion-img>
+                    </div>
+                  </div>
+                </label>
+              </ion-col>
+            </ion-row>
+            <p-calendar [hideOnDateTimeSelect]="false" [showTime]="true" [hourFormat]="'12'" [touchUI]="true"
+              inputId="fromdateCaleder" [(ngModel)]="fromDateTime1" appendTo="body" [dateFormat]="'yy-mm-dd'"
+              (onSelect)="onFilterSelection('fromdate', $event)"></p-calendar>
+
+            <ion-row style="width: 100%;">
+              <ion-col class="filterIcon height35px" (click)="warningMessage()">
+                <label [for]="filteredParams.fromDate !=='' ? 'todateCalender' : ''" style="width: 100%;">
+                  <div class="date_range"
+                    [ngClass]="this.filteredParams.fromDate && this.filteredParams.toDate == ''?'border_color_red':''">
+                    <div><span>{{daterange('to')}}</span></div>
+                    <div>
+                      <ion-img src="../assets/CRMimages/calendar-edit-outline.png"></ion-img>
+                    </div>
+                  </div>
+                </label>
+              </ion-col>
+            </ion-row>
+            <p-calendar [hideOnDateTimeSelect]="false" [showTime]="true" [hourFormat]="'12'" [touchUI]="true"
+              inputId="todateCalender" [minDate]="minDate" [(ngModel)]="toDateTime1" appendTo="body"
+              [dateFormat]="'yy-mm-dd'" (onSelect)="onFilterSelection('todate', $event)">
+            </p-calendar>
+          </ion-row>
+        </div>
+      </ion-row>
+    </div>
+
+    <ion-footer class="header_footerHeight">
+      <ion-row>
+        <ion-col class="content_center font-size14-familyPoppins">
+          <ion-button fill="clear" (click)="filterModal.dismiss();addQuerryParams()" [disabled]="!isenabled"
+            class="showresultButton">Show Results</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+
+
+
+
+
+<ion-img *ngIf="!isOnCallDetailsPage && !_sharedservice.isBottom" class="ion-filter-icon"
+  src="../../assets/CRMimages/filter.svg" (click)="navigateToFilter()"> </ion-img>
+<!-- 
+<div  expand="block" class="content_center ion-filter-icon" 
+style="margin-left: 38%;margin-right: 38%;" (click)="navigateToFilter()" >
+<ion-img src="../../assets/CRMimages/filter.png"></ion-img>
+</div> -->
+
+
+
+
+<ion-modal #callConfirmationModal class="callConfirmationModal">
+  <ng-template>
+    <ion-header>
+      <ion-row class="activeSaveButton">
+        <ion-col size="1"></ion-col>
+        <ion-col size="9" class="ion-text-center d-flex ion-justify-content-center">
+          <h3>Initiate Outbound Call</h3>
+        </ion-col>
+        <ion-col size="2" (click)="callConfirmationModal.dismiss()"
+          class="ion-text-center d-flex ion-justify-content-center paddingZero"> <ion-icon class="paddingZero"
+            name="close"></ion-icon></ion-col>
+      </ion-row>
+    </ion-header>
+    <ion-content>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <p style="font-size:20px;color: rgba(65, 65, 65, 1);">Do you want to place a call to
+            {{lead.CustomerName}}
+            <span
+              *ngIf="!isRM || (isRM && ((lead.Leadphase == 'Fresh' && lead.followupreason == '8') || lead.Leadphase != 'Fresh' ));else num">
+              {{"("+lead.number+")"}}</span>
+            <ng-template #num>
+              <span>xxxxxxxxxx</span>
+            </ng-template>?
+          </p>
+        </ion-col>
+      </ion-row>
+    </ion-content>
+    <ion-footer>
+      <ion-row>
+        <ion-col class="ion-text-center" (click)="callConfirmationModal.dismiss()"> <ion-button fill="clear"
+            class="active_text_borederColor"> Cancel</ion-button> </ion-col>
+        <ion-col class="ion-text-center" (click)="outboundCall(true)"> <ion-button fill="clear"
+            class="activeSaveButton"> Call </ion-button> </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<app-common-footer></app-common-footer>

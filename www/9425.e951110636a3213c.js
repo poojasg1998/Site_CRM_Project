@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkapp=self.webpackChunkapp||[]).push([[9425],{9425:(i,t,e)=>{e.r(t),e.d(t,{PrivacyScreenWeb:()=>a});var s=e(467),r=e(5083);class a extends r.E_{enable(){var n=this;return(0,s.A)(function*(){throw n.unimplemented("Not implemented on web.")})()}disable(){var n=this;return(0,s.A)(function*(){throw n.unimplemented("Not implemented on web.")})()}}}}]);

@@ -1,0 +1,558 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<app-header *ngIf="!isOnCallDetailsPage"></app-header>
+<div class="m-2 mb-0 datefilter-div" *ngIf="!isOnCallDetailsPage">
+  <ion-row>
+    <ion-col (click)="dateFilter('today')" class="normal_btn d-flex  align-items-center justify-content-center"
+      [ngClass]="getTodayDate()===filteredParams.fromdate?'bg_textColor':''">
+      <span>Today</span>
+    </ion-col>
+    <ion-col (click)="dateFilter('lastsevenDay')" class="normal_btn d-flex  align-items-center justify-content-center"
+      [ngClass]="getlastSeventhDate()===filteredParams.fromdate?'bg_textColor':''">
+      <span>Last 7 days</span>
+    </ion-col>
+    <ion-col (click)="dateFilter('custom')" class="normal_btn d-flex  align-items-center justify-content-center"
+      [ngClass]="getTodayDate() !==filteredParams.fromdate && getlastSeventhDate()!==filteredParams.fromdate?'bg_textColor':''">
+      <label>Custom</label>
+    </ion-col>
+    <ion-col (click)="reSet();addQueryParams();" class="normal_btn d-flex  align-items-center justify-content-center"
+      size="1.2">
+      <ion-icon name="refresh-outline"></ion-icon>
+    </ion-col>
+  </ion-row>
+  <p-calendar [ngStyle]="{ display: 'none' }" #calendar [hideOnDateTimeSelect]="true" [touchUI]="true"
+    inputId="mandate_hourlyReport_date_range" [(ngModel)]="dateRange" selectionMode="range" appendTo="body"
+    [dateFormat]="'yy-mm-dd'" (onSelect)="onCustomDate()"></p-calendar>
+</div>
+
+<ion-popover [backdropDismiss]="dateRange.fromdate && !dateRange.todate ? false:true"
+  trigger="mandate_hourlyReport_date_range" side="bottom" alignment="center" class="newAndselect_popover">
+  <ng-template>
+    <ion-row class="m-2 mb-0">
+      <label for="fromDate" class="from-date-calendar d-flex align-items-center p-0 w-100">
+        <div class="w-100">
+          <div class="font-size14-familyPoppins">From Date</div>
+          <div class="d-flex align-items-center calendar-div">
+            <label class="d-flex">
+              <ion-img src="../assets/CRMimages/date-filter-icon.png"></ion-img>
+            </label>
+            <span class="ps-2" [ngClass]="dateRange?.fromdate?'':'isBeforeselectingDate'">
+              {{dateRange?.fromdate?.toLocaleDateString('en-CA')?dateRange?.fromdate?.toLocaleDateString('en-CA'):
+              'Select From Date'}}
+            </span>
+            <p-calendar inputId="fromDate" [(ngModel)]="dateRange.fromdate" appendTo="body" dateFormat="yy-mm-dd"
+              class="m-3" (onSelect)="dateFilter( 'customfromDate') ">
+            </p-calendar>
+          </div>
+        </div>
+      </label>
+    </ion-row>
+    <ion-row class="m-2" [ngClass]="dateRange.fromdate?'':'pointerEvent'">
+      <label for="toDate" class="to-date-calendar d-flex align-items-center p-0 w-100">
+        <div class="w-100">
+          <div class="font-size14-familyPoppins">To Date</div>
+          <div class="d-flex align-items-center calendar-div">
+            <label class="d-flex">
+              <ion-img src="../assets/CRMimages/date-filter-icon.png"></ion-img>
+            </label>
+            <span class="ps-2" [ngClass]="dateRange?.todate?'':'isBeforeselectingDate'">
+              {{dateRange?.todate?.toLocaleDateString('en-CA')?dateRange?.todate?.toLocaleDateString('en-CA'):
+              'Select To Date'}}</span>
+            <p-calendar inputId="toDate" [(ngModel)]="dateRange.todate" appendTo="body" dateFormat="yy-mm-dd"
+              [minDate]="dateRange.fromdate" (onSelect)="dateFilter('custom')" class="m-3">
+            </p-calendar>
+          </div>
+        </div>
+      </label>
+    </ion-row>
+  </ng-template>
+</ion-popover>
+
+<ion-row class="my-2 align-items-center" style="flex-wrap: nowrap;" *ngIf="!isOnCallDetailsPage">
+  <!-- DATE COL -->
+  <ion-col [size]="(!isCustomDate && (filteredParams.fromdate ==
+      filteredParams.todate))?5:6" style="height: 34px; background: #2196F3; color: white;"
+    class="d-flex content_center p-0">
+    <ion-icon *ngIf="!isCustomDate && (filteredParams.fromdate ==
+      filteredParams.todate)" name="chevron-back-outline" class="px-1" (click)="changeDate('previous')" size="2.5"
+      [ngClass]="checkIfBeforeTargetDate() ? 'pointer_eventsNone' : ''"></ion-icon>
+
+    <label style="font-size: 12px;" for="mandate_hourlyReport_date_range">
+      {{(isCustomDate || filteredParams.fromdate !==
+      filteredParams.todate)?(filteredParams.fromdate?.split('-').join('/') + '-' +
+      filteredParams.todate?.split('-').join('/')): filteredParams.fromdate?.split('-').join('/') }}
+    </label>
+    <ion-icon *ngIf="!isCustomDate && (filteredParams.fromdate ==
+      filteredParams.todate)" name="chevron-forward-outline" class="px-1" (click)="changeDate('next')" size="2.5"
+      [ngClass]="checkIfAfterTargetDate() ? 'pointer_eventsNone' : ''"></ion-icon>
+  </ion-col>
+
+  <!-- AUTOCOMPLETE COL -->
+  <ion-col [size]="(!isCustomDate && (filteredParams.fromdate ==
+      filteredParams.todate))?5: 5" *ngIf="searchVisible" class="p-0 ml-2" style="height: 100%;">
+    <!-- <p-autoComplete placeholder="Search Exec" [dropdown]="true" ngClass="pautocomplete" [suggestions]="executiveList"
+      appendTo="body" optionLabel="Name" [style]="{ 'width': '100%', 'max-width': '180px' }"
+      (completeMethod)="filterExecName($event)">
+    </p-autoComplete> -->
+
+    <p-autoComplete [dropdown]="true" placeholder="Search Exec" [(ngModel)]="selectedExec"
+      [suggestions]="executiveList1" (input)="onExecInput($event)" (completeMethod)="filterExecName($event)"
+      optionLabel="Name" (onSelect)="onExecSelected($event)" />
+  </ion-col>
+  <ion-col size="1" (click)="searchVisible = false" *ngIf="searchVisible"
+    class="p-0 content_center chevron-forward-outline">
+    <ion-icon name="chevron-back-outline"></ion-icon>
+  </ion-col>
+
+  <!-- SEARCH ICON -->
+  <ion-col size="1.4" class="exec p-0 bg_textColor content_center search-icon-col mx-1"
+    *ngIf="!searchVisible && (isAdmin )">
+    <ion-icon class="search-icon" name="search" (click)="searchMembers()"></ion-icon>
+  </ion-col>
+
+  <!-- TOGGLE -->
+  <ion-col *ngIf="!searchVisible" class="content_center p-0" style="justify-content: flex-start !important;">
+    <span class="font-size12-familyPoppins content_center font-colorGray" style="width: 100%;">
+      Zero Activities
+      <ion-toggle [checked]="filteredParams.isZeroActiveLeads == 'true'"
+        (ionChange)="onToggleZeroActivityReport($event)">
+      </ion-toggle>
+    </span>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col size="6">
+    <p-dropdown [options]="executiveNames" class="exec_css" [(ngModel)]="selectedExecu" optionLabel="name"
+      placeholder="Select a Executive" (onChange)="onExecutiveFilter($event)" />
+  </ion-col>
+</ion-row>
+
+<ion-content>
+  <ion-row *ngIf="!isOnCallDetailsPage">
+    <ion-col [size]="isAdmin?3.5:''" style="padding: 5px 5px 0 0;" class="pt-0" *ngIf="isAdmin">
+      <ion-content style="height: 73vh;"
+        [ngClass]="(filteredParams.execid !== '' || filteredParams.fromdate !== filteredParams.todate)?'pointer_eventsNone':''">
+        <ion-row class="timerow" (click)="onTimeFilter('','')"
+          [ngClass]="filteredParams.fromtime==''?'bg_textColor':''">
+          <ion-col class="content_center">
+            Overall
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow"
+          [ngClass]="(filteredParams.fromtime=='12:00' && filteredParams.totime=='09:30')?'bg_textColor':''"
+          (click)="onTimeFilter('12:00','09:30')">
+          <ion-col class="content_center">
+            Before 9:30AM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('09:30','10:30')"
+          [ngClass]="(filteredParams.fromtime=='09:30' && filteredParams.totime=='10:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            9:30AM - 10:30AM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('10:30','11:30')"
+          [ngClass]="(filteredParams.fromtime=='10:30' && filteredParams.totime=='11:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            10:30AM - 11:30AM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('11:30','12:30')"
+          [ngClass]="(filteredParams.fromtime=='11:30' && filteredParams.totime=='12:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            11:30AM - 12:30AM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('12:30','13:30')"
+          [ngClass]="(filteredParams.fromtime=='12:30' && filteredParams.totime=='13:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            12:30AM - 1:30PM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('13:30','14:30')"
+          [ngClass]="(filteredParams.fromtime=='13:30' && filteredParams.totime=='14:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            1:30PM - 2:30PM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('14:30','15:30')"
+          [ngClass]="(filteredParams.fromtime=='14:30' && filteredParams.totime=='15:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            2:30PM - 3:30PM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('15:30','16:30')"
+          [ngClass]="(filteredParams.fromtime=='15:30' && filteredParams.totime=='16:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            3:30PM - 4:30PM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('16:30','17:30')"
+          [ngClass]="(filteredParams.fromtime=='16:30' && filteredParams.totime=='17:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            4:30PM - 5:30PM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('17:30','18:30')"
+          [ngClass]="(filteredParams.fromtime=='17:30' && filteredParams.totime=='18:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            5:30PM - 6:30PM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('18:30','19:30')"
+          [ngClass]="(filteredParams.fromtime=='18:30' && filteredParams.totime=='19:30')?'bg_textColor':''">
+          <ion-col class="content_center">
+            6:30PM - 7:30PM
+          </ion-col>
+        </ion-row>
+        <ion-row class="timerow" (click)="onTimeFilter('19:30','23:59')"
+          [ngClass]="(filteredParams.fromtime=='19:30' && filteredParams.totime=='23:59')?'bg_textColor':''">
+          <ion-col class="content_center">
+            After 7:30PM
+          </ion-col>
+        </ion-row>
+      </ion-content>
+    </ion-col>
+    <ion-col [size]="isAdmin?8.5:12" style="width: 100%;" [ngClass]="isAdmin?'pl-0 pt-0':''">
+      <ion-content style="height: 63vh">
+        <div [ngClass]="filteredParams.isZeroActiveLeads == 'true'?'orange_border':''">
+          <ion-row *ngIf="filteredParams.isZeroActiveLeads == 'true'" class="bg_Color_Orange">
+            <ion-col>
+              <span>Zero Activity Executive</span>
+            </ion-col>
+          </ion-row>
+          <div style="background:#f9f9f9" class="reportCard mb-2" *ngFor="let exec of this.executivesReportList1"
+            [ngClass]="(exec?.counts?.length > 0 ? exec?.counts[0]?.overall : exec?.overall ) !== '0'?'blue_border':filteredParams.isZeroActiveLeads != 'true'? 'orange_border':'zeroactivity-div'">
+            <ion-row
+              [ngClass]="(exec?.counts?.length > 0 ? exec?.counts[0]?.overall : exec?.overall) !== '0'?'bg_textColor':filteredParams.isZeroActiveLeads != 'true'? 'bg_Color_Orange':''">
+              <ion-col class="font-size10-familyPoppins">
+                {{exec.ExecName}}
+                <span *ngIf=" filteredParams.execid !== ''">
+                  <span *ngIf="exec.endtime === '09:30';else elseIfCon">
+                    Before 9:30 AM
+                  </span>
+                  <ng-template #elseIfCon>
+                    <span *ngIf="exec.endtime === '23:59';else elseCon">
+                      Aftter 7:30 AM
+                    </span>
+                  </ng-template>
+                  <ng-template #elseCon>
+                    <!-- <span>{{ '1970-01-01 ' + exec.starttime | date: 'hh:mm a' }} - {{ '1970-01-01 ' + exec.endtime | date: 'hh:mm a'}}</span> -->
+                    <span *ngIf="exec.starttime && exec.endtime">
+                      {{ ('1970-01-01 ' + exec.starttime) | date: 'hh:mm a' }} -
+                      {{ ('1970-01-01 ' + exec.endtime) | date: 'hh:mm a' }}
+                    </span>
+                  </ng-template>
+                </span>
+              </ion-col>
+              <ion-col *ngIf="filteredParams.isZeroActiveLeads != 'true'"
+                class="font-size10-familyPoppins px-2 ion-text-right">
+                <!-- Total Activity :<span>{{ exec?.counts?.length > 0 ?
+                  exec?.counts[0]?.overall : exec?.overall }}</span> -->
+                <span *ngIf="filteredParams.execid == '';else execname"> </span>
+                <ng-template #execname>
+                  <span>
+                    {{selectedExec.Name}}
+                  </span>
+                </ng-template>
+              </ion-col>
+            </ion-row>
+
+            <span *ngIf="filteredParams.isZeroActiveLeads != 'true'">
+              <ion-row class="status-row">
+                <ion-col class="font-size10-familyPoppins d-flex flex-column" (click)="onStage('',exec)">
+                  Untouched <span> {{totalPendingCount}}</span></ion-col>
+
+                <ion-col class="font-size10-familyPoppins d-flex flex-column" (click)="onStage('SV-Done',exec)">SV Done
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.svdone: exec?.svdone)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.svdone: exec?.svdone}}
+                  </span></ion-col>
+
+                <ion-col class="font-size10-familyPoppins d-flex flex-column" (click)="onStage('BR',exec)">Book Req
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.closingrequest: exec?.closingrequest) !== '0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.closingrequest: exec?.closingrequest}}
+                  </span></ion-col>
+              </ion-row>
+              <ion-row class="status-row">
+                <ion-col class="font-size10-familyPoppins d-flex flex-column" (click)="onStage('GF',exec)">G. Followups
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.generalfollowups: exec?.generalfollowups) !== '0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.generalfollowups: exec?.generalfollowups}}
+                  </span></ion-col>
+
+                <ion-col class="font-size10-familyPoppins d-flex flex-column" (click)="onStage('RSV-Fix',exec)">RSV
+                  Fixed
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.rsvfixed: exec?.rsvfixed)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.rsvfixed: exec?.rsvfixed}}
+                  </span></ion-col>
+
+                <ion-col class="font-size10-familyPoppins d-flex flex-column" (click)="onStage('Booked',exec)">Booked
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.leadclosed: exec?.leadclosed)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.leadclosed: exec?.leadclosed}}
+                  </span></ion-col>
+              </ion-row>
+              <ion-row class="status-row">
+                <ion-col class="font-size10-familyPoppins d-flex flex-column" (click)="onStage('NC',exec)">NC
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.NC: exec?.NC)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.NC: exec?.NC}}
+                  </span></ion-col>
+                <ion-col class="font-size10-familyPoppins  d-flex flex-column" (click)="onStage('RSV-Done',exec)">RSV
+                  Done
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.rsvdone: exec?.rsvdone)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.rsvdone: exec?.rsvdone}}
+                  </span></ion-col>
+                <ion-col class="font-size10-familyPoppins  d-flex flex-column"
+                  (click)="onStage('Inactive',exec)">Inactive
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.inactive: exec?.inactive)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.inactive: exec?.inactive}}
+                  </span></ion-col>
+              </ion-row>
+              <ion-row class="status-row">
+                <ion-col class="font-size10-familyPoppins  d-flex flex-column" (click)="onStage('USV-Fix',exec)">USV
+                  Fixed
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.usvfixed: exec?.usvfixed)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.usvfixed: exec?.usvfixed}}
+                  </span></ion-col>
+
+                <ion-col class="font-size10-familyPoppins d-flex flex-column" (click)="onStage('FN-Fix',exec)">FN Fixed
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.fnfixed: exec?.fnfixed) !== '0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.fnfixed: exec?.fnfixed}}
+                  </span></ion-col>
+                <ion-col class="font-size10-familyPoppins  d-flex flex-column" (click)="onStage('JunkLeads',exec)">J.
+                  Leads
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.junkleads: exec?.junkleads) !== '0' ?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.junkleads: exec?.junkleads}}
+                  </span></ion-col>
+              </ion-row>
+              <ion-row class="status-row">
+                <ion-col class="font-size10-familyPoppins  d-flex flex-column" (click)="onStage('USV-Done',exec)">USV
+                  Done
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.usvdone: exec?.usvdone)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.usvdone: exec?.usvdone}}
+                  </span></ion-col>
+
+                <ion-col class="font-size10-familyPoppins  d-flex flex-column" (click)="onStage('FN-Done',exec)">FN Done
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.fndone: exec?.fndone)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.fndone: exec?.fndone}}
+                  </span></ion-col>
+                <ion-col class="font-size10-familyPoppins  d-flex flex-column" (click)="onStage('JunkVisits',exec)">J.
+                  Visits
+                  <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.junkvisits: exec?.junkvisits)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.junkvisits: exec?.junkvisits}}
+                  </span>
+                </ion-col>
+              </ion-row>
+              <ion-row class="status-row">
+                <ion-col size="4" class="font-size10-familyPoppins  d-flex flex-column"
+                  (click)="onStage('SV-Fix',exec)">SV
+                  Fix <span
+                    [ngClass]="(exec?.counts?.length > 0? exec?.counts[0]?.svfixed: exec?.svfixed)!=='0'?'text_color_green':'text_color_red'">
+                    {{exec?.counts?.length > 0? exec?.counts[0]?.svfixed: exec?.svfixed}}
+                  </span></ion-col>
+                <ion-col class="content_center backgroundLightColor">
+                  <span class="font-size12-familyPoppins">Overall Activity : {{ exec?.counts?.length > 0 ?
+                    exec?.counts[0]?.overall : exec?.overall }}</span>
+                </ion-col>
+              </ion-row>
+            </span>
+          </div>
+        </div>
+        <ion-row *ngIf="(executivesReportList1 && executivesReportList1.length===0 || !executivesReportList1)"
+          class="textStyle ion-justify-content-center ion-align-items-center">
+          <ion-col class="ion-text-center"><span>No Executives Found...</span></ion-col>
+        </ion-row>
+
+        <ion-infinite-scroll *ngIf="showInfiniteScroll" [disabled]="false" threshold="100px" #infiniteScroll
+          (ionInfinite)="loadData($event)">
+          <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+          </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+      </ion-content>
+    </ion-col>
+  </ion-row>
+
+</ion-content>
+
+<app-common-footer></app-common-footer>
+<!-- footer Section -->
+
+<span class="addleadicon" (click)="onSendReport()" *ngIf="isAdmin && !isOnCallDetailsPage">
+  <ion-img src="../../assets/CRMimages/sendReport_icon.svg"></ion-img>
+</span>
+
+<ion-modal #reportSending class="reportSending">
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+    <ion-header>
+      <ion-row class="bg_textColor">
+        <ion-col size="10">
+          <span class="font-size14-familyPoppins">Report Sending</span>
+        </ion-col>
+        <ion-col size="2" class="content_center" style="justify-content: flex-end !important;"
+          (click)="reportSending.dismiss()">
+          <ion-icon style="font-size: 25px;" name="close"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+    <!-- <ion-content> -->
+
+    <div style="width: 100%;" class="lead-info">
+      <ion-row class="info-row-heading">
+        <ion-col>
+          <div><span class="font-size14-familyPoppins">Select Date</span></div>
+          <div>
+            <span class="info-row-value">
+              <div lines="none" class="input-with-image date-input">
+                <ion-input [(ngModel)]="fromAndToDate" name="date" id="reportSendingTime" placeholder="Choose Date"
+                  inputmode="none" required></ion-input>
+                <!-- <ion-popover trigger="reportSendingTime" #reportSendingTime>
+                  <ng-template>
+                    <ion-range-calendar doneIcon="true" style="padding: 0;font-size: 12px;font-family: Poppins;"
+                      #popoverDate [(ngModel)]="dateRange" (change)="onCustomDate();" [options]="optionsRange"
+                      [format]="'yyyy-MM-dd'">
+                    </ion-range-calendar>
+                  </ng-template>
+                </ion-popover> -->
+
+                <ion-popover [backdropDismiss]="dateRange.fromdate && !dateRange.todate ? false:true"
+                  trigger="reportSendingTime" side="bottom" alignment="center" class="newAndselect_popover">
+                  <ng-template>
+                    <ion-row class="m-2 mb-0">
+                      <label for="fromDate" class="from-date-calendar d-flex align-items-center p-0 w-100">
+                        <div class="w-100">
+                          <div class="font-size14-familyPoppins">From Date</div>
+                          <div class="d-flex align-items-center calendar-div">
+                            <label class="d-flex">
+                              <ion-img src="../assets/CRMimages/date-filter-icon.png"></ion-img>
+                            </label>
+                            <span class="ps-2" [ngClass]="dateRange?.fromdate?'':'isBeforeselectingDate'">
+                              {{dateRange?.fromdate?.toLocaleDateString('en-CA')?dateRange?.fromdate?.toLocaleDateString('en-CA'):
+                              'Select From Date'}}
+                            </span>
+                            <p-calendar inputId="fromDate" [(ngModel)]="dateRange.fromdate" appendTo="body"
+                              dateFormat="yy-mm-dd" class="m-3" (onSelect)="dateFilter( 'customfromDate') ">
+                            </p-calendar>
+                          </div>
+                        </div>
+                      </label>
+                    </ion-row>
+                    <ion-row class="m-2" [ngClass]="dateRange.fromdate?'':'pointerEvent'">
+                      <label for="toDate" class="to-date-calendar d-flex align-items-center p-0 w-100">
+                        <div class="w-100">
+                          <div class="font-size14-familyPoppins">To Date</div>
+                          <div class="d-flex align-items-center calendar-div">
+                            <label class="d-flex">
+                              <ion-img src="../assets/CRMimages/date-filter-icon.png"></ion-img>
+                            </label>
+                            <span class="ps-2" [ngClass]="dateRange?.todate?'':'isBeforeselectingDate'">
+                              {{dateRange?.todate?.toLocaleDateString('en-CA')?dateRange?.todate?.toLocaleDateString('en-CA'):
+                              'Select To Date'}}</span>
+                            <p-calendar inputId="toDate" [(ngModel)]="dateRange.todate" appendTo="body"
+                              dateFormat="yy-mm-dd" [minDate]="dateRange.fromdate" (onSelect)="dateFilter('custom')"
+                              class="m-3">
+                            </p-calendar>
+                          </div>
+                        </div>
+                      </label>
+                    </ion-row>
+                  </ng-template>
+                </ion-popover>
+              </div>
+            </span>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="info-row-heading">
+        <ion-col>
+          <div><span class="font-size14-familyPoppins">Select Time Slot</span></div>
+          <div>
+            <span class="info-row-value">
+              <div class="dateTime_css">
+                <p-dropdown [options]="filteredTime" appendTo="body" class="exec_css" [(ngModel)]="selectedTime"
+                  optionLabel="name" (onChange)="onTimeFilter1($event)" placeholder="Select Time" />
+              </div>
+            </span>
+          </div>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <ion-row>
+      <ion-col class="ion-text-right">
+        <ion-button fill="clear" class="bg_textColor" (click)="onReportSending()">Send</ion-button>
+      </ion-col>
+    </ion-row>
+    <!-- </ion-content> -->
+  </ng-template>
+</ion-modal>
+
+
+<ion-modal #dashboard_custDate_modal [breakpoints]="[0.3]" [initialBreakpoint]="0.3"
+  [backdropDismiss]="!(dateRange?.fromdate && dateRange?.todate)"
+  (ionModalDidDismiss)="onCustomDateModalDismiss($event)">
+  <ng-template>
+
+    <div class="modal-container">
+      <!-- CONTENT -->
+      <div class="date-range-wrapper">
+        <h3 class="title">Select date range</h3>
+
+        <div class="date-inputs">
+          <div class="date-box" (click)="openFromDate()">
+            <label>From</label>
+            <span>{{ dateRange?.fromdate ? ('' + dateRange.fromdate).split('T')[0] : '' }}</span>
+          </div>
+
+          <div class="date-box" (click)="handleToDateClick()" [class.disabled]="!dateRange?.fromdate">
+            <label>To</label>
+            <span>{{ dateRange?.todate ? ('' + dateRange.todate).split('T')[0] : '' }}</span>
+          </div>
+        </div>
+
+        <p class="error-text" *ngIf="showFromDateError">
+          Please select From date first
+        </p>
+      </div>
+
+      <!-- STICKY FOOTER -->
+      <div>
+        <ion-button expand="block" class="confirm-btn" [disabled]="!(dateRange?.fromdate && dateRange?.todate)"
+          (click)="addQueryParams(); dashboard_custDate_modal.dismiss()">
+          Confirm
+        </ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+<ion-modal #dashboard_fromDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+  [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+  <ng-template>
+    <ion-datetime presentation="date" [(ngModel)]="dateRange.fromdate"
+      (ionChange)="dateFilter('customfromDate')"></ion-datetime>
+  </ng-template>
+</ion-modal>
+<ion-modal #dashboard_toDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+  [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+  <ng-template>
+    <ion-datetime presentation="date" [min]="dateRange.fromdate" [(ngModel)]="dateRange.todate"
+      (ionChange)="dateFilter('customtoDate')"></ion-datetime>
+  </ng-template>
+</ion-modal>

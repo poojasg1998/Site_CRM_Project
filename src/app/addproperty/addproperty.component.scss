@@ -1,0 +1,186 @@
+@media (prefers-color-scheme: dark) {
+  :host {
+    /* Force light colors even in dark mode */
+    --ion-background-color: #ffffff !important;
+    --ion-text-color: #000000 !important;
+
+    --ion-color-step-50: #f2f2f2 !important;
+    --ion-color-step-100: #e6e6e6 !important;
+    --ion-item-background: #ffffff !important;
+  }
+}
+
+.lead-info {
+  border-radius: 4px;
+  margin: 10px;
+}
+.menu_icon {
+  font-size: 30px;
+  color: #0b7ab2;
+}
+.info-row-heading {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 14px;
+  color: rgb(0, 0, 0, 0.6);
+  padding: 0 10px;
+  background-color: #f6f5f5;
+}
+.info-row-heading1 {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 12px;
+  color: rgb(0, 0, 0, 0.6);
+  padding: 0 10px;
+  background-color: #f6f5f5;
+}
+
+.info-row-value {
+  font-family: "Poppins";
+  font-weight: 500;
+  font-size: 16px;
+  color: rgb(0, 0, 0, 0.8);
+}
+
+.info-row-value1 {
+  font-family: "Poppins";
+  font-weight: 500;
+  font-size: 14px;
+  color: rgb(0, 0, 0, 0.8);
+  text-transform: "capitalize";
+}
+
+.addicon {
+  font-size: 45px;
+  color: #2196f3;
+  font-size: 45px;
+  position: absolute;
+  right: 15px;
+  bottom: 65px;
+  background-color: white;
+  border-radius: 35px;
+}
+
+ion-modal {
+  --height: auto;
+  --border-radius: 3px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  padding: 10px;
+}
+.scroll-container {
+  height: 300px; /* Set proper height */
+  width: 100%;
+  border: 1px solid #ccc;
+  overflow: auto;
+}
+
+ion-modal ion-toolbar {
+  --background: #0b7ab2;
+  --color: white;
+}
+.no-padding-bottom {
+  padding-bottom: 0 !important;
+}
+.no-padding-top {
+  padding-top: 0 !important;
+}
+
+.addPropertybutton ion-button {
+  text-transform: none;
+  background-color: #0b7ab2;
+  border: 1px solid #0b7ab2;
+  border-radius: 3px;
+  color: white;
+}
+.addPropertybutton {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Centers the button horizontally */
+  padding: 10px 0;
+}
+
+.activeHtype {
+  border: 1px solid white;
+  border-radius: 25px;
+  background: #0b7ab2;
+  color: white;
+}
+
+.property-management {
+  border-radius: 25px;
+  // background: #0B7AB2;
+  color: #0b7ab2;
+  margin: 10px;
+}
+
+.custom-col {
+  border-radius: 50px !important;
+}
+.addCpForm {
+  padding: 10px;
+}
+.addCpForm div {
+  margin-bottom: 5px;
+}
+.addcpbutton {
+  display: flex;
+  justify-content: flex-end;
+}
+.addcpbutton button {
+  background: #0b7ab2;
+  color: #f6f5f5;
+}
+
+::ng-deep .dropdown-list li {
+  padding: 7px 10px !important;
+  font-size: 12px !important;
+}
+
+::ng-deep .multiselect-dropdown .dropdown-btn {
+  font-size: 10px;
+}
+
+::ng-deep .multiselect-dropdown .dropdown-btn .dropdown-multiselect__caret {
+  height: 30px !important;
+}
+
+::ng-deep .dropdown-list .item2 {
+  max-height: 115px !important;
+}
+ion-content.addPropertyModal1::part(scroll) {
+  display: flex;
+  align-items: center;
+}
+::ng-deep .ng-dropdown-panel {
+  position: absolute !important;
+  z-index: 1050 !important; /* Ensure it stays above the modal */
+}
+ion-modal#addPropertyModal1 {
+  padding: 10px;
+  --height: 400px;
+  --border-radius: 4px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+ion-modal#addPropertyModal1 .wrapper {
+  margin-bottom: 10px;
+}
+
+::ng-deep ng-multiselect-dropdown .multiselect-dropdown .dropdown-list {
+  position: relative;
+  padding: 0;
+  margin: 0;
+}
+
+::ng-deep
+  .multiselect-dropdown
+  .dropdown-btn
+  .selected-item-container
+  .selected-item {
+  max-width: 100% !important;
+  margin-top: 2px;
+  font-size: 12px;
+}

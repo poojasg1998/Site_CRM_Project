@@ -1,0 +1,182 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<span>
+  <ion-app class="mainSection" *ngIf="!isFingerPrintEnabled && !enableFingerPrintModal">
+    <ion-row>
+      <ion-col *ngIf="isOtpSend" class="backImage" size="2" (click)="isOtpSend=false;loginData.number=''">
+        <ion-img src="../../assets/CRMimages/back.svg"></ion-img>
+      </ion-col>
+
+      <ion-col [size]="isOtpSend? '6':'12'" class="content_center homes247logo">
+        <ion-img src="../../assets/CRMimages/siteCRMlogo.png"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <!-- Login Section -->
+    <span *ngIf="!isFingerPrintEnabled && !enableFingerPrintModal">
+      <form (ngSubmit)="login()" ngNativeValidate *ngIf="!isOtpSend" #otpForm="ngForm">
+        <ion-row class="page-background">
+          <span class="loginSection">
+
+            <!-- Login with registration number -->
+            <ion-row class="center-content" *ngIf="!showUsernameInput">
+              <ion-item no-lines class="password-input">
+                <ion-input inputmode="numeric" #numberInput="ngModel" class="borderNone" name="number"
+                  (input)="setCustomValidity($event)" no-lines placeholder="Enter Register Number"
+                  [(ngModel)]="loginData.number" pattern="^[0-9]{10}$" required></ion-input>
+              </ion-item>
+            </ion-row>
+
+            <!-- Login with userName and Password -->
+            <span *ngIf="showUsernameInput">
+              <ion-row class="center-content">
+                <ion-item no-lines class="password-input">
+                  <ion-input class="borderNone" name="userName" [(ngModel)]="loginData.username" no-lines
+                    placeholder="Username" required></ion-input>
+                </ion-item>
+              </ion-row>
+              <ion-row class="center-content">
+                <ion-item no-lines class="password-input">
+                  <ion-input class="borderNone" [(ngModel)]="loginData.password" name="password" no-lines
+                    placeholder="Password" required [type]="passwordType"></ion-input>
+                  <ion-icon [name]="isPasswordVisible?'eye-outline':'eye-off-outline'" slot="end"
+                    (click)="togglePasswordVisibility()"></ion-icon>
+                </ion-item>
+              </ion-row>
+            </span>
+
+            <ion-row class="center-content font-colorGray font-weight500 font-size12-familyPoppins">
+              <ion-col class="ion-text-right paddingZero" (click)="toggleUsernameVisibility()"> {{showUsernameInput?
+                'Login with OTP':'Login with Username/Password'}}</ion-col>
+            </ion-row>
+
+            <ion-row class="marginTop48">
+              <ion-button fill="clear" type="submit" class="custom-login-button">Login</ion-button>
+            </ion-row>
+            <!-- loginWithBiometrics(true); -->
+            <!-- <ion-button>Click</ion-button>
+                  <ion-button (click)="ionViewDidEnter1()">biometric</ion-button> -->
+          </span>
+        </ion-row>
+      </form>
+    </span>
+
+    <!--OTP Section  -->
+    <span *ngIf="!isFingerPrintEnabled && !enableFingerPrintModal">
+      <ion-row *ngIf="isOtpSend" class="otpSection">
+        <span class="span1">
+          <ion-row>
+            <ion-col class="ion-tex-left otpValidation">OTP Verification</ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="custom-col">Enter the verification code we just sent on your Mobile Number.</ion-col>
+          </ion-row>
+
+          <form (ngSubmit)="otpVerification()" ngNativeValidat #otpForm="ngForm">
+            <ion-row>
+              <ion-row style="width: 100%;"><ion-col style="display: flex;
+                justify-content: center !important;
+                align-items: center !important;" class="ion-text-center">{{display}}</ion-col></ion-row>
+              <ion-row style="width: 100%;">
+                <ng-otp-input style="width: 100%;display: flex;align-items: center;justify-content: center;"
+                  (onInputChange)="onOtpChange($event)" [config]="{length:4,allowNumbersOnly:true}"></ng-otp-input>
+              </ion-row>
+            </ion-row>
+            <ion-row class="marginTop48">
+              <ion-button fill="clear" type="submit" class="custom-login-button"
+                [disabled]="!otpForm.valid">Verify</ion-button>
+
+            </ion-row>
+          </form>
+        </span>
+        <span class="span2">
+          <ion-row>
+            <ion-col *ngIf="otpResend">
+              <span class="otpreceivedText"> Didn’t received code ? </span>
+              <span class="otpResendText" (click)="resendOtp()"> Resend</span>
+            </ion-col>
+          </ion-row>
+        </span>
+      </ion-row>
+    </span>
+  </ion-app>
+
+
+  <div *ngIf="enableFingerPrintModal">
+    <ion-row>
+      <ion-col [size]="isOtpSend? '6':'12'" class="content_center homes247logo mb-0 mt-2">
+        <ion-img src="../../assets/CRMimages/siteCRMlogo.png"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <div style="    display: flex
+;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vw;">
+      <ion-row>
+        <ion-col class="content_center">
+          <ion-img style="width:35%" src="../../assets/CRMimages/fingerPrint-icon.svg"></ion-img>
+        </ion-col>
+      </ion-row>
+      <ion-row class="enable-text">
+        <ion-col class="d-flex align-items-center justify-content-center flex-column">
+          <span>Enable Fingerprint</span>
+          <p>If you enable touch ID, you don’t need to enter your password when you login</p>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <ion-row class="continue-notNow-row">
+      <ion-col class="d-flex align-items-center justify-content-center flex-column">
+        <h2 (click)="fingerPrintEnable()">Continue</h2>
+        <p (click)="enableFingerPrintModal=false; this.authService.login()">Not Now</p>
+      </ion-col>
+    </ion-row>
+  </div>
+
+
+  <div *ngIf="isFingerPrintEnabled">
+    <ion-header style="box-shadow: none;">
+      <ion-row>
+        <ion-col [size]="isOtpSend? '6':'12'" class="content_center homes247logo mb-0 mt-2">
+          <ion-img src="../../assets/CRMimages/siteCRMlogo.png"></ion-img>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+
+    <div class="login-container">
+      <div class="login-form-wrapper">
+        <ion-row class="m-4 mb-1">
+          <ion-col [size]="isOtpSend? '6':'12'" class="d-flex align-items-center justify-content-center flex-column">
+            <ion-img src="../../assets/CRMimages/login-profile-icon.svg"></ion-img>
+            <span>{{loggedMailId}}</span>
+            <ion-input class="passwordInput mt-4 ml-2 mr-2" [(ngModel)]="loggedPassword" name="password" no-lines
+              placeholder="Password" required [type]="passwordType"></ion-input>
+          </ion-col>
+        </ion-row>
+        <ion-row class="login-btn-row mx-5">
+          <ion-col>
+            <h2 (click)="isFingerPrintEnabled=false;navigateToDashBoard(loggedMailId, loggedPassword)">
+              Login</h2>
+          </ion-col>
+        </ion-row>
+      </div>
+
+      <div class="or-divider d-flex align-items-center my-3 mx-4">
+        <div class="flex-grow-1 border-top"></div>
+        <span class="px-2 text-muted small">OR</span>
+        <div class="flex-grow-1 border-top"></div>
+      </div>
+
+      <div (click)="loginwithFingerPrint()"
+        class="fingerprint-wrapper d-flex align-items-center justify-content-center flex-column">
+        <ion-img style="width: 20%;" src="../../assets/CRMimages/finger-print-ligin-icon.svg"></ion-img>
+        <p class="loginwith-fingerPrint">Login with Touch ID</p>
+      </div>
+    </div>
+  </div>
+
+</span>

@@ -1,0 +1,3000 @@
+<ion-row
+  *ngIf="(callStatus == 'Call Connected'|| callStatus == 'Answered by customer'  || callStatus == 'Call Disconnected' || callStatus == 'Answered' || 
+callStatus == 'BUSY' || callStatus == 'Executive Busy' || callStatus == 'CONNECTING' ||  callStatus == 'Answered by agent') && !isOnCallDetailsPage"
+  [ngClass]="this.callStatus == 'Call Disconnected' || this.callStatus == '' || this.callStatus ==
+  undefined?'callDisconnectedBg_color':(callStatus == 'Answered by agent' || callStatus == 'Ringing')?'callRingingBg_color': 'callConnectedBg_color'">
+
+  <ion-col size="2" class="content_center" (click)="!isfromOnCallModal?callStatus = '':onBack()"
+    [ngClass]="!isfromOnCallModal && (callStatus == 'Call Connected' || callStatus == 'CONNECTING' || callStatus == 'Answered')?'pointer-event-none opacity4':''">
+    <ion-icon style="font-size: 24px;color: white;" name="arrow-back">back</ion-icon>
+  </ion-col>
+  <ion-col class="content_center call_icon">
+    <ion-img style="width: 24px;" class="pr-2"
+      [src]="this.callStatus == 'Call Disconnected'?'../../assets/CRMimages/call-disconnected-icon.svg':'../../assets/CRMimages/on-call-icon.svg'"></ion-img><span>{{this.callStatus
+      == 'Call Disconnected' ?'Disconnected':'On Call'}}</span>
+  </ion-col>
+  <ion-col size="2"></ion-col>
+</ion-row>
+
+<input type="hidden" id="customer_phase4">
+<ion-row class="heading"
+  *ngIf="(callStatus != 'Call Disconnected' && callStatus != 'Call Connected' &&  callStatus != 'BUSY' && callStatus != 'Executive Busy' &&  callStatus != 'CONNECTING' && callStatus != 'Answered' && callStatus !='Answered by customer' &&callStatus != 'Answered by agent') && !isOnCallDetailsPage">
+  <ion-col size="2" (click)="onBack()" class="d-flex align-items-center justify-content-start">
+    <ion-icon name="arrow-back" class="backButton"></ion-icon>
+  </ion-col>
+  <ion-col size="8" class="content_center">
+
+    {{ localStorage.getItem('Role')=='1' || !(localStorage.getItem('Role')=='50003' ||
+    localStorage.getItem('Role')=='50004') ?'Lead Details':''}}
+
+    <ion-row style="width: 100%;" class="retailMandate"
+      *ngIf="localStorage.getItem('Role')!='1' && localStorage.getItem('Role')=='50003' || localStorage.getItem('Role')=='50004'">
+      <ion-col class="content_center" [ngClass]="isRetail?'activeHtype':''" (click)="isRetail = true;onHtype('retail')">
+        <div>
+          <span class="font-size16-familyPoppins">Retail</span>
+        </div>
+      </ion-col>
+      <ion-col class="content_center" [ngClass]="!isRetail?'activeHtype':''"
+        (click)="isRetail = false;onHtype('mandate')">
+        <div>
+          <span class="font-size16-familyPoppins">Mandate</span>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <!-- {{'Lead Details'}} -->
+  </ion-col>
+  <ion-col size="2" class="d-flex align-items-center justify-content-end" (click)="openEndMenu()">
+    <ion-icon name="menu" class="menu_icon"></ion-icon>
+  </ion-col>
+</ion-row>
+
+<ion-content *ngIf="!isOnCallDetailsPage" class="page-background" #content (ionScroll)="onScroll($event)"
+  scrollEvents="true">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+  <div class="content_center loader" *ngIf="showSpinner">
+    <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+  </div>
+
+  <div style="margin-bottom: 20%">
+    <!-- INFO SECTION -->
+    <div *ngIf="isProfile">
+      <ion-row class="marginTop10" style="margin: 10px;">
+        <ion-col size="3" id="editProfileModal" (click)="onEditProfile(show_cnt.customer_IDPK)"
+          class="font-size14-familyPoppins ion-justify-content-center content_center editProfile">
+          Edit
+          <div class="content_center">
+            <ion-img src="../../../assets/CRMimages/edit.svg"></ion-img>
+          </div>
+        </ion-col>
+        <ion-col size="4"></ion-col>
+        <!-- <ion-col size="5" *ngIf="isAdmin"
+          class="font-size14-familyPoppins ion-justify-content-center content_center editProfile" id="click-trigger">
+          Assign
+          <div class="content_center" style="padding-left: 2px;">
+            <ion-img src="../../../assets/CRMimages/reassignicon.svg"></ion-img>
+          </div>
+        </ion-col> -->
+
+        <!-- <ion-col *ngIf="isVisitAssign_btn && isCS" size="5"
+          class="font-size14-familyPoppins ion-justify-content-center content_center editProfile"
+          (click)="onvisitAssignModal(); ">
+          Visit Assign
+          <div class="content_center" style="padding-left: 2px;">
+            <ion-img src="../../../assets/CRMimages/reassignicon.svg"></ion-img>
+          </div>
+        </ion-col> -->
+        <ion-popover trigger="click-trigger" triggerAction="click" style="--max-width:150px;padding: 10px;">
+          <ng-template>
+            <div class="dropdown" style="padding: 5px;">
+              <div (click)="displayAssignLeadModal('retail')"><span>Assign To Retail</span></div>
+              <div (click)="displayAssignLeadModal('mandate')"><span>Assign To Mandate</span></div>
+            </div>
+          </ng-template>
+        </ion-popover>
+      </ion-row>
+
+      <!-- edit icon -->
+      <!-- <ion-row *ngIf="!isAdmin" [ngClass]="block?'pointer-event-none opacity4':''"
+        class="ion-justify-content-end marginTop10" (click)="onEditProfile(show_cnt.customer_IDPK)">
+        <ion-col size="3" class="font-size14-familyPoppins content_center editProfile">
+          Edit
+          <div class="content_center">
+            <ion-img src="../../../assets/CRMimages/edit.svg"></ion-img>
+          </div>
+        </ion-col>
+      </ion-row> -->
+
+      <div class="bg_color_blue marginTop10" style="border-radius: 7px;margin: 10px;">
+        <span>
+          <ion-row *ngIf="isAdmin">
+            <ion-col class="ion-text-right" style="padding:0 5px">
+              <span class="font-size10-familyPoppins text_color_blue">Lead Recieved - {{show_cnt?.datetime | date:
+                'dd-MMM-yyyy hh:mm: a'}}</span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row *ngIf="!isAdmin">
+            <ion-col class="ion-text-right" style="padding:0 5px" *ngFor="let rm of assignedrm">
+              <span class="font-size10-familyPoppins text_color_blue">Lead Assigned - {{
+                rm?.assigneddate | date: 'dd-MMM-yyyy hh:mm: a'}}</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="leadName">
+            <span>
+              {{(show_cnt?.enquiry_name)?(show_cnt?.enquiry_name):(show_cnt?.customer_name)}}
+            </span>
+            <span *ngIf="show_cnt?.enquiry_altname"><span
+                *ngIf="show_cnt?.customer_name">/</span>{{show_cnt?.enquiry_altname}}</span>
+            <!-- <span>{{ show_cnt?.customer_name  && show_cnt?.enquiry_altname?
+          show_cnt?.customer_name +"/"+ show_cnt?.enquiry_altname:show_cnt?.customer_name?show_cnt?.customer_name:show_cnt?.enquiry_name}}</span> -->
+            <div *ngIf="show_cnt?.lead_priority > '0' && isAdmin" class="priority-div content_center"
+              [ngClass]="show_cnt?.lead_priority ==='1'?'activeHot':show_cnt?.lead_priority === '2'?'activeWarm':'activeCold'">
+              <div class="priority">
+                {{ show_cnt?.lead_priority === '1'?'HOT':show_cnt?.lead_priority === '2'?'WARM':'COLD'}}
+              </div>
+              <div class="priority-img">
+                <ion-img [src]="show_cnt?.lead_priority ==='1'?'../../assets/CRMimages/activehoticon.svg':show_cnt?.lead_priority === '2'?'../../assets/CRMimages/activewarmicon.svg':
+                '../../assets/CRMimages/activecoldicon.svg'">
+                </ion-img>
+              </div>
+            </div>
+          </ion-row>
+          <ion-row>
+            <!-- (click)="(assignedrm?.[0].leadstage == 'Fresh' && show_cnt?.customer_budget == null && show_cnt?.customer_size ==null )
+            ?onEditProfile(show_cnt?.customer_IDPK): (isAdmin && activestagestatus[0].stage == 'Junk')? alert():
+            callConfirmationModal.present()" -->
+            <ion-col
+              (click)="(isAdmin && activestagestatus[0].stage == 'Junk')? alert(): callConfirmationModal.present()"
+              size="1.2">
+              <ion-img style="width: 24px;" src="../../../assets/CRMimages/rounded_corner_call_icon.svg"></ion-img>
+            </ion-col>
+            <ion-col (click)="navigateToWhatsApp()" size="1.2"><ion-img style="width: 24px;"
+                src="../../../assets/CRMimages/rounded_corner_whatsapp_icon.svg"></ion-img></ion-col>
+            <ion-col size="1.2" (click)="getAllCallLogs(false);callRecordingsModal.present();"><ion-img
+                style="width: 24px;"
+                *ngIf="((!isAdmin && ((activestagestatus?.[0]?.stage != 'Fresh') || (activestagestatus?.[0]?.stage == 'Fresh' &&  activestagestatus?.[0]?.followupstatus == '4'))) || isAdmin)"
+                src="../../../assets/CRMimages/rounded_corner_play_icon.svg"></ion-img></ion-col>
+          </ion-row>
+
+          <span *ngIf="isAdmin">
+            <ion-row class="source">
+              <ion-col class="font-size12-familyPoppins" style="padding-bottom: 0;">Source</ion-col>
+            </ion-row>
+            <ion-row class="source">
+              <ion-col class="font-size12-familyPoppins"
+                style="padding-top: 0;color: rgb(0,0,0,0.8);">{{show_cnt?.customer_source}}</ion-col>
+            </ion-row>
+
+            <span *ngIf="closestObject?.length && closestObject[0]?.followup_status === '4'">
+              <ion-row>
+                <ion-col class="font-size12-familyPoppins" style="padding-bottom: 0;">
+                  <span>Next Followup</span>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col class="font-size12-familyPoppins" style="padding-top: 0;color: rgb(0,0,0,0.8);">
+                  <span>
+                    {{closestObject[0]?.nextaction_date}}-{{closestObject[0]?.nextaction_time}}({{closestObject[0]?.Exec_name}})
+                  </span>
+                </ion-col>
+              </ion-row>
+            </span>
+
+            <span
+              *ngIf="closestObject?.length && closestObject[0]?.followup_status === null && closestObject[0]?.nextaction_date">
+              <ion-row>
+                <ion-col class="font-size12-familyPoppins" style="padding-bottom: 0;">
+                  <span>Next Action</span>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col class="font-size12-familyPoppins" style="padding-top: 0;color: rgb(0,0,0,0.8);">
+                  <span>
+                    {{closestObject[0]?.nextaction_date}}-{{closestObject[0]?.nextaction_time}}({{closestObject[0]?.Exec_name}})
+                  </span>
+                </ion-col>
+              </ion-row>
+            </span>
+
+            <span
+              *ngIf="closestObject?.length && closestObject[0]?.followup === null &&  assignedrm[0]?.leadstage !== 'Fresh'">
+              <ion-row>
+                <ion-col class="font-size12-familyPoppins" style="padding-bottom: 0;">
+                  <span> Next Action</span>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col class="font-size12-familyPoppins" style="padding-top: 0;color: rgb(0,0,0,0.8);">
+                  <span>
+                    {{closestObject[0]?.nextaction_date}}-{{closestObject[0]?.nextaction_time}}({{closestObject[0]?.Exec_name}})
+                  </span>
+                </ion-col>
+              </ion-row>
+            </span>
+          </span>
+
+          <span *ngIf="!isAdmin">
+            <span *ngFor="let rm of assignedrm">
+              <span *ngFor="let suggested of rm.suggestedprop?.slice(0,1)">
+                <ion-row class="source"
+                  *ngIf="suggested.followup === '4' && suggested.followupdate && suggested.followuptime">
+                  <ion-col class="font-size12-familyPoppins" style="padding-bottom: 0;">
+                    <span *ngIf="suggested.followup === '4'"></span> Next Followup</ion-col>
+                </ion-row>
+                <ion-row class="source">
+                  <ion-col class="font-size12-familyPoppins" style="padding-top: 0;color: rgb(0,0,0,0.8);">
+                    {{suggested.followupdate | date: 'dd-MMM-yyyy'}}
+                    {{suggested.followuptime}}
+                  </ion-col>
+                </ion-row>
+              </span>
+            </span>
+          </span>
+        </span>
+        <ion-row class="mergedleads">
+          <ion-col class="content_center" (click)="toViewMergedLeads()" *ngIf="mergedleads && mergedleads.length!==0">
+            <span class="content_center font-size12-familyPoppins font-weight400" style="width: 100%;">
+              {{mergedleads.length}} Lead Merged <ion-img src="../../assets/CRMimages/merged_icon.svg"></ion-img>
+            </span>
+          </ion-col>
+        </ion-row>
+      </div>
+
+      <div style="margin: 10px;">
+        <ion-row class="hed">
+          <ion-col><span>Mail ID</span></ion-col>
+        </ion-row>
+        <ion-row class="data">
+          <ion-col>
+            {{(show_cnt?.enquiry_mail?show_cnt?.enquiry_mail:show_cnt?.customer_mail)}} <span
+              *ngIf="show_cnt?.enquiry_altmail"><span
+                *ngIf="show_cnt?.customer_mail">/</span>{{show_cnt?.enquiry_altmail}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="hed">
+          <ion-col>
+            <span>Contact Number</span>
+          </ion-col>
+        </ion-row>
+        <ion-row class="data">
+          <ion-col
+            *ngIf="localStorage.getItem('Name') != 'demo' && (((isRM || isCS) && ((activestagestatus?.[0]?.stage == 'Fresh' &&  activestagestatus?.[0]?.followupreason == '8') || activestagestatus?.[0]?.stage != 'Fresh')) || roleid == '1') else num "
+            [ngClass]="block?'pointer-event-none opacity4':''">
+            <span> {{show_cnt?.customer_number}} <span *ngIf="show_cnt?.enquiry_altnumber"><span
+                  *ngIf="show_cnt?.customer_number">/</span>{{show_cnt?.enquiry_altnumber}}</span></span>
+
+            <span class="merge_button" style="float: right;" (click)="onMergeIcon()">Merge
+              <ion-img src="../../assets/CRMimages/merge_icon.svg"></ion-img>
+            </span>
+          </ion-col>
+          <ng-template #num>
+            <span>xxxxxxxxxx</span>
+          </ng-template>
+
+        </ion-row>
+
+        <ion-row class="hed" *ngIf="!ismandate">
+          <ion-col>
+            <span> Enquired Project</span>
+          </ion-col>
+        </ion-row>
+        <ion-row class="data" *ngIf="!ismandate">
+          <ion-col>
+            <span>{{show_cnt?.customer_properties?show_cnt?.customer_properties:'--'}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="hed">
+          <ion-col>
+            <span>Preferred Location</span>
+          </ion-col>
+        </ion-row>
+        <ion-row class="data">
+          <ion-col>
+            <span>{{show_cnt?.enquiry_location?show_cnt?.enquiry_location:'--'}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="hed">
+          <ion-col>
+            <span>Property Type</span>
+          </ion-col>
+        </ion-row>
+        <ion-row class="data">
+          <ion-col>
+            <span>{{leadPropertyType?leadPropertyType:'--'}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="hed">
+          <ion-col>
+            <span>Possession</span>
+          </ion-col>
+        </ion-row>
+        <ion-row class="data">
+          <ion-col>
+            <span>{{leadPossession?leadPossession:'--'}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="hed">
+          <ion-col>
+            <span>Size</span>
+          </ion-col>
+        </ion-row>
+        <ion-row class="data">
+          <ion-col>
+            <span>{{show_cnt?.enquiry_bhksize?show_cnt?.enquiry_bhksize +"BHK":'--'}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="hed">
+          <ion-col>
+            <span>Budget</span>
+          </ion-col>
+        </ion-row>
+        <ion-row class="data">
+          <ion-col>
+            <span>{{show_cnt?.enquiry_budget?show_cnt?.enquiry_budget:'--'}}</span>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+    <input type="hidden" id="sectionselector">
+
+    <!-- PROPERTY SECTION -->
+    <div *ngIf="isProperty">
+      <!-- Admin Status Section -->
+      <span>
+        <!-- Executive Name -->
+        <span>
+          <ion-row>
+            <ion-col style="margin-left:10px;padding-bottom:0"><span class="font-weight400 font-size14-familyPoppins"
+                style="color: #647285">Assigned To</span></ion-col>
+          </ion-row>
+
+          <div class="d-flex px-1" style="flex-wrap: wrap; align-items: center;">
+            <span *ngFor="let exec of leadsDetailsInfo">
+              <ion-row *ngIf="((exec.leadstage != 'Fresh' || (exec.leadstage == 'Fresh' && exec.followupreason == 8)) || exec.RMID == this.userid) ||
+              (roleid == '1' || roleid == '2' || role_type == '1')">
+                <div
+                  [ngClass]="(this.selectedExecId === exec.executiveid) && !(exec?.suggestedprop &&  exec?.suggestedprop[0]?.currentstage === '5')?'active_text_borederColor execName':
+               (exec?.suggestedprop &&  exec?.suggestedprop[0]?.currentstage === '5') && 
+               (this.selectedExecId === exec.executiveid)?'dealClosedStyle execName':(exec.reassign_visibility == 4 || exec.reassign_visibility == 2 || exec.reassign_visibility == 3)?'accessRestricted execName': 'text_borderColor execName'">
+                  <span class="d-flex">
+                    <span (click)="getexecutiveId(exec)"> {{exec.RMID == this.userid?'Self':exec.customer_assign_name}}
+                    </span>
+                    <img src="../../../assets/CRMimages/indicatorfordealclosereq.png"
+                      *ngIf="exec?.suggestedprop &&  exec?.suggestedprop[0]?.currentstage === '5'"
+                      style="position: relative;bottom: 2px;">
+                  </span>
+                </div>
+              </ion-row>
+            </span>
+          </div>
+        </span>
+
+        <span *ngFor="let rm of assignedrm" style="position:relative">
+          <span *ngIf="rm.reassign_visibility == 2 && isAdmin" class="text_visiblity">
+            Access removed <br>
+            because the lead was re-assigned.
+          </span>
+          <span *ngIf="rm.reassign_visibility == 3 && isAdmin" class="text_visiblity">
+            Access removed <br>
+            because the lead was in overdue
+          </span>
+          <span *ngIf="rm.reassign_visibility == 4 && isAdmin" class="text_visiblity">
+            Access removed <br>
+            because the Visit was attended by {{rm.visitaccompaniedby}}
+          </span>
+          <span *ngFor="let suggested of rm.suggestedprop;"
+            [ngClass]="(isAdmin && (rm.reassign_visibility == '2' || rm.reassign_visibility == 3 || rm.reassign_visibility == 4))?'pointer-event-none opacity4':''">
+            <div class="suggprop-div"
+              *ngIf=" (suggested.leadstage != 'Junk' && roleid != 1 && roleid != 2) || roleid == '1'"
+              [ngClass]=" ((suggested.actions === '0' && suggested.selection === '0' && suggested.currentstage === '0' || suggested.leadstage === 'Fresh'))?'bg-color1':
+                  ((suggested.selection === '1' && suggested.stagestatus === '1' && suggested.leadstage !== 'Fresh') ||
+                  (suggested.selection === '1' && suggested.stagestatus === '2' && suggested.leadstage !== 'Fresh') ||
+                  (suggested.actions === '1' && suggested.selection === '0' && suggested.currentstage === '1' && suggested.leadstage !== 'Fresh') ||
+                  (suggested.actions === '0' && suggested.selection === '1' && suggested.stagestatus === '3' && suggested.leadstage !== 'Fresh') ||
+                  (suggested.selection === '2' && suggested.stagestatus === '1' && suggested.leadstage !== 'Fresh') ||
+                  (suggested.actions === '1' && suggested.selection === '0' && suggested.currentstage === '3' && suggested.leadstage !== 'Fresh') ||
+                  (suggested.selection === '2' && suggested.stagestatus === '2') ||
+                  (suggested.selection === '3' && suggested.stagestatus ==='1') ||
+                  (suggested.selection === '3' && suggested.stagestatus === '2') ||  (suggested.actions === '4' && suggested.selection === '0' && suggested.currentstage === '4' && suggested.leadstage !== 'Fresh') ||
+                  (suggested.actions === '7' && suggested.currentstage === '5') ||
+                  (suggested.actions === '6' && suggested.currentstage === '5'))?'bg-color2':
+          
+                  ((suggested.actions === '2' && suggested.selection === '0' && suggested.currentstage === '1') ||
+                  (suggested.actions === '3' && suggested.selection === '0' && suggested.currentstage ==='1') ||
+                  (suggested.actions === '5' && suggested.selection === '0' && suggested.currentstage === '3') ||
+                  (suggested.actions === '3' && suggested.selection === '0' && suggested.currentstage === '3') ||
+                  ((suggested.actions === '1' || suggested.actions === '0') && suggested.selection === '2' && suggested.stagestatus === '3') ||
+                  (suggested.actions === '2' && suggested.selection === '0' && suggested.currentstage === '4') ||
+                  (suggested.actions === '3' && suggested.selection === '0' && suggested.currentstage === '4' && suggested.leadstage !== 'Fresh') ||
+                  (suggested.actions === '0' && suggested.selection === '3' && suggested.stagestatus === '3') ||
+                  (suggested.actions === '8' && suggested.currentstage === '5') ||  
+                  (suggested.actions === '3' && suggested.selection === '0' && suggested.currentstage === '0'))?'bg-color3':''">
+
+
+              <ion-row class="nameStatus">
+                <ion-col size="8">
+                  <span>{{suggested.name}}</span>
+                </ion-col>
+
+                <!--Stage Status -->
+                <ion-col size="4" class="content_center">
+                  <span style="color: #D07F00;" *ngIf="(suggested.actions === '0' && 
+                        suggested.selection === '0' && suggested.currentstage === '0')">
+                    NOT VISITED
+                  </span>
+
+                  <span style="color:#006C00" *ngIf="suggested.selection === '1' && 
+                        suggested.stagestatus === '1' && suggested.leadstage !== 'Fresh'">
+                    USV Fixed
+                    <br><span style="font-size:9px">{{suggested.nextdate}} - {{suggested.nexttime}}</span>
+                  </span>
+
+                  <span style="color:#006C00" *ngIf="suggested.selection === '1' &&
+                        suggested.stagestatus === '2' &&  suggested.leadstage !== 'Fresh'">
+                    USV Refixed
+                    <br><span style="font-size:9px">{{suggested.nextdate}} - {{suggested.nexttime}}</span>
+                  </span>
+
+                  <span style="color:#006C00"
+                    *ngIf="suggested.actions === '1' && 
+                        suggested.selection === '0' && suggested.currentstage === '1' && suggested.leadstage !== 'Fresh'">
+                    USV Done <br><span style="font-size:11px">Interested</span>
+                  </span>
+
+                  <span style="color: #ea4545;"
+                    *ngIf="suggested.actions === '2' && suggested.selection === '0' && suggested.currentstage === '1'">
+                    USV Cancelled
+                  </span>
+
+                  <span style="color: #ea4545;" *ngIf="suggested.actions === '3' && 
+                          suggested.selection === '0' && suggested.currentstage === '1'">
+                    USV Done <br><span style="font-size:11px">Not Interested</span>
+                  </span>
+
+                  <span style="color: #ea4545;"
+                    *ngIf="suggested.actions === '0' && 
+                        suggested.selection === '1' && suggested.stagestatus === '3' && suggested.leadstage !== 'Fresh'">
+                    USV Done <br><span style="font-size:8px">Visit Status Not Updated</span>
+                  </span>
+
+                  <span style="color:#006C00"
+                    *ngIf="(suggested.selection === '2' && suggested.stagestatus === '1' && suggested.leadstage !== 'Fresh') || (suggested.selection == '2' && suggested.stagestatus == '1') ">
+                    RSV Fixed
+                    <br><span style="font-size:9px">{{suggested.nextdate}} - {{suggested.nexttime}}</span>
+                  </span>
+
+                  <span style="color:#006C00" *ngIf="suggested.selection === '2' && 
+                        suggested.stagestatus === '2'">
+                    RSV Refixed
+                    <br><span style="font-size:9px">{{suggested.nextdate}} - {{suggested.nexttime}}</span>
+                  </span>
+
+                  <span style="color:#006C00"
+                    *ngIf="suggested.actions === '1' && suggested.selection === '0' && suggested.currentstage === '3' && suggested.leadstage !== 'Fresh'">
+                    RSV Done <span style="font-size:11px;display:flex">Interested</span>
+                  </span>
+
+                  <span style="color: #ea4545;"
+                    *ngIf="suggested.actions === '5' && suggested.selection === '0' && suggested.currentstage === '3'">
+                    RSV Cancelled
+                  </span>
+
+                  <span style="color: #ea4545;"
+                    *ngIf="suggested.actions === '3' && suggested.selection === '0' && suggested.currentstage === '3'">
+                    RSV Done <br><span ststyle="font-size:11px;display:flex">Not Interested</span>
+                  </span>
+
+                  <span style="color:#D07F00"
+                    *ngIf="(suggested.actions === '1' || suggested.actions === '0') && suggested.selection === '2' && suggested.stagestatus === '3'">
+                    RSV Done <br><span style="font-size:11px;display:flex">Not Updated</span>
+                  </span>
+
+                  <span style="color:#006C00" *ngIf="suggested.selection === '3' && suggested.stagestatus === '1'">
+                    Negotiation Fixed
+                    <br><span style="font-size:9px">{{suggested.nextdate}} - {{suggested.nexttime}}</span>
+                  </span>
+
+                  <span style="color:#006C00" *ngIf="suggested.selection === '3' && suggested.stagestatus === '2'">
+                    Negotiation Refixed
+                    <br><span style="font-size:9px">{{suggested.nextdate}} - {{suggested.nexttime}}</span>
+                  </span>
+
+                  <span style="color: #006C00;"
+                    *ngIf="suggested.actions === '4' && suggested.selection === '0' && suggested.currentstage === '4' && suggested.leadstage !== 'Fresh'">
+                    Negotiation Done <span style="font-size:11px;display:flex">Interested</span>
+                  </span>
+
+                  <span style="color: #ea4545;"
+                    *ngIf="suggested.actions === '2' && suggested.selection === '0' && suggested.currentstage === '4'">
+                    Negotiation Cancelled
+                  </span>
+
+                  <span style="color: #ea4545;"
+                    *ngIf="suggested.actions === '3' && suggested.selection === '0' && suggested.currentstage === '4' && suggested.leadstage !== 'Fresh'">
+                    Negotiation Done <br><span style="font-size:10px;display:flex">Not Interested</span>
+                  </span>
+
+                  <span style="color:#D07F00"
+                    *ngIf="suggested.actions === '0' && suggested.selection === '3' && suggested.stagestatus === '3'">
+                    Negotiation Done <br><span style="font-size:10px;display:flex">Not Updated</span>
+                  </span>
+
+                  <span style="color:#006C00" *ngIf="suggested.actions === '7' && suggested.currentstage === '5'"
+                    (click)="isAdmin?openModal('resubmit',''):openModal('closeddeal','')">
+                    {{isAdmin?'Requested For Deal Closure':'Approval Pending'}}
+                  </span>
+
+                  <span style="color:#006C00" *ngIf="suggested.actions === '6' && 
+                        suggested.currentstage === '5'" (click)="openModal('closeddeal','')">
+                    {{isAdmin?'Deal Closed':'Deal Closed'}}
+                  </span>
+
+                  <span style="color: #ea4545;font-size: 11px;" *ngIf="suggested.actions === '8' && 
+                        suggested.currentstage === '5'" (click)="openModal('resubmit','')">
+                    {{isAdmin?'Rejected - Waiting for Response' : 'Request Rejected'}}
+                  </span>
+
+                  <span style="color: #ea4545;"
+                    *ngIf="suggested.actions === '3' && suggested.selection === '0' && suggested.currentstage === '0'">
+                    {{'Lead Pushed to Junk'}}
+                  </span>
+                </ion-col>
+              </ion-row>
+
+              <span *ngIf="suggested.actions === '0' && suggested.selection === '0' && 
+                    suggested.currentstage === '0' || suggested.leadstage === 'Fresh'">
+                <ion-row class="walkinAccom">
+                  <ion-col size="4"><span>Stage</span></ion-col>
+                  <ion-col size="8"><span>Assigned On</span></ion-col>
+                </ion-row>
+                <ion-row class="dateName">
+                  <ion-col size="4">
+                    <span>{{suggested.leadstage}}</span>
+                  </ion-col>
+                  <ion-col size="8">
+                    <span>{{rm.assigneddate | date: 'dd-MMM-yyyy hh:mm: a'}}</span>
+                  </ion-col>
+                </ion-row>
+              </span>
+
+              <span *ngIf="suggested.leadstage !== 'Fresh'">
+                <span *ngIf="rm.regname">
+                  <ion-row class="walkinAccom">
+                    <ion-col>
+                      <span>Registered Name</span>
+                    </ion-col>
+                    <ion-col>
+                      <span>Registered Source</span>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row class="dateName">
+                    <ion-col>
+                      <span>{{rm.regname}}</span>
+                    </ion-col>
+                    <ion-col>
+                      <span *ngIf="rm.regsource !== 'Channel Partners-Walkin'">
+                        <span class="font-weight-bold">{{rm.regsource}}</span>
+                      </span>
+                      <span *ngIf="rm.regsource === 'Channel Partners-Walkin'">
+                        <span class="font-weight-bold">{{rm.regcpname}}</span>
+                      </span>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row class="walkinAccom">
+                    <ion-col>
+                      <span>Bedroom </span>
+                    </ion-col>
+                    <ion-col>
+                      <span>Bugget</span>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row class="dateName">
+                    <ion-col>
+                      <span>{{rm.regbhk}} BHK</span>
+                    </ion-col>
+                    <ion-col>
+                      <span>{{rm.budget}}</span>
+                    </ion-col>
+                  </ion-row>
+                </span>
+
+                <ion-row class="walkinAccom">
+                  <ion-col>
+                    <span>Walkin Time</span>
+                  </ion-col>
+                  <ion-col>
+                    <span>
+                      Stage
+                    </span>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row class="dateName">
+                  <ion-col>
+                    <span>{{rm.walkintime | date: 'dd-MMM-yyyy hh:mm: a'}}</span>
+                  </ion-col>
+                  <ion-col>
+                    <span>
+                      {{suggested.leadstage}}
+                    </span>
+                  </ion-col>
+                </ion-row>
+              </span>
+
+
+              <!-- <span *ngIf="!(suggested.selection === '1' && suggested.stagestatus === '1') &&
+                  !(suggested.actions === '0' && suggested.selection === '0' && suggested.currentstage === '0') && isAdmin">
+                    <ion-row class="walkinAccom">
+                      <ion-col><span>Accompanied by</span></ion-col>
+                    </ion-row>
+          
+                    <ion-row class="dateName">
+                      <ion-col><span>{{rm.customer_assign_name}}</span></ion-col>
+                    </ion-row>
+                  </span> -->
+
+              <!-- Next Action -->
+              <span
+                *ngIf=" ((suggested.actions == '0' && suggested.selection == '0' && suggested.currentstage == '0' || suggested.leadstage == 'Fresh')|| (suggested.actions === '1' && suggested.selection === '0' && suggested.currentstage === '1' && suggested.leadstage !== 'Fresh') || (suggested.selection === '2' && suggested.stagestatus === '1' && suggested.leadstage !== 'Fresh') || (suggested.actions === '1' && suggested.selection === '0' && suggested.currentstage === '3' && suggested.leadstage !== 'Fresh') || (suggested.selection === '3' && suggested.stagestatus === '1') || (suggested.actions === '4' && suggested.selection === '0' && suggested.currentstage === '4' && suggested.leadstage !== 'Fresh') || (suggested.actions === '3' && suggested.selection === '0' && suggested.currentstage === '4' && suggested.leadstage !== 'Fresh')) &&  (suggested.followup === '4' && suggested.followupdate !== null)">
+                <ion-row class="walkinAccom">
+                  <ion-col><span>Next Followup fixed on :</span></ion-col>
+                </ion-row>
+                <ion-row class="dateName">
+                  <ion-col>
+                    <span>{{suggested.followupdate | date: 'dd-MMM-yyyy'}} &nbsp;{{suggested.followuptime}}</span>
+                  </ion-col>
+                </ion-row>
+              </span>
+
+              <ion-row class="regSuggState">
+                <ion-col>
+                  <span *ngIf="suggested.registered?.length">
+                    <span *ngFor="let register of suggested.registered;">
+                      <span style="color: red;" *ngIf="isDateOver30Days(register.registered_date)"
+                        (click)="fetchmails(suggested.name,suggested.propid);registereNowModal.present()">
+                        Expired - Register Now
+                      </span>
+                      <span style="color: #006C00;"
+                        (click)="fetchregistereddata(register.Lead_IDFK,register.registered_propertyid);registeredModal.present()"
+                        *ngIf="!isDateOver30Days(register.registered_date) && (register.Exec_IDFK == userid || userid == '1')">
+                        REGISTERED
+                      </span>
+
+                      <span style="color: #006C00;"
+                        *ngIf="!isDateOver30Days(register.registered_date) && register.Exec_IDFK != userid && userid != '1'">
+                        Already Registered
+                      </span>
+                    </span>
+                  </span>
+
+                  <span (click)="fetchmails(suggested.name,suggested.propid);registereNowModal.present()"
+                    style="color:#0074AE" *ngIf="!suggested.registered?.length">
+                    REGISTER NOW
+                  </span>
+                </ion-col>
+
+              </ion-row>
+
+              <ion-row class="updateVisit" (click)="onfooter('activity')">
+                <ion-col class="ion-text-center">
+                  <span>UPDATE VISIT</span>
+                </ion-col>
+              </ion-row>
+            </div>
+          </span>
+
+          <div *ngIf="!rm.suggestedprop" class="noPropSugg">
+            <span style="font-size: medium;color: #a9a9a9;">
+              No Properties Suggested</span>
+
+          </div>
+        </span>
+
+      </span>
+    </div>
+
+    <!--STATUS AND ACTIVITY SECTION  -->
+    <div *ngIf="isStatusActivity" class="m-2">
+
+      <div>
+        <ion-row class="activestatusCss marginBottom15px">
+          <ion-col [ngClass]="isAdminExceStatus?'rightBorder': block?'pointer-event-none opacity4 blurText':''"
+            (click)="onStatusActivity('status')" class="content_center">
+            <span>Status</span>
+          </ion-col>
+          <!-- {{isPlanSection}}
+        {{isAdminExceStatus}} -->
+
+          <span
+            *ngIf="((assignedrm && (assignedrm[0]?.leadstage == 'USV' || assignedrm[0]?.leadstage == 'SV' || assignedrm[0]?.leadstage == 'RSV' || assignedrm[0]?.leadstage == 'Final Negotiation')) || (assignedrm && assignedrm[0]?.leadstage == 'Fresh' && assignedrm[0]?.followupreason == '8')) && assignedrm[0].leadstatus != '3'">
+            <ion-col [ngClass]="isPlanSection?'rightBorder':block?'pointer-event-none opacity4 blurText':''"
+              [hidden]="assignedrm && assignedrm[0]?.leadstage == 'Fresh' && assignedrm[0]?.followupreason != '8'"
+              class="content_center">
+
+              <span (click)="onStatusActivity('plan');checkstage()"
+                *ngIf="assignedrm && (assignedrm[0]?.leadstage == 'USV' || assignedrm[0]?.leadstage == 'RSV' || assignedrm[0]?.leadstage == 'Final Negotiation')">
+                <span *ngIf="selectedSuggestedProp && selectedSuggestedProp['weekplan'] == null">Fix a Plan</span>
+                <span *ngIf="selectedSuggestedProp && selectedSuggestedProp['weekplan'] != null">Fixed Plan</span>
+              </span>
+
+              <span (click)="checkstage()"
+                *ngIf="assignedrm && assignedrm[0]?.leadstage == 'Fresh' && assignedrm[0]?.followupreason == '8'">
+                <i class="now-ui-icons shopping_cart-simple"></i>
+                <span>Fix a Plan</span>
+              </span>
+            </ion-col>
+          </span>
+
+          <ion-col [ngClass]="isAdminExeActivity?'leftBorder':''" (click)="onStatusActivity('activity')"
+            class="content_center">
+            <span>Activity</span>
+          </ion-col>
+        </ion-row>
+
+
+        <div *ngIf="isAdminExceStatus" [ngClass]="visitAssigModalDismiss || (onCallLeadData?.direction != 'inbound' && 
+          (callStatus != 'Answered by customer' && callStatus != '') )?'pointer-event-none opacity4':''">
+          <!-- executive name -->
+          <div *ngIf="isAdminExceStatus" class="marginBottom15px bg_border_color">
+            <ion-row>
+              <ion-col style="padding-bottom:0"><span class="font-weight400 font-size14-familyPoppins"
+                  style="color: #647285">Assigned To</span></ion-col>
+            </ion-row>
+            <div class="d-flex px-1" style="flex-wrap: wrap; align-items: center;">
+              <span *ngFor="let exec of leadsDetailsInfo">
+                <div *ngIf="((exec.leadstage != 'Fresh' || (exec.leadstage == 'Fresh' && exec.followupreason == 8)) || exec.RMID == this.userid) ||
+                            (roleid == '1' || roleid == '2' || role_type == '1')"
+                  [ngClass]="(this.selectedExecId === exec.executiveid) && !(exec?.suggestedprop &&  exec?.suggestedprop[0]?.currentstage === '5')?'active_text_borederColor execName': 
+                  
+                  (exec?.suggestedprop && exec?.suggestedprop[0]?.currentstage === '5') &&  (this.selectedExecId === exec.executiveid)?'dealClosedStyle execName': (exec?.suggestedprop &&  exec?.suggestedprop[0]?.currentstage === '5')?'text_color_green text_borderColor execName':(exec.reassign_visibility == 4 || exec.reassign_visibility == 2 || exec.reassign_visibility == 3)?'accessRestricted execName': 'text_borderColor execName'">
+
+                  <span class="d-flex align-items-center justify-content-center">
+                    <span class="" (click)="getexecutiveId(exec);"> {{exec.RMID == this.userid?'Self':
+                      exec.customer_assign_name}}
+                    </span>
+                    <img src="../../../assets/CRMimages/indicatorfordealclosereq.png"
+                      *ngIf="exec?.suggestedprop && exec?.suggestedprop[0]?.currentstage === '5'"
+                      style="position: relative;bottom: 2px;">
+                  </span>
+                </div>
+              </span>
+            </div>
+          </div>
+
+          <!-- property name -->
+          <div class="marginBottom15px" *ngIf="assignedrm?.length && assignedrm[0]?.suggestedprop?.length > 1">
+            <ion-row>
+              <div class="p-0">
+                <button *ngFor="let property of assignedrm[0]?.suggestedprop;  let i = index" id="closedsection"
+                  [ngClass]=" (propid === property.propid)? 'actionss':''"
+                  (click)='tabclick(i,property); selectedItem = i;addquerryParam(property)' type="button"
+                  class="btn btnTab commonbtnss actionbtnss actionss{{i}}">
+                  <span *ngIf="assignedrm[0]?.suggestedprop">
+                    <i class="fa fa-check-circle iconmarks selectMarks{{i}}" aria-hidden="true"
+                      [ngClass]="(propid === property.propid)? 'selectMarks':''"></i>
+                  </span>&nbsp; {{property.name}}
+                </button>&nbsp;
+              </div>
+            </ion-row>
+          </div>
+
+          <!-- Admin Status -->
+          <div class="marginBottom15px" *ngIf="isAdmin ">
+            <span *ngFor="let rm of assignedrm">
+              <span *ngFor="let suggested of rm.suggestedprop;let i = index">
+                <span *ngIf="(selectedSuggestedProp && selectedSuggestedProp['propid'] === suggested.propid)">
+                  <div
+                    *ngIf="(activestagestatus?.length && (activestagestatus[0]?.stage == 'Deal Closing Requested' || activestagestatus[0]?.stage == 'Deal Closed' || activestagestatus[0]?.stage == 'Closing Request Rejected' || activestagestatus[0]?.stage == 'Deal Closing Pending') && feedbackId == '0' && userid == selectedExecId) || (assignedrm && (assignedrm[0].roleid == 50013 || assignedrm[0].roleid == 50014) && userid == '1')">
+                    <div
+                      style="font-size:medium;font-weight: 700;display: flex;justify-content: center;color: #a9a9a9;">
+                      <span class="pt-3 text-center"
+                        *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Deal Closed' && assignedrm">Lead
+                        Closed by {{assignedrm[0]?.accompany}}</span>
+                      <span class="pt-3 text-center"
+                        *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Deal Closing Requested' && assignedrm">Deal
+                        Closing
+                        Requested sent by {{assignedrm[0]?.accompany}}</span>
+                      <span class="pt-3 text-center"
+                        *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Deal Closing Pending' && assignedrm">Deal
+                        Closing Pending request sent to {{assignedrm[0]?.accompany}}</span>
+                      <span class="pt-3 text-center"
+                        *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Closing Request Rejected'">Closing
+                        Request Rejected by Admin</span>
+                    </div>
+                  </div>
+
+                  <!-- Lead Closed -->
+                  <div *ngIf="(suggested.actions === '6' && suggested.currentstage === '5') || (suggested.actions === '8' && 
+                suggested.currentstage === '5')">
+                    <!-- Lead Closed Heading -->
+                    <span *ngIf="suggested.actions === '6' && suggested.currentstage === '5'">
+                      <ion-row class="bg_color_green">
+                        <ion-col class="font-size16-familyPoppins text_color_green">
+                          {{ userid ==='1'?'Deal Closed':'Booking Request Approved'}}
+                        </ion-col>
+                      </ion-row>
+                    </span>
+
+                    <!-- Lead details for both rejected and approved -->
+                    <span
+                      *ngIf="(suggested.actions === '8' && suggested.currentstage === '5') || (suggested.actions === '6' && suggested.currentstage === '5')">
+
+                      <div class="bg_border_color marginBottom15px" *ngFor="let request of requestedunits">
+                        <!-- Lead Rejected heading -->
+                        <span *ngIf="suggested.actions === '8' && suggested.currentstage === '5'">
+                          <ion-row class="bg_color_red">
+                            <ion-col class="font-size16-familyPoppins text_color_red">
+                              Booking Request Is Rejected
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col class="font-size14-familyPoppins">Reason For Rejection</ion-col>
+                          </ion-row>
+                          <ion-row *ngFor="let reject of request.suggested"
+                            style="background: rgb(232, 232, 232,0.4);height: 50px;">
+                            <ion-col class="font-size14-familyPoppins"> {{reject.remarks}}
+                            </ion-col>
+                          </ion-row>
+                        </span>
+
+                        <ion-row>
+                          <ion-col>
+                            <span class="font-colorGray font-weight300 font-size14-familyPoppins">
+                              Selected Unit:
+                            </span>
+                            <span class="font-colorBlack font-weight500 font-size14-familyPoppins"
+                              style="padding-left: 5px;">{{request.bhk}}</span>
+                          </ion-col>
+                        </ion-row>
+
+                        <ion-row>
+                          <ion-col>
+                            <span class="font-colorGray font-weight300 font-size14-familyPoppins">Unit Number:</span>
+                            <span class="font-colorBlack font-weight500 font-size14-familyPoppins"
+                              style="padding-left: 5px;">{{request.unit_number}}</span>
+                          </ion-col>
+                        </ion-row>
+
+                        <ion-row>
+                          <ion-col>
+                            <span class="font-colorGray font-weight300 font-size14-familyPoppins">Dimension:</span>
+                            <span class="font-colorBlack font-weight500 font-size14-familyPoppins"
+                              style="padding-left: 5px;">{{request.dimension}}</span>
+                          </ion-col>
+                        </ion-row>
+
+                        <ion-row>
+                          <ion-col>
+                            <span class="font-colorGray font-weight300 font-size14-familyPoppins">Rate Per Sq Ft:</span>
+                            <span class="font-colorBlack font-weight500 font-size14-familyPoppins"
+                              style="padding-left: 5px;">{{request.rate_per_sqft}}</span>
+                          </ion-col>
+                        </ion-row>
+
+                        <ion-row>
+                          <ion-col>
+                            <span class="font-colorGray font-weight300 font-size14-familyPoppins"> Uploaded
+                              Documents:</span>
+                          </ion-col>
+                        </ion-row>
+
+                        <ion-row>
+                          <ng-container *ngFor="let attached of request.images; let i = index">
+                            <ng-container *ngIf="(getExstendsion(attached.file_name) === 'jpg')">
+                              <ion-col size="6" style="height: 109px;">
+                                <span class="images" [photoGalleryGroup]>
+                                  <span
+                                    [photoGallery]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name">
+                                    <img style="height:100%;width:100%;object-fit: fill;"
+                                      [src]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name" />
+                                  </span>
+                                </span>
+                              </ion-col>
+                            </ng-container>
+                            <ng-container *ngIf="(getExstendsion(attached.file_name) === 'pdf')">
+                              <ion-col size="6" style="height: 109px;">
+                                <a href="https://superadmin-azure.right2shout.in/images/crm/closurefiles/{{attached.file_name}}"
+                                  target="_blank">
+                                  <ion-img style="width:100%;height:80%;object-fit: fill;"
+                                    src="../../assets/CRMimages/adobe-reader.svg"></ion-img>
+                                  <div class="font-size10-familyPoppins font-colorBlack font-weight500 uploadedFile">
+                                    {{attached.file_name}}</div>
+                                </a>
+                              </ion-col>
+                            </ng-container>
+                          </ng-container>
+                        </ion-row>
+
+                        <!-- Edit button(if Only lead rejected) -->
+                        <ion-row class="content_center margin-top-16"
+                          *ngIf="(suggested.actions === '8' && suggested.currentstage === '5') || (suggested.actions === '6' && suggested.currentstage === '5')"
+                          (click)="openModal('resubmit',request.closedlead_id)">
+                          <ion-col size="4" class="content_center font-colorWhite font-size16-familyPoppins"
+                            style="background: #0B7AB2;border-radius: 2px;">
+                            Edit <ion-img style="width:16px; height:16px"
+                              src="../../assets/CRMimages/edit-text.svg"></ion-img>
+                          </ion-col>
+                        </ion-row>
+                      </div>
+                    </span>
+                  </div>
+
+                  <!-- Booking Request Section -->
+                  <span *ngFor="let request of requestedunits">
+                    <div class="bg_border_color marginBottom15px" *ngIf="(suggested.actions === '7' && 
+            suggested.currentstage === '5') ">
+                      <ion-row class="bg_color_blue">
+                        <ion-col class="font-size16-familyPoppins font-weight400 text_color_blue">
+                          Booking Request</ion-col>
+                      </ion-row>
+                      <div>
+                        <ion-row>
+                          <ion-col class="padding_bottom_zero font-size16-familyPoppins">Selected Unit:</ion-col>
+                        </ion-row>
+                        <ion-row class="requestedData">
+                          <!-- <pre>{{ requestedunits | json }}</pre> -->
+
+                          <ion-select id="unit" [(ngModel)]="request.bhk" name="bhk" class="font-size16-familyPoppins"
+                            toggleIcon="chevron-down" interface="popover" placeholder="Select Units">
+                            <ion-select-option class="font-size14-familyPoppins" value="1BHK">1 BHK</ion-select-option>
+                            <ion-select-option class="font-size14-familyPoppins" value="2BHK">2 BHK</ion-select-option>
+                            <ion-select-option class="font-size14-familyPoppins" value="3BHK">3 BHK</ion-select-option>
+                            <ion-select-option class="font-size14-familyPoppins" value="4BHK">4 BHK</ion-select-option>
+                            <ion-select-option class="font-size14-familyPoppins" value="5BHK">5 BHK</ion-select-option>
+                          </ion-select>
+                        </ion-row>
+
+                        <ion-row>
+                          <ion-col class="padding_bottom_zero font-size16-familyPoppins">Unit Number:</ion-col>
+                        </ion-row>
+                        <ion-row class="requestedData">
+                          <ion-input id="unit_number" [(ngModel)]="request.unit_number" name="unit_number"
+                            class="font-size16-familyPoppins"></ion-input>
+                        </ion-row>
+
+                        <ion-row>
+                          <ion-col class="padding_bottom_zero font-size16-familyPoppins">Dimension:</ion-col>
+                        </ion-row>
+                        <ion-row class="requestedData">
+                          <ion-input class="font-size16-familyPoppins" id="dimension" [(ngModel)]="request.dimension"
+                            name="dimension"></ion-input>
+                        </ion-row>
+
+                        <ion-row>
+                          <ion-col class="padding_bottom_zero font-size16-familyPoppins">Rate Per Sqft:</ion-col>
+                        </ion-row>
+                        <ion-row class="requestedData">
+                          <ion-input class="font-size16-familyPoppins" id="rate_per_sqft"
+                            [(ngModel)]="request.rate_per_sqft" name="rate_per_sqft"></ion-input>
+                        </ion-row>
+
+                        <ion-row>
+                          <ion-col class="padding_bottom_zero font-size16-familyPoppins">Executive Remark</ion-col>
+                        </ion-row>
+                        <ion-row class="requestedData">
+                          <ion-input class="font-size16-familyPoppins" id="rate_per_sqft"
+                            [(ngModel)]="request.rate_per_sqft" name="rate_per_sqft" readonly></ion-input>
+                        </ion-row>
+
+                        <ion-row>
+                          <ion-col class="padding_bottom_zero font-size16-familyPoppins">Uploaded Documents:</ion-col>
+                        </ion-row>
+
+                        <ion-grid>
+                          <ion-row>
+                            <ion-col size="6" style="height: 109px;width: 146px;"
+                              *ngFor="let attached of request.images; let i = index">
+                              <div style="height: 100%;position:relative">
+                                <ng-container *ngIf="getExstendsion(attached.file_name) === 'jpg'">
+                                  <span [photoGalleryGroup]>
+                                    <span
+                                      [photoGallery]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name">
+                                      <img style="height:100%;width:100%;object-fit: fill;"
+                                        [src]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name">
+                                    </span>
+                                  </span>
+                                  <ion-icon (click)="removeImage(attached)" name="close-outline"
+                                    class="close-icon"></ion-icon>
+                                </ng-container>
+                                <ng-container *ngIf="getExstendsion(attached.file_name) === 'pdf'">
+                                  <a href="https://superadmin-azure.right2shout.in/images/crm/closurefiles/{{attached.file_name}}"
+                                    target="_blank">
+                                    <ion-img style="height: 80%; width: 100%;object-fit: fill;"
+                                      src="../../assets/CRMimages/adobe-reader.svg"></ion-img>
+                                    <div class="font-size12-familyPoppins font-colorBlack font-weight500 uploadedFile">
+                                      {{attached.file_name}}</div>
+                                  </a>
+                                </ng-container>
+                              </div>
+                            </ion-col>
+
+                            <ion-col size="12" *ngIf="i > 0 && i % 2 === 0" style="height: 0;"></ion-col>
+                            <ion-col size="6" style="height: 109px;">
+                              <div class="content_center"
+                                style="height: 100%; border: 1px solid #D2D2E4; border-radius: 6px; background: #F1F1F8;">
+                                <label for="file"
+                                  style="height: 100%; display: flex; align-items: center; justify-content: center;">
+                                  <ion-img style="height: auto;"
+                                    src="../../assets/CRMimages/upload-file-icon.svg"></ion-img>
+                                  <input
+                                    (change)="onFileSelected($event,request.Lead_IDFK,request.Exec_IDFK,request.property);"
+                                    type="file" id="file" style="display: none;" name="image"
+                                    accept="image/gif,image/jpeg,image/jpg,image/png" multiple
+                                    data-original-title="upload photos">
+                                </label>
+                              </div>
+                            </ion-col>
+                          </ion-row>
+                        </ion-grid>
+
+                        <ion-row>
+                          <ion-col class="padding_bottom_zero font-size16-familyPoppins">
+                            Reason For Rejection:
+                          </ion-col>
+                        </ion-row>
+                        <ion-row class="custom-textArea">
+                          <ion-col>
+                            <ion-textarea [(ngModel)]="remark" name="remark" #remarkInput="ngModel"
+                              class="rejectedtextarea" required></ion-textarea>
+                          </ion-col>
+                        </ion-row>
+
+                        <ion-row style="margin:10px">
+                          <ion-col class="ion-text-center font-size16-familyPoppins"
+                            [ngClass]="!remarkInput.value || remarkInput.value.trim().length === 0?'reject-btn':'approve-btn'"
+                            (click)="requestrejection(request.Lead_IDFK,request.Exec_IDFK,request.property)"> Reject
+                          </ion-col>
+                          <ion-col
+                            [ngClass]="!remarkInput.value || remarkInput.value.trim().length === 0?'approve-btn':'reject-btn'"
+                            class="ion-text-center font-size16-familyPoppins" style="margin-left:10px" (click)="(!remarkInput.value || remarkInput.value.trim().length === 0)?
+                requestapproval(request.Lead_IDFK,request.Exec_IDFK,request.property):''"> Approve </ion-col>
+                        </ion-row>
+                      </div>
+                    </div>
+                  </span>
+                </span>
+              </span>
+            </span>
+          </div>
+
+          <!-- Executive Status -->
+          <div class="marginBottom15px" *ngIf="!isAdmin ">
+
+            <span *ngFor="let rm of assignedrm">
+              <span *ngFor="let suggested of rm.suggestedprop;let i = index">
+                <span
+                  *ngIf="((this.selectedSuggestedProp && this.selectedSuggestedProp['propid']) === suggested.propid)">
+                  <div
+                    *ngIf="((roleid == '50013' || roleid == '50014') && activestagestatus?.length && (activestagestatus[0]?.stage == 'Deal Closing Requested' || activestagestatus[0]?.stage == 'Deal Closed' || activestagestatus[0]?.stage == 'Closing Request Rejected' || activestagestatus[0]?.stage == 'Deal Closing Pending') && feedbackId == '0' && userid == selectedExecId) || (assignedrm && (assignedrm[0].roleid == '50013' || assignedrm[0].roleid == '50014') && userid == '1')">
+                    <div
+                      style="font-size:medium;font-weight: 700;display: flex;justify-content: center;color: #a9a9a9;">
+                      <span class="pt-3 text-center"
+                        *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Deal Closed' && assignedrm">Lead
+                        Closed by {{assignedrm[0]?.accompany}}</span>
+                      <span class="pt-3 text-center"
+                        *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Deal Closing Requested' && assignedrm">Deal
+                        Closing
+                        Requested sent by {{assignedrm[0]?.accompany}}</span>
+                      <span class="pt-3 text-center"
+                        *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Deal Closing Pending' && assignedrm">Deal
+                        Closing Pending request sent to {{assignedrm[0]?.accompany}}</span>
+                      <span class="pt-3 text-center"
+                        *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Closing Request Rejected'">Closing
+                        Request Rejected by Admin</span>
+                    </div>
+                  </div>
+
+                  <!-- Lead Closed -->
+                  <span *ngIf="!isCS">
+                    <!-- closure request sented to admin -->
+                    <div *ngIf="(suggested.actions === '7' && suggested.currentstage === '5')">
+                      <div class="closureDetails">
+                        <ion-img src="../../assets/CRMimages/closure-requestSubmit.svg"></ion-img>
+                        <p style="position: absolute;top: 95%;" class="font-size16-familyPoppins text_color_orange">
+                          Closure Approval Pending</p>
+                        <p style="position: absolute;top: 103%;" class="font-size12-familyPoppins">
+                          Your property closure request has been sent.</p>
+                        <p style="position: absolute;top: 110%;" class="font-size12-familyPoppins"> You can now <u
+                            class="text_color_blue" (click)="openModal('closeddeal','')">view booking details.</u></p>
+                      </div>
+                    </div>
+
+                    <!-- If sented request is approved -->
+                    <div *ngIf="suggested.actions === '6' && suggested.currentstage === '5'">
+                      <div>
+                        <ion-img src="../../assets/CRMimages/closure-request-approved.svg"></ion-img>
+                        <ion-row>
+                          <ion-col
+                            class="font-size16-familyPoppins text_color_green ion-text-center paddingZero">Closure
+                            Request Approved</ion-col>
+                        </ion-row>
+                        <ion-row>
+                          <ion-col class="font-size10-familyPoppins ion-text-center paddingZero">Your property closure
+                            request has been approved.</ion-col>
+                        </ion-row>
+                        <ion-row>
+                          <ion-col class="font-size10-familyPoppins ion-text-center paddingZero"> You can now <u
+                              class="text_color_blue" (click)="openModal('closeddeal','')">view booking
+                              details.</u></ion-col>
+                        </ion-row>
+                      </div>
+                    </div>
+
+                    <!-- If admin rejected booking request -->
+                    <span *ngIf="suggested.actions === '8' && suggested.currentstage === '5'">
+                      <span *ngFor="let request of requestedunits, let i=index">
+                        <div *ngIf="selectedSuggestedProp['propid'] === request.property" class="requestedData">
+                          <ion-row style="background: rgb(198, 14, 2,0.19);">
+                            <ion-col class="font-size16-familyPoppins text_color_red">
+                              Closure Request Is Rejected
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col style="padding-bottom:0">
+                              <span class="font-colorGray font-weight300">Reason For Rejection:</span>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row style="background: rgb(217, 217, 217,0.4);height: 40px;">
+                            <ion-col style="padding-top:0">
+                              <span class="font-weight400" *ngFor="let reject of request.suggested"
+                                style="padding-left: 5px;color: #595959;">{{reject.remarks}}</span>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <span class="font-colorGray font-weight300">Selected Unit:</span>
+                              <ion-select id="unit" [(ngModel)]="request.bhk" name="bhk"
+                                class="font-size16-familyPoppins" toggleIcon="chevron-down" interface="popover"
+                                placeholder="Select Units">
+                                <ion-select-option class="font-size14-familyPoppins" value="1BHK">
+                                  1 BHK
+                                </ion-select-option>
+                                <ion-select-option class="font-size14-familyPoppins" value="2BHK">
+                                  2 BHK
+                                </ion-select-option>
+                                <ion-select-option class="font-size14-familyPoppins" value="3BHK">
+                                  3 BHK
+                                </ion-select-option>
+                                <ion-select-option class="font-size14-familyPoppins" value="4BHK">
+                                  4 BHK
+                                </ion-select-option>
+                                <ion-select-option class="font-size14-familyPoppins" value="5BHK">
+                                  5 BHK
+                                </ion-select-option>
+                              </ion-select>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <span class="font-colorGray font-weight300">Unit Number:</span>
+                              <ion-input id="unit_number" [(ngModel)]="request.unit_number" name="unit_number" no-lines
+                                style="padding-left: 5px;"></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <span class="font-colorGray font-weight300">Dimension:</span>
+                              <ion-input id="dimension" [(ngModel)]="request.dimension" name="dimension" no-lines
+                                style="padding-left: 5px;"></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <span class="font-colorGray font-weight300">Rate Per Sqft:</span>
+                              <ion-input id="rate_per_sqft" [(ngModel)]="request.rate_per_sqft" name="rate_per_sqft"
+                                no-lines style="padding-left: 5px;"></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <span class="font-colorGray font-weight300"> Uploaded Documents:</span>
+                            </ion-col>
+                          </ion-row>
+                          <ion-grid>
+                            <ion-row>
+                              <ion-col size="6" style="height: 109px;width: 146px;"
+                                *ngFor="let attached of request.images; let i = index">
+                                <div style="height: 100%;position:relative">
+                                  <ng-container *ngIf="getExstendsion(attached.file_name) === 'jpg'">
+                                    <span [photoGalleryGroup]>
+                                      <span
+                                        [photoGallery]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name">
+                                        <img style="height:100%;width:100%;object-fit: fill;"
+                                          [src]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name">
+                                      </span>
+                                    </span>
+                                    <ion-icon (click)="removeImage(attached)" name="close-outline"
+                                      class="close-icon"></ion-icon>
+                                  </ng-container>
+                                  <ng-container *ngIf="getExstendsion(attached.file_name) === 'pdf'">
+                                    <a href="https://superadmin-azure.right2shout.in/images/crm/closurefiles/{{attached.file_name}}"
+                                      target="_blank">
+                                      <ion-img style="height: 80%; width: 100%;object-fit: fill;"
+                                        src="../../assets/CRMimages/adobe-reader.svg"></ion-img>
+                                      <span
+                                        class="font-size12-familyPoppins font-colorBlack font-weight500">{{attached.file_name}}</span>
+                                    </a>
+                                  </ng-container>
+                                </div>
+                              </ion-col>
+
+                              <ion-col size="12" *ngIf="i > 0 && i % 2 === 0" style="height: 0;"></ion-col>
+                              <ion-col size="6" style="height: 109px;">
+                                <div class="content_center"
+                                  style="height: 100%; border: 1px solid #D2D2E4; border-radius: 6px; background: #F1F1F8;">
+                                  <label for="file"
+                                    style="height: 100%; display: flex; align-items: center; justify-content: center;">
+                                    <ion-img style="height: auto;"
+                                      src="../../assets/CRMimages/upload-file-icon.svg"></ion-img>
+                                    <input
+                                      (change)="onFileSelected($event,request.Lead_IDFK,request.Exec_IDFK,request.property);"
+                                      type="file" id="file" style="display: none;" name="image"
+                                      accept="image/gif,image/jpeg,image/jpg,image/png" multiple
+                                      data-original-title="upload photos">
+                                  </label>
+                                </div>
+                              </ion-col>
+                            </ion-row>
+                          </ion-grid>
+
+                          <ion-row class="content_center">
+                            <ion-col size="9" style="padding: 0;">
+                              <ion-button fill="clear" class="activeSaveButton"
+                                (click)="resubmitdata(request.Lead_IDFK,request.Exec_IDFK,request.property,i)">Resend
+                                Closure Request</ion-button>
+                            </ion-col>
+                          </ion-row>
+                        </div>
+                      </span>
+                    </span>
+                  </span>
+                </span>
+              </span>
+            </span>
+
+            <!-- <div
+              *ngIf="((roleid == '50013' || roleid == '50014') && activestagestatus?.length && (activestagestatus[0]?.stage == 'Deal Closing Requested' || activestagestatus[0]?.stage == 'Deal Closed' || activestagestatus[0]?.stage == 'Closing Request Rejected' || activestagestatus[0]?.stage == 'Deal Closing Pending') && feedbackId == '0' && userid == selectedExecId) || (assignedrm && (assignedrm[0].roleid == 50013 || assignedrm[0].roleid == 50014) && userid =='1')">
+              <div style="font-size:medium;font-weight: 700;display: flex;justify-content: center;color: #a9a9a9;">
+                <span class="pt-3"
+                  *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Deal Closed' && assignedrm">Lead
+                  Closed by
+                  {{assignedrm[0]?.accompany}}</span>
+                <span class="pt-3"
+                  *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Deal Closing Requested' && assignedrm">Deal
+                  Closing Requested sent by {{assignedrm[0]?.accompany}}</span>
+                <span class="pt-3"
+                  *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Deal Closing Pending' && assignedrm">Deal
+                  Closing Pending request sent to {{assignedrm[0]?.accompany}}</span>
+                <span class="pt-3"
+                  *ngIf="activestagestatus && activestagestatus[0]?.stage == 'Closing Request Rejected'">Closing
+                  Request
+                  Rejected by Admin</span>
+              </div>
+            </div> -->
+          </div>
+
+          <!-- JUNK LEAD MESSAGE (EXECUTIVE) -->
+          <div *ngIf="roleid !== '1' && activestagestatus?.length && activestagestatus[0]?.stage === 'Junk'">
+            <div style="font-size:medium;font-weight: 700;display: flex;justify-content: center;color: #a9a9a9;">Lead
+              Moved to Junk</div>
+          </div>
+
+          <!-- REVERT BUTTON(ADMIN) -->
+          <div
+            *ngIf="activestagestatus && activestagestatus[0]?.stage === 'Junk' && leadMoveJunkExec && roleid === '1' && feedbackId == '0'"
+            style="display: flex;flex-direction: column;justify-content: center;align-items: center;gap: 1rem;">
+            <div style="font-size:medium;font-weight: 700;display: flex;justify-content: center;color: #a9a9a9;">
+              Lead Moved to Junk</div>
+            <ion-button fill="clead" (click)="revertStage()" class="font-size14-familyPoppins revertbutton">
+              Revert
+            </ion-button>
+          </div>
+
+          <!-- (activestagestatus && activestagestatus[0]?.stage != 'Deal Closing Pending' && assignedrm && (roleid=='40013' || roleid=='40014')) -->
+
+          <!-- Stages Section -->
+          <span
+            *ngIf="( USV !== false || RSV !== false || Negotiation !== false || leadclose !== false || 
+          followup !== false || junkmove !== false) && !((assignedrm && (assignedrm[0]?.reassign_visibility == 4 || assignedrm[0]?.reassign_visibility == 2 || assignedrm[0]?.reassign_visibility == 3)) && isAdmin)"
+            [ngClass]="block?'pointer-event-none opacity4':''">
+            <div *ngIf="!isSuggestedPropBoolean && showRejectionForm === false && isShowStages">
+              <ion-row class="marginBottom15px bg_border_color"
+                *ngIf="followup || USV || RSV || Negotiation || leadclose || junkmove">
+                <div *ngIf="followup" class="stages">
+                  <span [ngClass]="followform?'bg_textColor':''" (click)="actionChange('Follow Up')">
+                    Follow Up</span>
+                </div>
+                <div *ngIf="USV" class="stages">
+                  <span [ngClass]="usvform?'bg_textColor':''" (click)="actionChange('USV')">USV</span>
+                </div>
+                <div *ngIf="RSV" class="stages">
+                  <span [ngClass]="rsvform?'bg_textColor':''" (click)="actionChange('RSV')">RSV</span>
+                </div>
+                <div *ngIf="Negotiation" class="stages">
+                  <span [ngClass]="finalnegoform?'bg_textColor':''"
+                    (click)="actionChange('Final Negotiation')">FN</span>
+                </div>
+                <div *ngIf="leadclose && feedbackId != '1'" class="stages">
+                  <span [ngClass]="leadclosedform?'bg_textColor':''" (click)="actionChange('Lead Closed')">Closed</span>
+                </div>
+                <div *ngIf="junkmove" class="stages">
+                  <span [ngClass]="{'bg_textColor': junkform}" (click)="actionChange('Move to Junk')">
+                    Junk</span>
+                </div>
+              </ion-row>
+
+              <app-follow-up-form *ngIf="followform" [selectedExecId]="selectedExecId"
+                [selectedSuggestedProp]="selectedSuggestedProp">
+              </app-follow-up-form>
+
+              <app-mandate-usv-form *ngIf="usvform" [selectedExecId]="selectedExecId"
+                [selectedSuggestedProp]="selectedSuggestedProp"></app-mandate-usv-form>
+
+              <app-mandate-rsv-form *ngIf="rsvform" [selectedExecId]="selectedExecId"
+                [selectedSuggestedProp]="selectedSuggestedProp"></app-mandate-rsv-form>
+
+              <app-mandate-negoform *ngIf="finalnegoform" [selectedExecId]="selectedExecId"
+                [selectedSuggestedProp]="selectedSuggestedProp"></app-mandate-negoform>
+
+              <!-- <app-closedform *ngIf="leadclosedform" [selectedExecId]="selectedExecId"
+                [selectedSuggesapp-closedformtedProp]="selectedSuggestedProp"></app-closedform> -->
+              <app-mandate-close-form *ngIf="leadclosedform" [selectedExecId]="selectedExecId"
+                [selectedSuggestedProp]="selectedSuggestedProp"></app-mandate-close-form>
+
+              <app-junkform *ngIf="junkform" [selectedExecId]="selectedExecId"
+                [selectedSuggestedProp]="selectedSuggestedProp"></app-junkform>
+            </div>
+          </span>
+
+          <!-- <div class="d-flex justify-content-center align-items-center flex-column" style="padding-block: 8rem;"
+            *ngIf="(!isAdmin && isAccompanyBy && role_type == '1')">
+            <span class="font-size16-familyPoppins">{{assignedrm?.[0]?.visitaccompaniedby}} has assisted the Visit.
+            </span>
+            <div><button class="btn  font-size16-familyPoppins textBgColor" type="button"
+                (click)="accessNow(assignedrm)">Access Now</button></div>
+          </div> -->
+
+          <div class="acess_restricted_class bg_border_color"
+            *ngIf="(assignedrm && (assignedrm[0]?.reassign_visibility == 4 || assignedrm[0]?.reassign_visibility == 2 || assignedrm[0]?.reassign_visibility == 3)) && isAdmin">
+            <img src="../../../assets/CRMimages/manage-lead-modal-icon.svg">
+            <div class="access_restricted_text pt-2">Access Restricted</div>
+            <div class="pt-1" style="font-size: 12px;font-weight: 300;text-align: center;">This executive currently does
+              not have access to this lead. Once enabled, the executive will regain full access for the lead</div>
+            <div class="" style="font-size: 12px;font-weight: 300;"></div>
+            <div class="mt-3 btn_access" (click)="showSpinner = true;enableAccess()">Enable Access</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVITY OR HISTORY SECTION (ADMIN AND EXECUTIVE) -->
+      <!-- style=" border: 0.6px solid #d7d7d7;border-radius: 4px;" -->
+      <div *ngIf="isAdminExeActivity" style=" border: 0.6px solid #d7d7d7;border-radius: 4px; background:white">
+        <ion-row class="callLeadHistory">
+          <ion-col (click)="onCallLeadHistory('leads')" size="4"
+            class="d-flex align-items-center justify-content-center p-1"
+            [ngClass]="isCallHistory == 'leads'?'backgroundLightColor':''"><span style="font-size: 12px;">Lead
+              History</span></ion-col>
+
+          <ion-col (click)="onCallLeadHistory('calls')" size="3"
+            class="d-flex align-items-center justify-content-center p-1"
+            [ngClass]="!isAdmin && executeid != localStorage.getItem('UserId') && role_type != '1'?'pointer-event-none opacity4 blurText':isCallHistory == 'calls'?'backgroundLightColor':''">
+            <span style="font-size: 12px;">Call History</span>
+          </ion-col>
+          <ion-col (click)="onCallLeadHistory('executive')" size="5"
+            class="d-flex align-items-center justify-content-center p-1"
+            [ngClass]="isCallHistory == 'executive'?'backgroundLightColor':''"><span style="font-size: 12px;"
+              *ngIf="assignedrm && assignedrm.length > 0">{{assignedrm[0]?.customer_assign_name}}'s
+              History</span></ion-col>
+        </ion-row>
+
+        <!-- <ion-row *ngIf="isCallHistory == 'leads' || isCallHistory == 'executive'">
+          <div class="history-tl-container p-3">
+            <ul class="tl">
+              <li class="tl-item" *ngFor="let leadhistory of leadtrack;let i = index">
+                <div class="historynametitle">
+                  <div class="item-title">
+                    <span *ngIf="this.username === leadhistory.executivename">You </span>
+                    <span *ngIf="(this.username !== leadhistory.executivename)">
+                      {{ leadhistory.executivename+" "}}</span>
+                    <span>{{ leadhistory.autoremarks}}</span>
+                  </div>
+
+                  <div class="font-size12-familyPoppins font-weight400 font-colorGray">
+                    {{leadhistory.Saveddate}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </ion-row> -->
+
+        <span *ngIf="isCallHistory == 'leads' || isCallHistory == 'executive'">
+          <div class="timeline-item" *ngFor="let leadhistory of leadtrack;let i = index">
+            <ion-row class="date-header w-100" *ngIf="leadhistory.item_type=='message_date'">
+              <ion-col>
+                <span>{{leadhistory.Saveddate}}</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row class="w-100" *ngIf="leadhistory.item_type!='message_date'">
+
+              <!-- LEFT (dot + line) -->
+              <ion-col size="1" class="timeline-left py-0">
+                <span class="dot"></span>
+                <span class="line" *ngIf="(i + 1) < leadtrack.length">
+                </span>
+              </ion-col>
+
+              <!-- TIME -->
+              <ion-col size="2.5" class="time py-0">
+                {{ leadhistory.Saveddate |date:'hh:mm a' }}
+              </ion-col>
+
+              <!-- CONTENT -->
+              <ion-col size="8.5" class="timeline-right py-0">
+                <p class="text">
+
+                  <!-- <span *ngIf="this.username === leadhistory.executivename">You </span> -->
+                  {{((leadhistory.autoremarks == 'got this new lead from Admin' ||
+                  leadhistory.autoremarks == 'got this lead from Admin' ||
+                  leadhistory.autoremarks == 'got this new lead from Admin Auto-Assigned' ||
+                  leadhistory.autoremarks == 'got this lead from Admin auto assigned' ||
+                  leadhistory.autoremarks == 'got this new lead from Admin auto') ? leadhistory.executivename :
+                  leadhistory.updatebyname)}}
+                  <span>{{ leadhistory.autoremarks}}</span>
+
+                  <!-- {{item.execname +" " + item.autoremarks}} -->
+                </p>
+                <p class="remarks">{{leadhistory.Remarks}}</p>
+              </ion-col>
+            </ion-row>
+          </div>
+
+          <div *ngIf="leadtrack?.length == 0">
+            <ion-row>
+              <ion-col class="content_center p-1 font-size12-familyPoppins "><span>No History
+                  Found...</span></ion-col>
+            </ion-row>
+          </div>
+        </span>
+
+        <ion-row *ngIf="isCallHistory == 'calls'">
+          <ion-col *ngIf="groupedByDate.length == 0" class="content_center"><span class="font-size12-familyPoppins">No
+              records
+              found.....</span></ion-col>
+
+          <ion-card class="shadow-sm rounded-2xl m-1" style="width:100%;box-shadow: none;"
+            *ngFor="let group of groupedByDate, let i = index">
+            <ion-card-content class="p-0">
+              <ion-grid class="p-0">
+                <ion-row class="backgroundLightColor">
+                  <ion-col><span>{{group.date | date:'y-MM-dd'}}</span></ion-col>
+                </ion-row>
+                <ion-row *ngFor="let call of group.calls" style=" border-bottom: 0.6px solid #d7d7d7">
+                  <ion-col size="2" class="content_center">
+                    <audio #audioRef [src]="call.filename"></audio>
+                    <ion-icon (click)="toggleAudio(audioRef, $event)" name="play" class="play-icon"></ion-icon>
+                  </ion-col>
+                  <ion-col>
+                    <div class="font-size12-familyPoppins">{{call.leadname}}</div>
+                    <div class="font-size12-familyPoppins">{{call.starttime | date:'hh:mm a'}} /
+                      {{call.direction}}</div>
+                  </ion-col>
+                  <ion-col size="3" class="content_center">
+                    <span class="font-size12-familyPoppins fw-semibold"
+                      [ngClass]="call.callstatus=='BUSY'?'font-colorBlue':call.callstatus=='ANSWER'?'text_color_green': ''">{{call.callstatus}}</span>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </ion-row>
+      </div>
+
+      <!-- FIXED PLAN SECTION -->
+      <div
+        *ngIf="isPlanSection && assignedrm &&  (assignedrm[0]?.leadstage == 'USV' || assignedrm[0]?.leadstage == 'SV' ||  assignedrm[0]?.leadstage == 'RSV' ||  assignedrm[0]?.leadstage == 'Final Negotiation')"
+        [ngClass]="visitAssigModalDismiss || (onCallLeadData?.direction != 'inbound' && (callStatus == 'Call Connected' || callStatus == 'CONNECTING' || callStatus == 'Executive Busy' || callStatus == 'BUSY') )?'pointer-event-none opacity4':''">
+        <!-- executive name -->
+        <div class="marginBottom15px bg_border_color">
+          <ion-row>
+            <ion-col style="padding-bottom:0"><span class="font-weight400 font-size14-familyPoppins"
+                style="color: #647285">Assigned To</span></ion-col>
+          </ion-row>
+          <div class="d-flex px-1" style="flex-wrap: wrap;align-items: center;">
+            <span class="execName" *ngFor="let exec of leadsDetailsInfo"
+              [ngClass]="(this.selectedExecId === exec.executiveid) && !(exec?.suggestedprop &&  exec?.suggestedprop[0]?.currentstage === '5')?'active_text_borederColor': (exec?.suggestedprop &&  exec?.suggestedprop[0]?.currentstage === '5') &&  (this.selectedExecId === exec.executiveid)?'dealClosedStyle': (exec?.suggestedprop &&  exec?.suggestedprop[0]?.currentstage === '5')?'text_color_green text_borderColor':'text_borderColor'">
+
+              <span *ngIf="((exec.leadstage != 'Fresh' || (exec.leadstage == 'Fresh' && exec.followupreason == 8)) || exec.RMID == this.userid) ||
+          (roleid == '1' || roleid == '2'|| role_type == '1')" class="d-flex">
+                <span class="" (click)="getexecutiveId(exec);">
+                  {{exec.RMID == this.userid?'Self' : exec.customer_assign_name}}
+                </span>
+                <img src="../../../assets/CRMimages/indicatorfordealclosereq.png"
+                  *ngIf="exec?.suggestedprop &&  exec?.suggestedprop[0]?.currentstage === '5'"
+                  style="position: relative;bottom: 2px;">
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <ion-row class="weekPlan">
+          <ion-col>
+            <div [ngClass]="selectedPlanType == 'weekend'?'active_text_borederColor':'text_borederColor'"
+              class="font-size12-familyPoppins content_center" (click)="selectedplan('weekend')">Weekend
+              <img *ngIf="visitpanelselection && visitpanelselection[0]?.weekplan == '2'"
+                src="../../../assets/CRMimages/checkin.png" style="padding-left: 2px;">
+            </div>
+          </ion-col>
+          <ion-col>
+            <div [ngClass]="selectedPlanType == 'weekdays'?'active_text_borederColor':'text_borederColor'"
+              class="font-size12-familyPoppins content_center" (click)="selectedplan('weekdays')">Weekdays
+              <img *ngIf="visitpanelselection && visitpanelselection[0]?.weekplan == '1'"
+                src="../../../assets/CRMimages/checkin.png" style="padding-left: 2px;">
+            </div>
+          </ion-col>
+          <!-- <ion-col size="5">
+          <div [ngClass]="isYetToConfirm?'active_text_borederColor':'text_borederColor'" class="font-size12-familyPoppins content_center" src="../../../assets/CRMimages/checkin.png" style="padding-left: 2px;" (click)="selectedplan('ytc')">Yet To Confirm
+            <img *ngIf="visitpanelselection && visitpanelselection[0]?.weekplan == '0'" src="../../../assets/CRMimages/checkin.png">
+          </div>
+        </ion-col> -->
+        </ion-row>
+
+        <!-- WEEK END SECTION -->
+        <div class="weekend margin-top-16" *ngIf="selectedPlanType != '' && !editplan">
+          <div>
+            <p class="font-size14-familyPoppins content_center font-weight400">
+              <span *ngIf="activestagestatus">
+                {{(activestagestatus[0].stage == 'Final Negotiation' ? 'FN' : activestagestatus[0].stage)}} Fixed on
+                <span *ngIf="visitPlanNextDate">{{visitPlanNextDate | date : 'dd-MMMM-yy'}}
+                  <span *ngIf="visitPlanNextTime">
+                    , {{visitPlanNextTime}}
+                  </span>
+                </span>
+              </span>
+            </p>
+            <p class="font-size12-familyPoppins content_center">
+              {{selectedSuggestedProp.name}} were Fixed
+            </p>
+          </div>
+          <div *ngIf="visitPlanDone == false">
+            <ion-row>
+              <ion-col (click)="editvisitPlan('edit')">
+                <span class="font-size12-familyPoppins content_center active_text_borederColor">Edit Plan</span>
+              </ion-col>
+              <ion-col (click)="confirmPlan()">
+                <span class="font-size12-familyPoppins content_center active_text_borederColor">Confirm Plan</span>
+              </ion-col>
+            </ion-row>
+          </div>
+          <div *ngIf="visitPlanDone == true" class="content_center">
+            <ion-row style="width:70%">
+              <ion-col (click)="editvisitPlan('change')">
+                <span class="font-size12-familyPoppins content_center active_text_borederColor">
+                  Change The Plan
+                </span>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+
+        <div [hidden]="selectedPlanType == 'ytc'" *ngIf="editplan == true" style="margin-top:10px">
+          <ion-row>
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              Visit Date
+            </p>
+          </ion-row>
+          <ion-row class="center-content">
+            <div lines="none" class="input-with-image date-input">
+              <ion-input readonly [(ngModel)]="visitPlandate" name="visitPlandate" id="visitPlandate"
+                placeholder="Choose Date" required></ion-input>
+              <ion-popover trigger="visitPlandate" #popover>
+                <ng-template>
+                  <ion-datetime presentation="date" locale="en-US" [isDateEnabled]="isWeekday"
+                    (ionChange)="onDateChange($event);popover.dismiss()" [min]="today"></ion-datetime>
+                </ng-template>
+              </ion-popover>
+            </div>
+          </ion-row>
+
+          <ion-row class="margin-top-16">
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              Visit Time
+            </p>
+          </ion-row>
+          <ion-row class="center-content">
+            <div no-lines class="date-input inputTime-with-image">
+              <div style="width: 100%;height: 100%;">
+                <input style="width: 100%;height: 100%;" pInputText placeholder="Choose Time" id="visitPlantime"
+                  aria-label="12hr format" [ngxTimepicker]="default" [(ngModel)]="visitPlantime" name="visitPlantime"
+                  readonly (ngModelChange)="validateTime()" required>
+              </div>
+            </div>
+          </ion-row>
+          <ngx-material-timepicker #default></ngx-material-timepicker>
+          <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.</div>
+          <ion-row class="confirmCancel">
+            <ion-col class="content_center" (click)="editplan = false">
+              <div fill="clear" class="active_text_borederColor">Cancel</div>
+            </ion-col>
+            <ion-col class="content_center">
+              <div fill="clear" class="active_text_borederColor" (click)="fixPlan()">Confirm</div>
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div [ngClass]="visitAssigModalDismiss?'pointer-event-none':''" class="custom-footer"
+    style="position: fixed; bottom: 0;width: 100%; background: white;z-index: 2;">
+    <ion-row style="height:56px">
+      <ion-col class="content_center" style="flex-direction: column;" (click)="onfooter('info')">
+        <ion-img *ngIf="!isProfile" src="../../assets/CRMimages/infoImage.svg"
+          style="width: 23px;height: 38px;"></ion-img>
+        <ion-img *ngIf="isProfile" src="../../assets/CRMimages/ActiveInfoImage.svg"
+          style="width: 23px;height: 38px;"></ion-img>
+        <p class="font-size10-familyPoppins positionabsolute">Lead Profile</p>
+      </ion-col>
+      <ion-col class="content_center" style="flex-direction: column;" (click)="onfooter('propertyInfo')">
+        <ion-img *ngIf="!isProperty" src="../../assets/CRMimages/propertylisticon.png"
+          style="width:30px;height:30px"></ion-img>
+        <ion-img *ngIf="isProperty" src="../../assets/CRMimages/activePropertylisticon.png"
+          style="width:28px;height: 30px;"></ion-img>
+        <p class="font-size10-familyPoppins positionabsolute" *ngIf="!isAdmin">Property Details</p>
+        <p class="font-size10-familyPoppins positionabsolute" *ngIf="isAdmin">Assignees</p>
+      </ion-col>
+      <ion-col class="content_center" style="flex-direction: column;" (click)="onfooter('activity')">
+        <ion-img *ngIf="!isStatusActivity" src="../../assets/CRMimages/statusActivityicon.png"
+          style="width:25px;height:25px"></ion-img>
+        <ion-img *ngIf="isStatusActivity" src="../../assets/CRMimages/activeStatusActivityIcon.png"
+          style="width:25px;height: 25px;"></ion-img>
+        <p class="font-size10-familyPoppins positionabsolute">Update Status</p>
+      </ion-col>
+    </ion-row>
+  </div>
+
+
+  <!-- <ion-infinite-scroll *ngIf="showInfiniteScroll && isCallHistory == 'true'" [disabled]="false" threshold="100px"
+    #infiniteScroll (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll> -->
+</ion-content>
+
+
+<ion-icon
+  *ngIf="isProperty && (((roleid == 1 || roleid == 2) || (selectedExecId == userid && roleid != 1 && roleid != 2)) && (activestagestatus && activestagestatus?.[0]?.stage != 'Junk')) && (localStorage.getItem('prop_suggestion') == '1')"
+  (click)="displaySuggProperty()" class="addleadicon" name="add-circle"></ion-icon>
+
+<div class="addleadicon1" *ngIf="isAdmin && isProfile" (click)="getExecList(); displayAssignLeadModal('mandate')">
+  <ion-img src="../../assets/CRMimages/assign-icon.svg"></ion-img>
+</div>
+<!-- 
+<div class="visitassign_icon" (click)="onvisitAssignModal();"
+  *ngIf="isVisitAssign_btn && isCS && isStatusActivity &&  !isAtBottom">
+  <ion-img src="../../assets/CRMimages/visit_assign_icon.svg"></ion-img>
+</div> -->
+
+
+<!-- EDIT LEAD INFORMATION MODAL -->
+<ion-modal class="sheet-modal" trigger="editLeadInfoModal" #editLeadInfoModal>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-row>
+          <ion-col size="2" class="content_center" (click)="editLeadInfoModal.dismiss()">
+            <ion-icon name="arrow-back" class="backButton"></ion-icon>
+          </ion-col>
+          <ion-col size="8" class="ion-text-center">
+            <span style="color: #004466;">Update Customer Details</span>
+          </ion-col>
+          <ion-col size="2"></ion-col>
+        </ion-row>
+      </ion-toolbar>
+    </ion-header>
+
+    <!-- EDIT PROFILE MODAL-->
+    <ion-content>
+      <div class="edit-css" style="margin: 10px;margin-bottom:20%">
+        <div class="enquiredDetails">
+          <ion-row>
+            <ion-col class="ion-text-center">
+              <span style="color: #004466;">Enquired Details</span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="enqDetailsHeading">
+            <ion-col>
+              <span class="font-size12-familyPoppins font-weight400">Name</span>
+            </ion-col>
+            <ion-col>
+              <span class="font-size12-familyPoppins font-weight400">Mobile Number</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="enqDetailsdata">
+            <ion-col class="text-truncate">
+              <span class="font-size14-familyPoppins font-weight400 ">{{show_cnt?.customer_name}}</span>
+            </ion-col>
+            <ion-col>
+
+              <span
+                *ngIf="((isRM || isCS) && ((activestagestatus?.[0]?.stage == 'Fresh' && activestagestatus?.[0]?.followupreason == '8') || activestagestatus?.[0]?.stage != 'Fresh')) || roleid == '1' ;else num">
+                {{show_cnt?.customer_number}}</span>
+              <ng-template #num>
+                <span>xxxxxxxxxx</span>
+              </ng-template>
+
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="enqDetailsHeading">
+            <ion-col>
+              <span class="font-size12-familyPoppins font-weight400">Mail ID</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="enqDetailsdata">
+            <ion-col>
+              <span class="font-size14-familyPoppins font-weight400">
+                {{show_cnt?.customer_mail?show_cnt?.customer_mail:'--'}}
+              </span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="enqDetailsHeading">
+            <ion-col><span class="font-size12-familyPoppins font-weight400">Location</span></ion-col>
+            <ion-col><span class="font-size12-familyPoppins font-weight400">Project</span></ion-col>
+          </ion-row>
+          <ion-row class="enqDetailsdata">
+            <ion-col>
+              <span class="font-size14-familyPoppins font-weight400">
+                {{show_cnt?.customer_location?show_cnt?.customer_location:'--'}}
+              </span>
+            </ion-col>
+            <ion-col>
+              <span class="font-size14-familyPoppins font-weight400">
+                {{show_cnt?.customer_properties?show_cnt?.customer_properties:'--'}}
+              </span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="enqDetailsHeading">
+            <ion-col>
+              <span class="font-size12-familyPoppins font-weight400">Property Type</span>
+            </ion-col>
+            <ion-col>
+              <span class="font-size12-familyPoppins font-weight400">Size</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="enqDetailsdata">
+            <ion-col>
+              <span class="font-size14-familyPoppins font-weight400">
+                {{show_cnt?.customer_proptype?show_cnt?.customer_proptype:'--'}}
+              </span>
+            </ion-col>
+            <ion-col>
+              <span class="font-size14-familyPoppins font-weight400">
+                {{show_cnt?.customer_size?show_cnt?.customer_size:'--'}}
+              </span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="enqDetailsHeading">
+            <ion-col><span class="font-size12-familyPoppins font-weight400">Possession</span></ion-col>
+            <ion-col><span class="font-size12-familyPoppins font-weight400">Budget</span></ion-col>
+          </ion-row>
+          <ion-row class="enqDetailsdata">
+            <ion-col>
+              <span class="font-size14-familyPoppins font-weight400">
+                {{show_cnt?.customer_timeline?show_cnt?.customer_timeline:'--'}}
+              </span>
+            </ion-col>
+            <ion-col>
+              <span class="font-size14-familyPoppins font-weight400">
+                {{show_cnt?.customer_budget?show_cnt?.customer_budget:'--'}}
+              </span>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Primary Name</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-input id="customer_name" class="inner-content" [(ngModel)]="getName"
+                name="customer_name"></ion-input>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Alternate Name</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-input id="enquiry_name" class="inner-content" placeholder="Enter Alternate Name"
+                [(ngModel)]="show_cnt.enquiry_altname" (oninput)="alternateNumbercheck($event)"
+                name="enquiry_name"></ion-input>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Primary Number</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col class="d-flex align-items-center ps-1">
+              <span
+                *ngIf="((isRM || isCS) && ((activestagestatus?.[0]?.stage == 'Fresh' && activestagestatus?.[0]?.followupreason == '8') || activestagestatus?.[0]?.stage != 'Fresh')) || roleid == '1' ;else num">
+                <ion-input id="customer_number" disabled class="inner-content" [(ngModel)]="show_cnt.customer_number"
+                  name="customer_number"></ion-input>
+              </span>
+              <ng-template #num>
+                <ion-input disabled class="inner-content" placeholder="xxxxxxxxxx" name="customer_number"></ion-input>
+              </ng-template>
+
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Alternate Number</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-input *ngIf="localStorage.getItem('Name') !== 'demo' && !isRM" class="inner-content"
+                placeholder="Enter Alternate Number" [(ngModel)]="show_cnt.enquiry_altnumber" id="enquiry_number"
+                (ionInput)="alternateNumbercheck($event)" name="enquiry_number">
+              </ion-input>
+
+              <ion-input *ngIf="localStorage.getItem('Name') == 'demo' || isRM" class="inner-content"
+                placeholder="Enter Alternate Number" id="enquiry_number" name="enquiry_number">
+              </ion-input>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Primary Email ID</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-input id="customer_mail" class="inner-content"
+                [placeholder]="(show_cnt.customer_mail || this.show_cnt.enquiry_mail) ?'':'--'" [(ngModel)]="getMail"
+                name="customer_mail"></ion-input>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Alternate Email ID</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-input id="enquiry_mail" class="inner-content" placeholder="Enter Alternative Number"
+                [(ngModel)]="show_cnt.enquiry_altmail" name="enquiry_mail"></ion-input>
+
+              <ion-input id="enquiry_mail" class="inner-content" [hidden]="true" name="customer_name"
+                placeholder="xxxxxxxxxx"></ion-input>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Preferred Location</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select interface="popover" [(ngModel)]="show_cnt.localityid"
+                [placeholder]="show_cnt.proptypeid?'':'--'" name="localityid">
+                <ion-select-option *ngFor="let locality of locality"
+                  [value]="locality.id">{{locality.locality}}</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row>
+            <ion-col>
+              <p>Lead Priority</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select interface="popover" [(ngModel)]="show_cnt.lead_priority" name="leadpriority"
+                [placeholder]="show_cnt.lead_priority?'':'--'">
+                <ion-select-option *ngFor="let priority of leadpriority"
+                  [value]="priority.id">{{priority.priority}}</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Preferred Type</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select interface="popover" [(ngModel)]="show_cnt.enquiry_proptype"
+                [placeholder]="show_cnt.enquiry_proptype?'':'--'" name="leadpriority">
+                <ion-select-option value="1">Apartment</ion-select-option>
+                <ion-select-option value="2">Villa</ion-select-option>
+                <ion-select-option value="3">Plot</ion-select-option>
+                <ion-select-option value="4">villament</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Possession With</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select interface="popover" [(ngModel)]="show_cnt.enquiry_possession"
+                [placeholder]="show_cnt.enquiry_possession?'':'--'" name="leadpriority">
+                <ion-select-option value="1">Immediate</ion-select-option>
+                <ion-select-option value="2">6 Months</ion-select-option>
+                <ion-select-option value="3">1 Year</ion-select-option>
+                <ion-select-option value="4">
+                  < 2 years</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Preferred Size</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select interface="popover" [placeholder]="show_cnt.enquiry_bhksize?'':'--'"
+                [(ngModel)]="show_cnt.enquiry_bhksize" name="customer_size">
+                <ion-select-option *ngFor="let size of size_array" [value]="size.id">{{size.size}}</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="lead-details">
+          <ion-row><ion-col>
+              <p>Preferred Budget</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select interface="popover" [(ngModel)]="show_cnt.enquiry_budget" name="customer_budget"
+                [placeholder]="show_cnt.enquiry_budget?'':'--'">
+                <ion-select-option *ngFor="let budget of budget_array" [value]="budget">{{budget}}</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="custom-textArea" style="height:0">
+          <ion-row><ion-col>
+              <p>Address</p>
+            </ion-col></ion-row>
+          <ion-row>
+            <ion-col class="paddingZero">
+              <ion-textarea [(ngModel)]="show_cnt.address" [placeholder]="show_cnt.address?'':'--'"></ion-textarea>
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </ion-content>
+    <ion-footer class="footer">
+      <ion-toolbar>
+        <div class="lead-details">
+          <ion-row>
+            <ion-col class="cancel-btn ion-text-center" (click)="editLeadInfoModal.dismiss()">
+              <div>Cancel</div>
+            </ion-col>
+            <ion-col class="save-btn ion-text-center" (click)="updateProfile()">
+              <div>Update</div>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<!-- Re-ASSIGN MODAL -->
+<ion-modal #retailMandate id="reassignModal" [backdropDismiss]="false">
+  <ng-template>
+    <div class="wrapper">
+      <ion-row style="border-bottom: 1px solid #dee2e6;">
+        <ion-col size="10">
+          <span class="headSuggProp">Assign Lead</span>
+        </ion-col>
+        <ion-col size="2" (click)="modeldismis_reset()" class="ion-text-center">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+      </ion-row>
+
+      <div class="modal-body">
+        <div style="margin: 10px;">
+          <span *ngIf="this.activestagestatus[0].stage == 'Fresh' ||
+          (this.activestagestatus[0].stagestatus == '1' &&
+            this.activestagestatus[0].stage == 'USV')">
+            <div class="selectProperty">
+              <ion-row>
+                <ion-col style="padding: 0 5px;">
+                  <span class="font-size12-familyPoppins">Select a property</span>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col style="padding: 0;">
+                  <ion-select toggleIcon="chevron-down" class="assignLeaddselect" interface="popover"
+                    placeholder="Select Property" (ionChange)="getselectedprop($event)">
+                    <div *ngFor="let projects of projectNames">
+                      <ion-select-option
+                        [value]="projects.property_idfk">{{projects.property_info_name}}</ion-select-option>
+                    </div>
+                  </ion-select>
+                </ion-col>
+              </ion-row>
+            </div>
+            <ion-row>
+              <ion-col class="font-size12-familyPoppins font-weight400" style="padding-left: 0;padding-bottom: 0">
+                <span class="font-size12-familyPoppins">Select Team</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col id="teamSelectDropdown" class="p-0" style=" border: 1px solid #d8d8d8; border-radius:4px">
+                <p-dropdown class="teamSelectDropdown" [(ngModel)]="selectedExecTeam" [options]="execTeam"
+                  optionLabel="name" appendTo="body" (onChange)="onExecTeamSelect($event)" placeholder="Select a Team"
+                  name="selectedExecTeam" />
+              </ion-col>
+            </ion-row>
+          </span>
+          <ion-row>
+            <ion-col class="font-size12-familyPoppins font-weight400" style="padding-left: 0;padding-bottom: 0">Select
+              Executive</ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-select id="rm_dropdown" [multiple]="(this.activestagestatus[0].stage == 'Fresh' ||
+          (this.activestagestatus[0].stagestatus == '1' &&
+            this.activestagestatus[0].stage == 'USV'))? true:false" interface="popover" toggleIcon="chevron-down"
+              placeholder="Select the member" [(ngModel)]="selectedEXEC" class="assignLeaddselect"
+              (ionChange)="executiveSelect($event)">
+              <ion-select-option *ngFor="let executive of assignteam === 'mandate'?mandateExecutives:retailExecutives"
+                [value]="executive">
+
+                {{ assignteam === 'mandate'?executive.name:executive.Name}}
+              </ion-select-option>
+            </ion-select>
+          </ion-row>
+
+          <ion-row>
+            <ion-col class="ion-text-end">
+              <ion-button fill="clear" class="reassignButton" (click)="assignLead()">Assign Now</ion-button>
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- CLOSED LEAD DETAILS MODAL -->
+<ion-modal #closeddeal trigger="closeddeal" id="dealClosed" [enterAnimation]="enterAnimation"
+  [leaveAnimation]="leaveAnimation">
+  <ng-template>
+    <ion-row class="bg_color_blue" style="height: 45px;">
+      <ion-col size="10" class="center-vertically">
+        <ion-title style="font-family: Poppins;font-size: 16px;" class="text_color_blue">Booking details </ion-title>
+      </ion-col>
+      <ion-col size="2" class="content_center">
+        <ion-icon name="close" (click)="closeddeal.dismiss()"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-content class="ion-padding">
+      <div *ngFor="let request of requestedunits" class="requestedData" style="border: none;">
+        <ion-row>
+          <ion-col>
+            <span class="font-colorGray font-weight300 font-size16-familyPoppins">Selected Unit:</span>
+            <span class="font-size16-familyPoppins font-colorBlack font-weight500"
+              style="padding-left: 5px;">{{request.bhk}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <span class="font-colorGray font-weight300 font-size16-familyPoppins">Unit Number:</span>
+            <span class="font-colorBlack font-weight500 font-size16-familyPoppins"
+              style="padding-left: 5px;">{{request.unit_number}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <span class="font-colorGray font-weight300 font-size16-familyPoppins">Dimension:</span>
+            <span class="font-colorBlack font-weight500 font-size16-familyPoppins"
+              style="padding-left: 5px;">{{request.dimension}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <span class="font-colorGray font-weight300 font-size16-familyPoppins">Rate Per Sq Ft:</span>
+            <span class="font-colorBlack font-weight500 font-size16-familyPoppins"
+              style="padding-left: 5px;">{{request.rate_per_sqft}}</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <span class="font-colorGray font-weight300 font-size16-familyPoppins"> Uploaded Documents:</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="6" style="height: 109px;width: 146px;" *ngFor="let attached of request.images; let i = index">
+            <div style="height: 100%;position:relative">
+              <ng-container *ngIf="getExstendsion(attached.file_name) === 'jpg'">
+                <span [photoGalleryGroup]>
+                  <span
+                    [photoGallery]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name">
+                    <img style="height:100%;width:100%;object-fit: fill;"
+                      [src]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name">
+                  </span>
+                </span>
+              </ng-container>
+              <ng-container *ngIf="getExstendsion(attached.file_name) === 'pdf'">
+                <a href="https://superadmin-azure.right2shout.in/images/crm/closurefiles/{{attached.file_name}}"
+                  target="_blank">
+                  <ion-img style="height: 80%; width: 100%;object-fit: fill;"
+                    src="../../assets/CRMimages/adobe-reader.svg"></ion-img>
+                  <span class="font-size10-familyPoppins font-colorBlack font-weight500">{{attached.file_name}}</span>
+                </a>
+              </ng-container>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row class="content_center margin-top-16" (click)="openModal('resubmit','')" *ngIf="isAdmin">
+          <ion-col size="4" class="content_center font-colorWhite font-size16-familyPoppins"
+            style="background: #0B7AB2;border-radius: 2px;">
+            Edit <ion-img style="width:16px; height:16px" src="../../assets/CRMimages/edit-text.svg"></ion-img>
+          </ion-col>
+        </ion-row>
+
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- LEAD REJECTED RESUBMIT MODAL -->
+<ion-modal #reSubmitLead>
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+    <ion-header>
+      <ion-toolbar>
+        <ion-row>
+          <ion-col size="2" class="content_center" (click)="getexecutiveLeadCloseDetail();reSubmitLead.dismiss()">
+            <ion-icon name="arrow-back" class="backButton"></ion-icon>
+          </ion-col>
+          <ion-col size="9" class="content_center" *ngFor="let request of requestedunits">
+            <span *ngFor="let rm of assignedrm">
+              <span *ngFor="let suggested of rm.suggestedprop;let i = index">
+                <span style="font-family: 'Poppins';"
+                  *ngIf="suggested.actions === '6' && suggested.currentstage === '5'" style="font-size:17px">
+                  Booking Request is Approved
+                </span>
+                <span *ngIf="suggested.actions === '8' && suggested.currentstage === '5'" style="font-size:17px">
+                  Booking Request is Rejected
+                </span>
+                <span *ngIf="suggested.actions === '7' && suggested.currentstage === '5'" style="font-size:17px">
+                  Requested For Deal Closure
+                </span>
+              </span>
+            </span>
+          </ion-col>
+          <ion-col size="1"></ion-col>
+        </ion-row>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content style="--background:#F5F7F9">
+      <span *ngFor="let rm of assignedrm">
+        <span *ngFor="let suggested of rm.suggestedprop;let i = index">
+          <span *ngIf="selectedSuggestedProp['propid'] === suggested.propid">
+            <span *ngFor="let request of requestedunits">
+              <div class="bg_border_color marginBottom15px">
+                <ion-row class="bg_color_red" *ngIf="suggested.actions === '8' && suggested.currentstage === '5'">
+                  <ion-col class="font-size16-familyPoppins text_color_red">
+                    Booking Request Is Rejected
+                  </ion-col>
+                </ion-row>
+                <div>
+                  <ion-row>
+                    <ion-col class="padding_bottom_zero font-size16-familyPoppins">Selected Unit:</ion-col>
+                  </ion-row>
+                  <ion-row class="requestedData">
+                    <ion-select name="bhk" id="unit" [(ngModel)]="request.bhk" class="font-size16-familyPoppins"
+                      toggleIcon="chevron-down" interface="popover" placeholder="Select Units">
+                      <ion-select-option class="font-size14-familyPoppins" value="1BHK">1BHK</ion-select-option>
+                      <ion-select-option class="font-size14-familyPoppins" value="2BHK">2BHK</ion-select-option>
+                      <ion-select-option class="font-size14-familyPoppins" value="3BHK">3BHK</ion-select-option>
+                      <ion-select-option class="font-size14-familyPoppins" value="4BHK">4BHK</ion-select-option>
+                      <ion-select-option class="font-size14-familyPoppins" value="5BHK">5BHK</ion-select-option>
+                    </ion-select>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col class="padding_bottom_zero font-size16-familyPoppins">Unit Number:</ion-col>
+                  </ion-row>
+                  <ion-row class="requestedData">
+                    <ion-input id="unit_number" [(ngModel)]="request.unit_number" name="unit_number"
+                      class="font-size16-familyPoppins"></ion-input>
+                  </ion-row>
+
+                  <ion-row>
+                    <ion-col class="padding_bottom_zero font-size16-familyPoppins">Dimension:</ion-col>
+                  </ion-row>
+                  <ion-row class="requestedData">
+                    <ion-input class="font-size16-familyPoppins" id="dimension" [(ngModel)]="request.dimension"
+                      name="dimension"></ion-input>
+                  </ion-row>
+
+                  <ion-row>
+                    <ion-col class="padding_bottom_zero font-size16-familyPoppins">Rate Per Sqft:</ion-col>
+                  </ion-row>
+                  <ion-row class="requestedData">
+                    <ion-input class="font-size16-familyPoppins" id="rate_per_sqft" [(ngModel)]="request.rate_per_sqft"
+                      name="rate_per_sqft"></ion-input>
+                  </ion-row>
+
+                  <ion-row>
+                    <ion-col class="padding_bottom_zero font-size16-familyPoppins">Uploaded Documents:</ion-col>
+                  </ion-row>
+
+                  <ion-grid>
+                    <ion-row>
+                      <ion-col size="6" style="height: 109px;width: 146px;"
+                        *ngFor="let attached of request.images; let i = index">
+                        <div style="height: 100%;position:relative">
+                          <ng-container *ngIf="getExstendsion(attached.file_name) === 'jpg'">
+                            <span [photoGalleryGroup]>
+                              <span
+                                [photoGallery]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name">
+                                <img style="height:100%;width:100%;object-fit: fill;"
+                                  [src]="'https://superadmin-azure.right2shout.in/images/crm/closurefiles/'+attached.file_name">
+                              </span>
+                            </span>
+                            <ion-icon (click)="removeImage(attached)" name="close-outline"
+                              class="close-icon"></ion-icon>
+                          </ng-container>
+                          <ng-container *ngIf="getExstendsion(attached.file_name) === 'pdf'">
+                            <a href="https://superadmin-azure.right2shout.in/images/crm/closurefiles/{{attached.file_name}}"
+                              target="_blank">
+                              <ion-img style="height: 80%; width: 100%;object-fit: fill;"
+                                src="../../assets/CRMimages/adobe-reader.svg"></ion-img>
+                              <div class="font-size12-familyPoppins font-colorBlack font-weight500 uploadedFile">
+                                {{attached.file_name}}</div>
+                            </a>
+                          </ng-container>
+                        </div>
+                      </ion-col>
+
+                      <ion-col size="12" *ngIf="i > 0 && i % 2 === 0" style="height: 0;"></ion-col>
+                      <ion-col size="6" style="height: 109px;">
+                        <div class="content_center"
+                          style="height: 100%; border: 1px solid #D2D2E4; border-radius: 6px; background: #F1F1F8;">
+                          <label for="file"
+                            style="height: 100%; display: flex; align-items: center; justify-content: center;">
+                            <ion-img style="height: auto;" src="../../assets/CRMimages/upload-file-icon.svg"></ion-img>
+                            <input
+                              (change)="onFileSelected($event,request.Lead_IDFK,request.Exec_IDFK,request.property);"
+                              type="file" id="file" style="display: none;" name="image"
+                              accept="image/gif,image/jpeg,image/jpg,image/png" multiple
+                              data-original-title="upload photos">
+                          </label>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+
+                  <span *ngIf="isAdmin">
+                    <ion-row>
+                      <ion-col class="padding_bottom_zero font-size16-familyPoppins">
+                        Reason For Rejection:
+                      </ion-col>
+                    </ion-row>
+                    <ion-row class="custom-textArea">
+                      <ion-col *ngFor="let remark of request.suggested">
+                        <ion-textarea [(ngModel)]="remark.remarks" name="remark" #remarkInput="ngModel"
+                          class="rejectedtextarea" (input)="enableButton()" required></ion-textarea>
+                      </ion-col>
+                    </ion-row>
+
+                    <ion-row>
+                      <ion-col *ngIf="!(isAdmin && suggested.actions === '8' && suggested.currentstage === '5')">
+                        <ion-button style="width:100%;text-transform: none;" fill="clear"
+                          (click)="requestrejection(request.Lead_IDFK,request.Exec_IDFK,request.property)"
+                          [disabled]="!enablebuttonReject" [ngClass]="enablebuttonReject?'approve-btn':'reject-btn'">
+                          Reject
+                        </ion-button>
+                      </ion-col>
+                      <ion-col>
+                        <ion-button style="width:100%;text-transform: none;" fill="clear"
+                          (click)="editNow(request.Lead_IDFK,request.Exec_IDFK,request.property,request.closedlead_id)"
+                          [disabled]="(isAdmin && suggested.actions === '8' && suggested.currentstage === '5')?false:!enablebuttonApprove"
+                          [ngClass]="(isAdmin && suggested.actions === '8' && suggested.currentstage === '5')?'approve-btn': enablebuttonApprove?'approve-btn':'reject-btn'">
+                          Approve
+                        </ion-button>
+                      </ion-col>
+                    </ion-row>
+                  </span>
+
+                  <span *ngIf="!isAdmin">
+                    <ion-row class="content_center">
+                      <ion-col size="9" style="padding: 0;">
+                        <ion-button fill="clear" class="activeSaveButton"
+                          (click)="resubmitdata(request.Lead_IDFK,request.Exec_IDFK,request.property,i)">Resend Closure
+                          Request</ion-button>
+                      </ion-col>
+                    </ion-row>
+                  </span>
+                </div>
+              </div>
+            </span>
+          </span>
+        </span>
+      </span>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+
+<ion-modal #viewToMergedLeads class="viewMergedLedasModal">
+  <ng-template>
+    <ion-row class="mergerModal_heading">
+      <ion-col size="10">
+        <span class="font-size16-familyPoppins">Merged Leads</span>
+      </ion-col>
+      <ion-col size="2" class="content_center" (click)="viewToMergedLeads.dismiss()">
+        <ion-icon name="close" style="font-size: 25px;"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-content>
+      <div style="margin: 10px;" *ngFor="let lead of mergedleads" class="mergedLeadsInfo">
+        <ion-row class="mergedLeadsInfo-heading">
+          <ion-col size="7">
+            <div><span class="mergedLeadsInfo-value">Lead Name</span></div>
+            <div>{{lead.mergedName}}</div>
+          </ion-col>
+          <ion-col size="5">
+            <div><span class="mergedLeadsInfo-value">Relationship</span></div>
+            <div>{{lead.relationship}}</div>
+          </ion-col>
+        </ion-row>
+        <ion-row class="mergedLeadsInfo-heading">
+          <ion-col size="7">
+            <div><span class="mergedLeadsInfo-value">Mail</span></div>
+            <div>{{lead.mergedMail}}</div>
+          </ion-col>
+          <ion-col size="5">
+            <div><span class="mergedLeadsInfo-value">Contact number</span></div>
+            <div>{{lead.mergedNumber}}</div>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #mergeModal class="mergeModal">
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+    <div class="">
+      <ion-row class="mergerModal_heading">
+        <ion-col size="10">
+          <span class="font-size16-familyPoppins">Merge the Lead</span>
+        </ion-col>
+        <ion-col size="2" class="content_center" (click)="onCloseMergeModal()">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+      </ion-row>
+      <div style="margin:10px">
+        <ion-row>
+          <ion-col>
+            <ion-searchbar [(ngModel)]="leadSearchTerm" (ionInput)="searchClient($event)"
+              placeholder="Search by name or contact number"></ion-searchbar>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="font-size10-familyPoppins">
+            <span style="color:#7E7E7E">
+              You're merging these contacts. This will combine their info into one entry. Review the details below and
+              select the preferred contact number.
+            </span>
+          </ion-col>
+        </ion-row>
+      </div>
+
+      <ion-content style="height:45vh" *ngIf="filteredLeads.length !== 0">
+        <div class="lead-info" *ngFor="let lead of filteredLeads" (click)="onFilteredLead(lead)">
+          <ion-row class="info-row-heading">
+            <ion-col>
+              <div>{{lead.customer_name}}</div>
+              <div><span class="info-row-value">Lead Name</span></div>
+            </ion-col>
+            <ion-col>
+              <div>{{lead.customer_number}}</div>
+              <div><span class="info-row-value">Contact number</span></div>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-content>
+
+      <!-- <ion-content style="height:45vh"> -->
+      <div class="lead-info" *ngFor="let lead of filteredLead">
+        <ion-row class="info-row-heading">
+          <ion-col>
+            <div>{{lead.customer_name}}</div>
+            <div><span class="info-row-value">Lead Name</span></div>
+          </ion-col>
+          <ion-col>
+            <div>{{lead.customer_number}}</div>
+            <div><span class="info-row-value">Contact number</span></div>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="info-row-heading">
+          <ion-col>
+            <div>{{lead.Lead_stage}}</div>
+            <div><span class="info-row-value">Lead Stage</span></div>
+          </ion-col>
+          <ion-col>
+            <div>{{lead.execname}}</div>
+            <div><span class="info-row-value">Executive Name</span></div>
+          </ion-col>
+        </ion-row>
+        <ion-row class="info-row-heading">
+          <ion-col>
+            <span>Relationship between Them</span>
+          </ion-col>
+        </ion-row>
+        <ion-row class="relationshipDropdown">
+          <ion-col style="padding:0">
+            <p-dropdown [options]="relationShips" optionLabel="name" (onChange)="relationshipSelect($event)"
+              [(ngModel)]="selectedRelation" placeholder="Select a Team" name="teamSelect" />
+          </ion-col>
+        </ion-row>
+      </div>
+
+      <!-- If leads detail empty -->
+      <ion-row *ngIf="filteredLeads.length === 0 && leadSearchTerm"
+        class="textStyle ion-justify-content-center ion-align-items-center">
+        <ion-col class="ion-text-center"><span>No Data Found...</span></ion-col>
+      </ion-row>
+      <!-- </ion-content> -->
+    </div>
+    <ion-footer class="merge-footer">
+      <ion-row>
+        <ion-col class="ion-text-center" [ngClass]="isActiveMerge?'textBgColor':''">
+          <ion-button fill="clear" [disabled]="!isActiveMerge" (click)="onMergeLead()">Merge</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+
+<ion-modal #unlockleadtomandateModal class="unlockleadtomandate" [backdropDismiss]="false">
+  <ng-template>
+    <ion-row class="visitAssignHeaderModal">
+      <ion-col>
+        <span class="font-size16-familyPoppins">Assigned lead</span>
+      </ion-col>
+      <ion-col size="1" class="content_center"
+        (click)="visitAssigModalDismiss=true; unlockleadtomandateModal.dismiss();">
+        <span>
+          <ion-icon name="close" style="font-size: 20px;"></ion-icon>
+        </span>
+      </ion-col>
+    </ion-row>
+
+    <div style="margin:5px">
+      <ion-row>
+        <ion-col class="paddingZero">
+          <span class="font-size14-familyPoppins">
+            Select Property
+          </span>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col id="propertyDropdown">
+          <p-dropdown class="propDropdown" [options]="projectNames" [(ngModel)]="selectedProperty"
+            optionLabel="property_info_name" placeholder="Select Property" appendTo="body" />
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <ion-row>
+      <ion-col></ion-col>
+      <ion-col class="d-flex ion-justify-content-end">
+        <ion-button (click)="unlockleadtomandate()" fill="clear" class="bg_textColor">Assign Now</ion-button>
+      </ion-col>
+    </ion-row>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #callConfirmationModal class="callConfirmationModal">
+  <ng-template>
+    <ion-header>
+      <ion-row class="activeSaveButton">
+        <ion-col size="1"></ion-col>
+        <ion-col size="9" class="ion-text-center d-flex ion-justify-content-center">
+          <h3>Initiate Outbound Call</h3>
+        </ion-col>
+        <ion-col size="2" (click)="callConfirmationModal.dismiss()"
+          class="ion-text-center d-flex ion-justify-content-center paddingZero"> <ion-icon
+            name="close"></ion-icon></ion-col>
+      </ion-row>
+    </ion-header>
+    <ion-content>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <p style="font-size:20px;color: rgba(65, 65, 65, 1);">Do you want to place a call to
+            {{this.show_cnt?.customer_name}}
+            <span
+              *ngIf="((isRM || isCS) && ((activestagestatus?.[0]?.stage == 'Fresh' && activestagestatus?.[0]?.followupreason == '8') || activestagestatus?.[0]?.stage != 'Fresh')) || roleid == '1' ;else num">
+              {{"( "+this.show_cnt?.customer_number +" )"}}</span>
+            <ng-template #num>
+              <span>xxxxxxxxxx</span>
+            </ng-template>
+            ?
+          </p>
+        </ion-col>
+      </ion-row>
+    </ion-content>
+    <ion-footer>
+      <ion-row>
+        <ion-col class="ion-text-center" (click)="callConfirmationModal.dismiss()"> <ion-button fill="clear"
+            class="active_text_borederColor"> Cancel</ion-button> </ion-col>
+        <ion-col class="ion-text-center" (click)="outboundCall()"> <ion-button fill="clear" class="activeSaveButton">
+            Call </ion-button> </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<app-on-call-lead-update *ngIf="isOnCallDetailsPage"></app-on-call-lead-update>
+<ion-modal #callRecordingsModal class="callRecordingsModal">
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+    <ion-header class="textBgColor" style="height: 42px;">
+      <ion-row style="height: 100%;">
+        <ion-col size="2"></ion-col>
+        <ion-col class="content_center">
+          <span class="font-size16-familyPoppins">Call Recordings</span>
+        </ion-col>
+        <ion-col size="2" class="content_center" (click)="callRecordingsModal.dismiss()">
+          <ion-icon name="close" style="font-size: 22px;"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+    <ion-content>
+
+      <ion-row *ngIf="allCallLogs?.length == 0">
+        <ion-col class="content_center">
+          <span class="font-size16-familyPoppins">No call logs found...</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-card class="shadow-sm rounded-2xl" *ngFor="let callLogs of allCallLogs, let i = index">
+        <ion-card-content class="p-0">
+          <ion-grid>
+            <ion-row>
+              <!-- Left section -->
+              <ion-col size="6" class="p-0">
+                <p class="mb-0 font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                  Call Type</p>
+                <p class="small font-size12-familyPoppins">{{callLogs.direction}}</p>
+
+                <p class="mt-2 mb-0 font-size12-familyPoppins">Start Time</p>
+                <p class="small font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                  {{callLogs.starttime}}</p>
+              </ion-col>
+
+              <!-- Right section -->
+              <ion-col size="6" class="text-end p-0">
+                <p class="mb-0 font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                  Duration</p>
+                <p class="small font-size12-familyPoppins">{{callLogs.answeredtime}}</p>
+
+                <span>
+                  <p class="mt-2 mb-0 font-size12-familyPoppins">End Time</p>
+                  <p class="small font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                    {{callLogs.endtime}}</p>
+                </span>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+
+        <div class="bg-light p-2 d-flex align-items-center rounded-bottom"
+          style="background: rgb(183 216 233) !important;">
+          <audio controls style="width: 100% !important; height: 32px !important;">
+            <source [src]="callLogs.filename" type="audio/wav">
+          </audio>
+        </div>
+      </ion-card>
+      <!-- 
+      <ion-row *ngIf="allCallLogs.length == 0">
+        <ion-col class="content_center">
+          <span class="font-size16-familyPoppins">
+            No records found.....
+          </span>
+        </ion-col>
+      </ion-row> -->
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- REGISTERED NOW MODAL -->
+<ion-modal #registereNowModal>
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+    <ion-header>
+      <ion-toolbar>
+        <ion-row>
+          <ion-col size="2" class="content_center" (click)="registereNowModal.dismiss()">
+            <ion-icon name="arrow-back" class="backButton"></ion-icon>
+          </ion-col>
+          <ion-col size="9" class="content_center">
+            <span style="font-family: 'Poppins';">Client Registration</span>
+          </ion-col>
+          <ion-col size="1"></ion-col>
+        </ion-row>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content style="--background:#F5F7F9">
+      <div style="padding: 10px;">
+        <ion-row>
+          <ion-col>
+            <ion-select id="mailtoselect"
+              class="form-control sendto ui selection fluid dropdown normalmail bg_border_color" interface="popover"
+              placeholder="To:" style="padding: 0;">
+              <ion-select-option *ngFor="let mail of mails" value="{{mail.builder_mail}}">
+                {{mail.builder_mail}}
+              </ion-select-option>
+            </ion-select>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <ion-select id="ccselect"
+              class="form-control sendcc ui label selection fluid dropdown normalmail bg_border_color"
+              interface="popover" placeholder="Cc:" style="padding: 0;">
+              <ion-select-option *ngFor="let mail of mails" value="{{mail.builder_mail}}">
+                {{mail.builder_mail}}
+              </ion-select-option>
+            </ion-select>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <div>
+              <textarea style="height: 100vh" id="regremarks" class="form-control composeMail"
+                placeholder="Compose email"></textarea>
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-content>
+
+    <ion-footer>
+      <ion-toolbar style="padding: 10px;">
+        <ion-row>
+          <!-- <ion-col>
+              <span>
+                Add Files
+              </span>
+            </ion-col> -->
+          <ion-col (click)="clientregisteration()">
+            <div class="bg_textColor content_center" style="padding:5px;width: 100%;border-radius: 4px;">
+              Send
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #registeredModal>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-row>
+          <ion-col size="2" class="content_center" (click)="registeredModal.dismiss()">
+            <ion-icon name="arrow-back" class="backButton"></ion-icon>
+          </ion-col>
+          <ion-col size="9" class="content_center">
+            <span style="font-family: 'Poppins';">Property Visit Update</span>
+          </ion-col>
+          <ion-col size="1"></ion-col>
+        </ion-row>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content style="--background:#F5F7F9">
+      <div style="padding: 8px;">
+        <div class="bg_border_color" style="padding: 0;">
+          <ion-img style="width: 15px;position: absolute;right: 15px;top: 15px;"
+            src="../../../assets/CRMimages/printer-icon.svg"></ion-img>
+          <ion-row class="margin-top-16">
+            <ion-col size="3" class="font-size14-familyPoppins">Sent To :</ion-col>
+            <ion-col size="9" class="font-size12-familyPoppins">{{clientregistereddata?.sendto}}</ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="3" class="font-size14-familyPoppins">Send Cc :</ion-col>
+            <ion-col size="9" class="font-size12-familyPoppins"
+              style="padding-bottom: 0;">{{clientregistereddata?.sendcc}}</ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col class="ion-text-right" style="padding-top: 0;">
+              <span class="font-size10-familyPoppins text_color_blue">{{clientregistereddata.datetime | date:
+                'dd-MMM-yyyy hh:mm: a'}}</span>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <ion-row>
+          <div class="email-body bg_border_color margin-top-16">
+            <p class="font-size12-familyPoppins" [innerHTML]="clientregistereddata.mailbody"></p>
+          </div>
+        </ion-row>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+
+<!-- SUGGESTED MODAL -->
+<ion-modal id="suggested-modal" #suggModal trigger="open-custom-dialog">
+  <ng-template>
+    <div class="wrapper">
+      <ion-row>
+        <ion-col size="10">
+          <span class="headSuggProp">Properties for Suggestions</span>
+        </ion-col>
+        <ion-col size="2" (click)="suggModal.dismiss()" class="ion-text-end">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+      </ion-row>
+      <div>
+        <ion-row>
+          <ion-col>
+            <ng-multiselect-dropdown (onSelect)="onSelectSuggProp($event)" (onDeSelect)="deSelectSuggProp($event)"
+              [placeholder]="'Select Properties'" [settings]="dropdownSettings"
+              [data]="properties"></ng-multiselect-dropdown>
+          </ion-col>
+        </ion-row>
+      </div>
+      <ion-row>
+        <ion-col class="ion-text-right" (click)="addpropertiestolist()">
+          <ion-button fill="clear" class="bg_textColor">Add to List</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- visit assign -->
+<ion-modal #visitAssign class="visitAssign" [backdropDismiss]="false">
+  <ng-template>
+    <ion-toolbar>
+      <ion-title class="font-size16-familyPoppins">Assign Lead</ion-title>
+      <ion-buttons slot="end" (click)="selectedProperty=null;selectedExec=null; visitAssign.dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-buttons>
+    </ion-toolbar>
+    <form (ngSubmit)="assignFixedLead()" ngNativeValidate #visitassignForm="ngForm">
+      <ion-row>
+        <ion-col class="paddingBottomLeft">
+          <span class="font-size14-familyPoppins">
+            Select Property
+          </span>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col id="propertyDropdown">
+          <p-dropdown class="execDropdown" [options]="projectNames" [(ngModel)]="selectedProperty"
+            name="selectedProperty" optionLabel="property_info_name" placeholder="Select Property" appendTo="body"
+            (onChange)="onPropSelectOfVisitsAssign($event)" required />
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="paddingBottomLeft">
+          <span class="font-size14-familyPoppins">
+            Select Executives
+          </span>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col id="execDropdown">
+          <!-- Mandate Executive -->
+          <p-dropdown class="execDropdown" [options]="mandateExecList" [(ngModel)]="selectedExec" optionLabel="name"
+            name="selectedExec" placeholder="Select a Executive" appendTo="body" required />
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col></ion-col>
+        <ion-col>
+          <ion-button type="submit" fill="clear" class="bg_textColor" [disabled]="visitassignForm.invalid">
+            Assign Now</ion-button>
+        </ion-col>
+      </ion-row>
+    </form>
+  </ng-template>
+</ion-modal>
+
+
+<!-- View Re-Assigned lead details -->
+<ion-modal #viewAssignLeadDetail id="viewAssignLeadDetail" (willDismiss)="onWillDismiss($event)"
+  [backdropDismiss]="false">
+  <ng-template>
+    <ion-header>
+      <ion-row class="assignTaskHeading1">
+        <ion-col size="10">Re-Assign Leads Details</ion-col>
+        <ion-col size="2" class="content_center" style="align-items:end;flex-direction: column-reverse;"
+          (click)="onWillDismiss('');"><ion-icon name="close"></ion-icon></ion-col>
+      </ion-row>
+    </ion-header>
+    <ion-content>
+      <!-- <ion-grid>
+        <ion-row class="table-header">
+          <ion-col class="table-cell" size="3.5">Name</ion-col>
+          <ion-col class="table-cell" size="2">Fresh</ion-col>
+          <ion-col class="table-cell" size="1.5">Re-Asgn</ion-col>
+          <ion-col class="table-cell" size="3">NotAsgn</ion-col>
+          <ion-col class="table-cell" size="2">Untchd</ion-col>
+        </ion-row>
+
+        <div *ngFor="let item of reassignedResponseInfo" style="border-left:1px solid #4398c3;">
+          <ion-row>
+            <ion-col class="table-cell" size="3.5">{{item.execname}}</ion-col>
+            <ion-col class="table-cell" size="2">{{item.fresh}}</ion-col>
+            <ion-col class="table-cell" size=1.5>{{item.reassigned}}</ion-col>
+            <ion-col class="table-cell" size=3>
+              <div>
+                {{'Others- ' +item.exsiting}}
+              </div>
+              <div>{{'Gr-Swara- '+item.gr_swara_leads_skipped}}</div>
+            </ion-col>
+            <ion-col class="table-cell" size=2>{{item.totalleads}}</ion-col>
+          </ion-row>
+        </div>
+      </ion-grid> -->
+      <ion-grid class="p-2" *ngFor="let reassign of reassignedResponseInfo">
+        <div class="header">
+          <span class="name">{{reassign.execname}}</span>
+        </div>
+        <div style="border:1px solid #EEEEEE !important" class="m-0">
+          <!-- Header -->
+          <ion-grid class="p-0">
+            <ion-row>
+              <ion-col size="4" class="p-0">
+                <div class="assigned-title">Assigned</div>
+              </ion-col>
+              <ion-col class="p-0">
+                <div class="not-assigned-title">Not Assigned</div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <!-- ASSIGNED -->
+              <ion-col size="4" class="assigned-col p-0">
+                <div>
+                  <span>Total</span>
+                  <p>{{reassign.fresh + reassign.reassignedLeads + reassign.reassignedVisits}}</p>
+                </div>
+                <div>
+                  <span>Leads</span>
+                  <p>{{reassign.fresh + reassign.reassignedLeads}}</p>
+                </div>
+                <div>
+                  <span>Overdue Visits</span>
+                  <p>{{reassign.reassignedVisits}}</p>
+                </div>
+              </ion-col>
+
+              <ion-col class="not-assigned-col p-0 d-flex">
+                <div class="not-assigned-left-div w-100">
+                  <div>
+                    <span>Already in Fresh</span>
+                    <p>{{reassign.alreadyinfresh}}</p>
+                  </div>
+                  <div>
+                    <span>Already in Active</span>
+                    <p>{{reassign.alreadyinactive}}</p>
+                  </div>
+                  <div>
+                    <span>Overload Limit</span>
+                    <p>{{reassign.leads_skipped_executive_capacity}}</p>
+                  </div>
+                </div>
+                <div class="not-assigned-right-div w-100">
+                  <div class="w-100 h-100 d-flex flex-column align-items-start justify-content-center">
+                    <span>GR Swara Leads</span>
+                    <p>{{reassign.gr_swara_leads_skipped}}</p>
+                  </div>
+                  <div class="w-100 h-100 d-flex flex-column align-items-start justify-content-center">
+                    <span>Active Visits</span>
+                    <p>{{reassign.reassignedVisitExist}}</p>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+
+
+            <ion-row class="untouched-title">
+              <ion-col class="d-flex align-item-center justify-content-center">
+                <div class="unto-item">
+                  <span>Untouched </span>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row class="untouched-row">
+              <ion-col size="6">
+                <div class="untouched-div">
+                  <span> Leads</span>
+                  <p>{{reassign.untouched_leads}}</p>
+                </div>
+              </ion-col>
+
+              <ion-col size="6">
+                <div class="untouched-div">
+                  <span> Visits</span>
+                  <p>{{reassign.untouched_visits}}</p>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </ion-grid>
+    </ion-content>
+  </ng-template>
+</ion-modal>

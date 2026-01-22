@@ -1,0 +1,317 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<app-header *ngIf="!isOnCallDetailsPage"></app-header>
+
+<ion-row *ngIf="!isOnCallDetailsPage" class="selectOption content_center marginTop10"
+  style="overflow-x: auto; white-space: nowrap;box-shadow: 0 -10px 33px rgb(0 0 0 / 0.1);border-radius: 78px;margin: 10px;">
+  <div style="display: inline-flex; width: 100%;">
+    <ion-col class="custom-col center-text font-weight500" style="padding: 3px;display: flex;"
+      (click)="onpendingFreshleads('1')">
+      <div [ngClass]="filteredParams.leads == '1'?'leftBorder':''" class="font-size12-familyPoppins content_center"
+        style="padding: 4px;border-radius: 78px;width: 100%;">Fresh Leads {{"( "+freshvisits_count +" )"}}
+      </div>
+    </ion-col>
+    <ion-col class="custom-col center-text font-weight500" style="padding: 3px;display: flex;"
+      (click)="onpendingFreshleads(2)">
+      <div [ngClass]="filteredParams.leads == '2'?'rightBorder':''" class="font-size12-familyPoppins content_center"
+        style="padding: 4px;border-radius: 78px; width: 100%;"> Pending Leads
+        {{"( "+pendingleads_count +" )"}}
+      </div>
+    </ion-col>
+  </div>
+</ion-row>
+
+<!-- FILTERED CHIPS -->
+<ion-row class="filteredChips" *ngIf="!isOnCallDetailsPage">
+  <div style="display: flex; overflow-x: scroll; padding: 0 5px;">
+    <ion-button fill="clear" class="filterButtons marginBottom15px" style="padding: 0;"
+      *ngIf="this.filteredParams.fromdate && this.filteredParams.todate"
+      (click)="this.filteredParams.fromdate=''; this.filteredParams.todate='';addQueryParams()">
+      <span>{{ this.filteredParams.fromdate }}{{ " to " + this.filteredParams.todate }}</span>
+      <ion-icon slot="end" name="close"></ion-icon>
+    </ion-button>
+
+    <ion-button fill="clear" *ngIf="filteredParams.propname" class="filterButtons marginBottom15px"
+      (click)="this.filteredParams.propname = '';addQueryParams()">
+      {{filteredParams.propname == 'GR - Microsite'?'GR - campaign':filteredParams.propname}}
+      <ion-icon slot="end" name="close"></ion-icon>
+    </ion-button>
+  </div>
+</ion-row>
+
+<ion-content *ngIf="!isOnCallDetailsPage" #mainscrollContainer (ionScroll)="onScroll($event)" scrollEvents="true">
+  <div style="margin: 10px;">
+    <ion-item-sliding *ngFor="let lead of leads_detail let i=index" #sliding (ionSwipe)="onSwipe($event,lead)"
+      class="mb-1">
+      <ion-item style="--border-style:none">
+        <div class="lead-info">
+          <ion-row class="info-row-heading">
+            <ion-col size="6">
+              <div><span>Lead Name</span></div>
+              <div>
+                <span class="info-row-value">
+                  {{lead.name}}
+                </span>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div><span>
+                  Number</span></div>
+              <div>
+                <span class="info-row-value">
+                  {{ lead.number }}
+                </span>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div><span>
+                  Lead Received</span></div>
+              <div>
+                <span class="info-row-value">
+                  {{ lead.datetime | date: 'dd-MMM-yyyy, hh:mm a' }}
+                </span>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div><span>
+                  Property</span></div>
+              <div>
+                <span class="info-row-value">
+                  {{ lead.propertyname }}
+                </span>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <span>Visit Fixed On</span>
+              </div>
+              <div>
+                <span class="info-row-value">
+                  {{ lead.selectedday + " , "+ lead.selectedtime }}
+                </span>
+              </div>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="custom-row-style">
+            <ion-col size="9">
+              <div (click)="onVisitAssign(lead)" style="display: flex;" *ngIf="localStorage.getItem('Name') !== 'demo'">
+                <a class="ion-text-start" style="padding-right: 8px;">
+                  <ion-img src="../../assets/CRMimages/whatsAppVisitAssign.svg" class="call-icon"
+                    style="width: 16px;"></ion-img>
+                </a>
+              </div>
+            </ion-col>
+            <ion-col size="3" class="content_center">
+              <div style="display: flex;" *ngIf="localStorage.getItem('Name') !== 'demo'">
+                <a href="tel:{{lead.number}}" class="ion-text-start" style="padding-right: 8px;">
+                  <ion-img src="../../assets/CRMimages/call-icon.svg" class="call-icon"></ion-img>
+                </a>
+                <!-- <a (click)="navigateToWhatsApp(lead.number)"> -->
+                <a href="https://wa.me/+91{{lead.number}}">
+                  <ion-img src="../../assets/CRMimages/what'sapp-icon.svg" class="whatsapp-icon"></ion-img>
+                </a>
+              </div>
+
+              <div style="display: flex;" *ngIf="localStorage.getItem('Name') == 'demo'">
+                <a class="ion-text-start" style="padding-right: 8px;">
+                  <ion-img src="../../assets/CRMimages/call-icon.svg" class="call-icon"></ion-img>
+                </a>
+                <a>
+                  <ion-img src="../../assets/CRMimages/what'sapp-icon.svg" class="whatsapp-icon"></ion-img>
+                </a>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-item>
+
+      <span *ngIf="localStorage.getItem('Name') !== 'demo'">
+        <span>
+          <ion-item-options side="end">
+            <ion-img src="../../assets/CRMimages/phone-call.svg" style="width:45px;padding: 10px;"
+              class="call-icon"></ion-img>
+          </ion-item-options>
+
+          <ion-item-options side="start">
+            <ion-img src="../../assets/CRMimages/whatsapp_icon.svg" style="width:52px;padding: 10px;"
+              class="call-icon"></ion-img>
+          </ion-item-options>
+        </span>
+      </span>
+    </ion-item-sliding>
+  </div>
+
+  <ion-row *ngIf=" leads_detail?.length === 0 " style="border-bottom:none;height:100%" class="content_center">
+    <ion-col class="ion-text-center">
+      <span>No Data Found ...!</span>
+    </ion-col>
+  </ion-row>
+
+
+  <!-- INFINITE SCROLL -->
+  <!-- <ion-infinite-scroll *ngIf="showInfiniteScroll" [disabled]="false" threshold="100px" #infiniteScroll 
+  (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll> -->
+</ion-content>
+
+<div class="ion-filter-icon" *ngIf="!isOnCallDetailsPage">
+  <ion-img src="../../assets/CRMimages/filter.svg" (click)="navigateToFilter()"></ion-img>
+</div>
+<app-common-footer></app-common-footer>
+
+
+
+<!-- FILTER MODAL -->
+<ion-modal #filterModal>
+  <ng-template>
+    <ion-header class="header_footerHeight">
+      <ion-row>
+        <ion-col size="2" class="content_center" (click)="filterModal.dismiss()">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="content_center">Filters</ion-col>
+        <ion-col size="2" class="content_center" (click)=" this.tempFilteredValues = {};reset_filter()">
+          <ion-icon name="refresh"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+
+    <div style="height: 100%;">
+      <ion-row class="split-layout">
+        <div class="left-column">
+          <ion-row [ngClass]="isLeftFilterActive=='property'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('property')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Property</span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row [ngClass]="isLeftFilterActive=='date'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('date')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Lead Received Date</span>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="divider"></div>
+        <div class="right-column">
+          <span *ngIf="isLeftFilterActive=='property'">
+            <ion-searchbar [(ngModel)]="propertySearchTerm" (ionInput)="setFilteredProperty()">
+            </ion-searchbar>
+            <ion-content style="height:70vh;" #propertyList>
+              <ion-row class="filterButtons" (click)="onFilterSelection('property','all')"
+                [ngClass]="{'backgroundLightColor': (tempFilteredValues?.propname === '')}">
+                <span>All</span></ion-row>
+              <ion-row class="filterButtons" *ngFor="let property of propertyList1"
+                (click)="onFilterSelection('property',property.propertyname)" [id]="property.propertyname"
+                [ngClass]="{'backgroundLightColor': (tempFilteredValues?.propname=== property.propertyname)}">
+                <span>{{property.propertyname}}</span>
+              </ion-row>
+            </ion-content>
+          </span>
+
+          <!-- RECEIVED DATE -->
+          <ion-row *ngIf="isLeftFilterActive=='date'">
+            <ion-item lines="none" class="input-with-image">
+              <ion-input [(ngModel)]="tempFilteredValues.fromdate" id="fromdate" placeholder="From">
+              </ion-input>
+              <ion-popover trigger="fromdate">
+                <ng-template>
+                  <ion-datetime #datetime presentation="date" [showDefaultButtons]="true" display-format="YYYY/MM/DD"
+                    [(ngModel)]="startdate" (ionChange)="onFilterSelection('fromdate',$event)" [min]="minDate"
+                    [max]="maxDate">
+                  </ion-datetime>
+                </ng-template>
+              </ion-popover>
+            </ion-item>
+            <ion-item lines="none" class="input-with-image marginTop10">
+              <ion-input [(ngModel)]="this.tempFilteredValues.todate" id="todate" placeholder="To"></ion-input>
+              <ion-popover trigger="todate">
+                <ng-template>
+                  <ion-datetime presentation="date" [showDefaultButtons]="true" display-format="DD/MM/YYYY"
+                    [(ngModel)]="enddate" [min]="endDateMinDate" [max]="maxDate"
+                    (ionChange)="onFilterSelection('todate',$event)"></ion-datetime>
+                </ng-template>
+              </ion-popover>
+            </ion-item>
+          </ion-row>
+        </div>
+      </ion-row>
+    </div>
+
+    <ion-footer class="header_footerHeight">
+      <ion-row>
+        <ion-col class="content_center font-size14-familyPoppins" (click)="filterModal.dismiss();confirmSelection()">
+          <ion-button fill="clear" class="showresultButton" [disabled]="!isenabled">Show Results</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+
+<ion-modal #visitAssign id="assignLeads-modal" (ionModalDidDismiss)="onVisitAssignModalClose($event)">
+  <ng-template>
+    <div class="m-2">
+      <span>
+        <ion-row>
+          <ion-col class="paddingBottomLeft">
+            <span class="font-size14-familyPoppins">
+              Select Property
+            </span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col id="teamSelectDropdown">
+            <p-dropdown class="teamSelectDropdown" [options]="assigningPropertyList" [(ngModel)]="selectedProperty"
+              optionLabel="property_info_name" name="selectedProperty" (onChange)="onPropertySelect($event)"
+              placeholder="Select a Team" appendTo="body" />
+          </ion-col>
+        </ion-row>
+      </span>
+
+      <span>
+        <ion-row>
+          <ion-col class="paddingBottomLeft">
+            <span class="font-size14-familyPoppins">Assign Executive Team</span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col id="teamSelectDropdown">
+            <p-dropdown class="teamSelectDropdown" [(ngModel)]="selectedExecTeam" [options]="execTeam"
+              optionLabel="name" appendTo="body" (onChange)="onExecTeamSelect($event)" placeholder="Select a Team"
+              name="selectedExecTeam" />
+          </ion-col>
+        </ion-row>
+      </span>
+      <ion-row>
+        <ion-col class="paddingBottomLeft">
+          <span class="font-size14-familyPoppins">
+            Select Executives
+          </span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row id="executiveDropdown">
+        <p-multiSelect class="exeSelection teamSelectDropdown" [options]="executives"
+          [(ngModel)]="selectedExecutiveName" optionLabel="name" name="selectedExecutiveNames"
+          (onChange)="onexecutive($event)" placeholder="Select Executives" display="chip" appendTo="body">
+        </p-multiSelect>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-button (click)="visitAssignLead()" fill="clear" style="width: 100%;"
+            class="font-size14-familyPoppins bg_textColor">
+            Vissit Assign
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ng-template>
+</ion-modal>

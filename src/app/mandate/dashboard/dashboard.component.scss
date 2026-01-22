@@ -1,0 +1,977 @@
+// html {
+//   font-size: clamp(14px, 4vw, 18px) !important;
+// }
+:host(.force-light) {
+  --ion-background-color: #fff !important;
+  --ion-text-color: #000 !important;
+}
+.main-div {
+  box-shadow: -3px 0px 7.3px 0px rgba(157, 126, 126, 0.2588235294);
+  background: white;
+  padding: 2px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding-bottom: 0;
+}
+.fi {
+  font-size: 24px;
+  color: #ff0000;
+}
+.filter-btn div {
+  border: 0.5px #0b7ab2 solid;
+  height: 100%;
+  border-radius: 4px;
+  color: #0b7ab2;
+}
+
+// UPDATE CODE
+.datefilter-div {
+  margin: 10px 5px;
+}
+.datefilter-div ion-col {
+  border-radius: 50px;
+  // background-color: white;
+}
+.datefilter-div ion-icon {
+  border-radius: 20px;
+  font-size: 1.375rem;
+  color: #515151;
+  --ionicon-stroke-width: 14px;
+}
+.p-2px {
+  padding: 2px !important;
+}
+
+.highlightedprop-text {
+  background: linear-gradient(180deg, #ffffff 0%, #d3ebff 100%);
+  border: none !important;
+  border-bottom: 1px solid #1366a5 !important;
+  color: #1365a4;
+  font-weight: 400;
+}
+.custom-row {
+  border-bottom: 1px solid rgba(100, 100, 111, 0.05);
+  box-shadow: 1px -2px 7.3px 0px rgba(157, 126, 126, 0.2588235294);
+}
+
+.custom-col {
+  padding: 5px;
+  font-size: 14px;
+  font-family: "Poppins";
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+::ng-deep p-calendar input {
+  top: 15px;
+  left: 10px;
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  display: none !important;
+}
+
+::ng-deep .p-datepicker {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+::ng-deep .p-datepicker table td > span.p-highlight {
+  color: #e6eaed !important;
+  background: rgb(11 122 178) !important;
+}
+p-calendar {
+  display: none !important;
+}
+.to-date-calendar,
+.from-date-calendar {
+  ion-img {
+    width: 20px;
+  }
+  .calendar-div {
+    border: 1px solid rgb(73 73 77 / 30%);
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 12px;
+    font-family: "Poppins";
+  }
+}
+.filterButtons ion-button {
+  color: #0b7ab2;
+  font-size: 12px;
+  font-family: "Poppins";
+  font-weight: 400;
+  word-wrap: break-word;
+  border: 0.5px #0b7ab2 solid;
+  border-radius: 4px;
+  height: 26px;
+  min-height: 26px;
+}
+::ng-deep p-dropdown.exec_css .p-inputwrapper span {
+  padding: 5px;
+  font-family: "Poppins";
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper span {
+  padding: 5px;
+  font-size: 12px;
+  font-family: "Poppins";
+  color: #0b7ab2;
+}
+::ng-deep p-dropdown.exec_css .p-inputwrapper {
+  width: 100% !important;
+  border: 0.5px #0b7ab2 solid;
+}
+::ng-deep p-dropdown.exec_css .p-inputwrapper .p-dropdown-trigger {
+  width: 30px !important;
+}
+::ng-deep
+  p-dropdown.exec_css
+  .p-inputwrapper
+  .p-dropdown-trigger
+  chevrondownicon {
+  width: 12px;
+  color: #0b7ab2;
+}
+::ng-deep .exec_css .p-element .p-dropdown-item {
+  padding: 5px !important;
+  font-size: 12px;
+}
+.leads_visits_calls {
+  // border-radius: 30px;
+  // border: 1px solid #bebebe;
+  gap: 5px;
+  ion-col span {
+    font-size: 12px;
+    font-family: "Poppins";
+  }
+  .active_btn,
+  .normal_btn {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+  .normal_btn {
+    background: linear-gradient(180deg, #ffffff 0%, #d2d2d2 100%);
+  }
+}
+.cards {
+  background-color: #efefef;
+  border: 2px solid white;
+  margin: 6px 3px;
+  border-radius: 6px;
+  box-shadow: 0px -3px 7.3px 0px rgb(164 127 127 / 26%);
+}
+
+.assignedLeads-card,
+.touchedLeads-card,
+.active-card,
+.allVisits-card,
+.visit-details-card,
+.booking-request-card,
+.closed-card,
+.total-call-card,
+.connected-call-card,
+.active-call-card,
+.inacive-call-card,
+.missed-call-card,
+.visitfixed-call-card,
+.overdues-card {
+  height: auto;
+  padding: 0;
+  margin: 0 2px 0 2px;
+  border-radius: 7px;
+}
+
+.assignedLeads-card ion-img,
+.touchedLeads-card ion-img,
+.active-card ion-img,
+.allVisits-card ion-img,
+.visit-details-card ion-img,
+.booking-request-card ion-img,
+.closed-card ion-img,
+.total-call-card ion-img,
+.connected-call-card ion-img,
+.active-call-card ion-img,
+.inacive-call-card ion-img,
+.missed-call-card ion-img,
+.visitfixed-call-card ion-img,
+.overdues-card ion-img {
+  width: 26px;
+  height: 26px;
+  position: absolute;
+  right: 3px !important;
+  top: 3px !important;
+}
+
+.assignedLeads-card div,
+.touchedLeads-card div,
+.active-card div,
+.allVisits-card div,
+.booking-request-card div,
+.closed-card div,
+.total-call-card div,
+.connected-call-card div,
+.active-call-card div,
+.inacive-call-card div,
+.missed-call-card div,
+.visitfixed-call-card div,
+.overdues-card div,
+.visit-details-card div {
+  font-size: 10px;
+  margin: 4px 5px 2px 4px;
+}
+.overdues-card div,
+.active-card div {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  align-items: flex-start;
+}
+
+.assignedLeads-card p:first-child,
+.touchedLeads-card p:first-child,
+.active-card p:first-child,
+.allVisits-card p:first-child,
+.visit-details-card p:first-child,
+.booking-request-card p:first-child,
+.closed-card p:first-child,
+.total-call-card p:first-child,
+.connected-call-card p:first-child,
+.active-call-card p:first-child,
+.inacive-call-card p:first-child,
+.missed-call-card p:first-child,
+.visitfixed-call-card p:first-child,
+.overdues-card p:first-child {
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.assignedLeads-card h1 + p span,
+.touchedLeads-card h1 + p span,
+.active-card h1 + p span,
+.allVisits-card h1 + p span,
+.visit-details-card h1 + p span,
+.booking-request-card h1 + p span,
+.closed-card h1 + p span,
+.total-call-card h1 + p span,
+.connected-call-card h1 + p span,
+.active-call-card h1 + p span,
+.inacive-call-card h1 + p span,
+.missed-call-card h1 + p span,
+.visitfixed-call-card h1 + p span,
+.overdues-card h1 + p span {
+  font-weight: 500;
+}
+
+.assignedLeads-card h1 + p,
+.touchedLeads-card h1 + p,
+.active-card h1 + p,
+.allVisits-card h1 + p,
+.visit-details-card h1 + p,
+.booking-request-card h1 + p,
+.closed-card h1 + p,
+.total-call-card h1 + p,
+.connected-call-card h1 + p,
+.active-call-card h1 + p,
+.inacive-call-card h1 + p,
+.missed-call-card h1 + p,
+.visitfixed-call-card h1 + p,
+.overdues-card h1 + p {
+  font-size: 10px !important;
+  font-weight: 400;
+}
+
+.assignedLeads-card h1,
+.touchedLeads-card h1,
+.active-card h1,
+.allVisits-card h1,
+.visit-details-card h1,
+.booking-request-card h1,
+.closed-card h1,
+.total-call-card h1,
+.connected-call-card h1,
+.active-call-card h1,
+.inacive-call-card h1,
+.missed-call-card h1,
+.visitfixed-call-card h1,
+.overdues-card h1 {
+  font-size: 20px;
+  font-weight: 500;
+}
+.assignedLeads-sub-data {
+  color: #004e76;
+}
+.touchedLeads-sub-data {
+  color: #73322d;
+}
+.active-sub-data {
+  color: #5d4100;
+}
+.overdues-sub-data {
+  color: #981f21;
+}
+.allVisits-sub-data {
+  color: #0f0084;
+}
+.booking-request-sub-data {
+  color: #9a4b1b;
+}
+.closed-sub-data {
+  color: #9a4b1b;
+}
+
+.assignedLeads-card {
+  background: linear-gradient(84.03deg, #ffffff 32.95%, #e5f6fe 104.6%);
+  border: 2px solid #ffffff;
+}
+.overdues-card {
+  background: linear-gradient(86.98deg, #ffffff 47.96%, #ffeced 113.29%);
+  border: 2px solid #ffffff;
+}
+
+.touchedLeads-card {
+  background: linear-gradient(81.85deg, #ffffff 48.93%, #ffe4e1 106.84%);
+  border: 2px solid #ffffff;
+  box-shadow: 0px 2px 3.1px 0px #959da533;
+}
+.active-card {
+  background: linear-gradient(81.86deg, #ffffff 47.83%, #ffe371 237.55%);
+  border: 2px solid #ffffff;
+  box-shadow: 0px 2px 3.1px 0px #959da533;
+}
+.allVisits-card {
+  background: linear-gradient(90deg, #ffffff 55.23%, #dbd8ff 224.32%);
+  border: 2px solid #ffffff;
+  box-shadow: 0px 2px 3.1px 0px #959da533;
+}
+.booking-request-card {
+  background: linear-gradient(261.88deg, #ffb884 -252.69%, #ffffff 52.51%);
+  border: 2px solid #ffffff;
+  box-shadow: 0px 2px 3.1px 0px #959da533;
+}
+.closed-card {
+  background: linear-gradient(254.46deg, #d3ffc9 -140.92%, #ffffff 54.02%);
+  border: 2px solid #ffffff;
+  box-shadow: 0px 2px 3.1px 0px #959da533;
+}
+
+.total-call-card {
+  background: #cce7ff;
+}
+.connected-call-card {
+  background: #ddd9ff;
+}
+.active-call-card {
+  background: #e4ffde;
+}
+.inacive-call-card {
+  background: #ffe3e3;
+}
+.missed-call-card {
+  background: #ffedf3;
+}
+.visitfixed-call-card {
+  background: #fff1d0;
+}
+.visits-leads {
+  font-size: 10px;
+  font-family: "Poppins";
+  border: 1px solid #727272;
+  border-radius: 24px;
+  margin: 0 36% 0 36%;
+  padding: 3px 11px 3px 11px;
+}
+.visits-leads ion-col {
+  padding: 0;
+}
+.visits-leads p {
+  padding: 4px;
+}
+.custom-datefilterIcon {
+  label {
+    width: 19px;
+    border-radius: 8px;
+    opacity: 0.4;
+  }
+}
+
+.active.custom-datefilterIcon {
+  background-color: #0b7ab2;
+  ion-icon {
+    color: white;
+  }
+}
+
+.lead-status-table ion-grid {
+  border: 1px solid rgba(224, 224, 224, 1);
+  padding: 0;
+  border-radius: 2px;
+}
+.lead-status-table .tableHeading ion-col {
+  font-size: 10px;
+  font-family: "Poppins";
+}
+
+.lead-status-table ion-row {
+  border-bottom: 1px solid rgba(224, 224, 224, 1);
+}
+.lead-status-table .exce_table ion-row ion-col {
+  font-size: 12px;
+  font-family: "Poppins";
+}
+.lead-status-table ion-content {
+  height: 200px;
+  max-height: 125px;
+}
+
+.scheduleOverduesButtons {
+  height: 34px;
+  border-radius: 4px;
+  background: rgba(236, 236, 236, 0.24);
+  border: 1px solid rgb(137, 137, 137, 0.26);
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.12);
+  color: #0b7ab2;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+.scheduledCountsRow,
+.totalLeadsCount {
+  border: 0.75px solid #ececec;
+}
+
+.scheduledCountsRow div,
+.totalLeadsCount div {
+  color: #000;
+  font-family: "Poppins";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.scheduledCountsRow p {
+  color: #080808;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  opacity: 0.56;
+}
+
+.logo::part(image) {
+  border-radius: 3px !important;
+  width: 30px;
+  height: 30px;
+}
+
+ion-toggle {
+  --handle-width: 15px;
+}
+ion-toggle::part(handle) {
+  height: 14px !important;
+  width: 14px !important;
+  border: 1px solid #009acb !important;
+}
+
+ion-toggle::part(track) {
+  width: 30px !important;
+  height: 10px !important;
+}
+
+::ng-deep .toggle-ltr.toggle-checked .toggle-inner {
+  border: 1px solid #ffff !important;
+}
+
+ion-toggle.toggle-checked::part(handle) {
+  border: 1px solid #fff !important;
+}
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  text-align: center;
+}
+
+.underline-red {
+  text-decoration: underline;
+  text-decoration-color: #0b7ab2;
+}
+.overdue-card {
+  font-family: "Poppins", sans-serif;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 8px;
+
+  ion-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d9534f;
+    margin-bottom: 10px;
+  }
+}
+.overdue-card {
+  border-radius: 4px;
+  box-shadow: 0px -4px 17px 0px rgba(199, 199, 199, 0.3294117647);
+  ion-col {
+    font-size: 10px;
+    font-family: "Poppins";
+  }
+  ion-card-title {
+    padding: 2px;
+    font-family: "Poppins";
+    font-weight: 500;
+    font-size: 14px;
+    color: #9f2e00 !important;
+  }
+  .overdue-table .overduetable-header ion-col:nth-child(even) {
+    background: #ffd7c7;
+  }
+
+  .overdue-table .overduetable-header ion-col:nth-child(odd) {
+    background: #ffeee8;
+  }
+
+  .overdue-table .overduetable-row:nth-child(even) .overduetable-cell.stage {
+    background: #ffd7c7;
+  }
+  .overdue-table .overduetable-row:nth-child(odd) .overduetable-cell.stage {
+    background: #ffeee8;
+  }
+  .overduetable-row {
+    height: 6vh;
+  }
+}
+
+.text-value {
+  color: #202224;
+  font-weight: 500;
+  font-size: 10px;
+  padding-top: 0;
+  line-height: 1.1;
+}
+
+.text-label {
+  color: #727272;
+  font-weight: 300;
+  font-size: 10px;
+  padding-bottom: 0;
+  text-transform: capitalize;
+}
+
+ion-item.lead-item {
+  --padding-start: 0;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+  --padding-end: 0;
+  ion-card {
+    border: 1px solid rgba(137, 137, 137, 0.26);
+    width: 100%;
+  }
+}
+
+.calls-data {
+  // border: 1px solid rgba(137, 137, 137, 0.26);
+  .allMissedlive-calls {
+    border: 1px solid #fcfcfe;
+    border-radius: 4px;
+    span {
+      font-size: 12px;
+    }
+  }
+
+  .allMissedlive-calls ion-col:nth-child(2) {
+    border-right: 1px solid rgba(137, 137, 137, 0.26);
+    border-left: 1px solid rgba(137, 137, 137, 0.26);
+  }
+  .normal_btn {
+    background: #ededed;
+    box-shadow: none;
+    border: none;
+  }
+  ion-card {
+    box-shadow: 0px 8px 24px 0px #959da533;
+  }
+  div.emptydata {
+    background: #fcfcfe;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+  }
+  .notemptydata {
+    background: #fcfcfe;
+    min-height: 200px;
+  }
+}
+
+.audio {
+  background: rgb(183 216 233) !important;
+}
+audio::-webkit-media-controls-panel {
+  background: rgba(183, 216, 233, 1);
+}
+audio::-webkit-media-controls-play-button {
+  background-color: #fff;
+  border-radius: 50%;
+}
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+  color: rgba(114, 114, 114, 1);
+}
+.pointerEvent {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.refreshLiveCall {
+  z-index: 9999;
+  position: fixed;
+  bottom: 75px;
+  right: 7px;
+  span {
+    background: #0b7ab2;
+    border: 1px solid #ffffff;
+    color: white;
+    border-radius: 50px;
+    padding: 2px 5px;
+    font-size: 12px;
+    font-family: "Poppins";
+  }
+  ion-icon {
+    font-size: 20px;
+
+    padding-right: 6px;
+  }
+}
+
+.on_call {
+  span {
+    border-radius: 50px;
+    background: #0c6d00;
+    color: white;
+    padding: 0 4px;
+  }
+}
+
+.reconnectedCall-span {
+  background: #ed6a0f;
+  border-radius: 50px;
+  color: white;
+  padding: 4px 6px;
+}
+.missedCall-span {
+  background: red;
+  border-radius: 50px;
+  color: white;
+  padding: 4px 6px;
+}
+
+.custom-ion-item {
+  --inner-item-padding-top: 0;
+  --inner-item-padding-bottom: 0;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --padding-end: 0;
+  width: 100%;
+  padding-left: 10px;
+}
+ion-modal.callConfirmationModal {
+  padding: 10px;
+  --height: 38%;
+  --border-radius: 5px;
+  --backdrop-opacity: 0.8;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+.callConfirmationModal ion-header {
+  font-family: "Poppins";
+  box-shadow: none;
+  ion-row {
+    padding: 4px;
+  }
+  h3,
+  ion-icon {
+    font-size: 18px;
+    color: #ffffff !important;
+  }
+  ion-icon {
+    font-size: 30px;
+  }
+}
+
+.callConfirmationModal ion-button {
+  width: 100%;
+  border-radius: 4px;
+  font-family: "Poppins";
+  font-size: 18px;
+  text-transform: none;
+}
+.callConfirmationModal ion-footer {
+  box-shadow: none;
+}
+
+.isBeforeselectingDate {
+  color: #b8b9ba;
+  font-weight: 100;
+}
+ion-modal.dashboard_custDate_modal::part(content) {
+  border-radius: 20px 20px 0 0 !important;
+  overflow: hidden;
+}
+
+.calendar-modal {
+  background: white;
+}
+
+ion-modal {
+  --backdrop-opacity: 1.4;
+  // --height: auto;
+}
+
+.date-range-wrapper {
+  padding: 20px 10px;
+}
+
+.title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.date-inputs {
+  display: flex;
+  gap: 12px;
+}
+
+.date-box {
+  flex: 1;
+  background: #f6f9fc;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.date-box label {
+  font-size: 12px;
+  color: #8a8a8a;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.date-box span {
+  font-size: 14px;
+  color: #000;
+}
+
+.confirm-btn {
+  --border-radius: 24px;
+  --background: #0b7ab2;
+  min-height: 5px !important;
+  width: 100%;
+  padding: 0 10px;
+}
+
+::ng-deep.confirm-btn::part(native) {
+  padding: 12px;
+}
+.error-text {
+  font-size: 12px;
+  font-family: "Poppins";
+  color: red;
+}
+
+ion-datetime {
+  width: 100%;
+  max-width: 100%;
+  --background: #ffffff;
+}
+.leads_health_row {
+  background: linear-gradient(180deg, #ffffff -21.82%, #d0d0d0 294.59%);
+  padding: 2px;
+  color: #3a3939;
+  font-family: "Poppins";
+  font-size: 14px;
+}
+
+ion-datetime::part(calendar) {
+  width: 100% !important;
+  height: 100% !important;
+}
+.main_body {
+  margin: 10px;
+  background: #ffffff;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border: 1px solid #ffffff;
+  box-shadow: 2px -1px 9px 1px #959da533;
+}
+.row-box {
+  background: #fff;
+  padding-inline: 5px;
+  padding-block: 20px;
+  border-radius: 5px;
+  margin-bottom: 6px;
+  padding: 9px;
+}
+.title {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0;
+  font-weight: 600;
+  font-size: 12px;
+}
+.value {
+  font-size: 12px;
+}
+.segments {
+  display: flex;
+  gap: 5px;
+}
+.segment {
+  flex: 1;
+  background: #dcdcdc;
+  height: 6px;
+  border-radius: 10px;
+}
+.solid-bar {
+  height: 6px;
+  border-radius: 10px;
+}
+.blue {
+  background: linear-gradient(180deg, #a4d7ff 0%, #0b7ab2 100%);
+}
+
+.green-active {
+  background: linear-gradient(180deg, #d6ffa4 0%, #559d00 100%);
+}
+
+.orange-active {
+  background: linear-gradient(180deg, #f8c8b4 0%, #e84c0a 100%);
+}
+
+.red-active {
+  background: linear-gradient(180deg, #f8cccc 0%, #bc0000 100%);
+}
+.table_card {
+  border-radius: 4px;
+  box-shadow: none;
+  border: 1px solid #ffffff;
+  box-shadow: 2px -1px 9px 1px rgba(149, 157, 165, 0.2);
+  .card_heading {
+    background: linear-gradient(180deg, #ffffff -21.82%, #d0d0d0 294.59%);
+    padding: 2px;
+    color: #3a3939;
+    font-family: "Poppins";
+    font-size: 14px;
+  }
+}
+
+.table-header {
+  background: #d0eaff;
+  color: #004378;
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.table-body ion-row {
+  border-bottom: 1px solid #eee;
+}
+
+.table-body ion-col {
+  line-height: 1.4;
+}
+
+.name {
+  font-weight: 400;
+  color: #202224;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.phone {
+  color: #414141;
+  font-weight: 300;
+  font-size: 12px;
+}
+.date {
+  font-weight: 400;
+  font-size: 12px;
+  color: #000000;
+}
+.plan {
+  font-weight: 500;
+}
+
+.weekend {
+  color: #8b6800;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.weekday {
+  color: #ce3d00;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+// .row-scroll,
+// .d-flex {
+//   width: 100%;
+//   overflow-x: auto;
+//   scrollbar-width: none;
+//   -webkit-overflow-scrolling: touch;
+// }
+
+.row-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.table-row {
+  // min-width: 680px; /* IMPORTANT */
+  // flex-wrap: nowrap; /* Prevent wrap */
+}
+
+.full-table-scroll {
+  // overflow-x: auto;
+  // width: 100%;
+  // scrollbar-width: none;
+  // -webkit-overflow-scrolling: touch;
+}
+
+.full-table-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Force overflow */
+.table-row {
+  // min-width: 680px;
+  // flex-wrap: nowrap;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.weekday_span {
+  background: linear-gradient(180deg, #ffd350 0%, #c09001 100%);
+}
+
+.weekend_span {
+  background: linear-gradient(180deg, #ff996e 0%, #e84c0a 100%);
+}
+
+.re_connected_text {
+  color: #ae1d50;
+  font-weight: 700;
+}

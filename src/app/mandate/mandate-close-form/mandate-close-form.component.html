@@ -1,0 +1,191 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<!-- Lead Closed Form -->
+
+<div class="closedForm margin-top-16">
+  <span *ngFor="let visited of visitedpropertylists;  let i = index">
+    <form (ngSubmit)="isCS?csClosingrequest(): closingrequest(i,visited.propid,visited.name)" ngNativeValidate
+      #submitForm="ngForm" [hidden]="!visitedpropertylists">
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          Closed Date
+        </p>
+      </ion-row>
+      <ion-row class="center-content">
+        <div lines="none" class="input-with-image date-input">
+          <ion-input [(ngModel)]="closeddate" name="date" id="closeddate" placeholder="Choose Date"
+            required></ion-input>
+          <ion-popover trigger="closeddate" #popover>
+            <ng-template>
+              <ion-datetime presentation="date" locale="en-US" [max]="minDate"
+                (ionChange)="onDateChange($event);closePopover()"></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </ion-row>
+
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          Closed Time
+        </p>
+      </ion-row>
+      <!-- <ion-row class="center-content">
+        <div no-lines class="date-input inputTime-with-image">
+          <ion-input  [(ngModel)]="closedtime" name="time" class="borderNone" id="closedtime" no-lines placeholder="Choose Time" required></ion-input>               
+          <ion-popover trigger="closedtime">
+            <ng-template>
+              <ion-datetime  presentation="time" locale="en-US" (ionChange)="onTimeChange($event)"></ion-datetime>
+          </ng-template>
+          </ion-popover>
+        </div>
+      </ion-row> -->
+
+      <ion-row class="center-content">
+        <div no-lines class="date-input inputTime-with-image">
+          <div style="width: 100%;">
+            <input style="width: 100%;" placeholder="Choose Time" id="closedtime" aria-label="12hr format"
+              [ngxTimepicker]="default" name="closedtime" [(ngModel)]="closedtime" inputmode="none"
+              (ngModelChange)="validateTime()" required readonly>
+          </div>
+        </div>
+      </ion-row>
+      <ngx-material-timepicker #default>
+      </ngx-material-timepicker>
+
+      <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.</div>
+
+
+      <ion-button *ngIf="isCS" class="font-size14-familyPoppins" style="background-color: #0b7ab2;color: white;"
+        type="submit" fill="clear" [disabled]="submitForm.invalid">
+        close
+      </ion-button>
+
+      <span *ngIf="!isCS">
+        <ion-row class="margin-top-16">
+          <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+            Select the properties for the LeadClosing
+          </p>
+          <!-- <div class="ui vertical fluid tabular menu selector{{i}}">
+                  <a class="item" [ngClass]="{'active': selectedItem === i}" 
+                  (click)='selectedItem = i;' data-toggle="tab" href="#selector{{i}}">
+                    {{visited.name}}
+                  </a>
+                </div> -->
+        </ion-row>
+        <span>
+          <ion-row>
+            <div>
+              <ion-button fill="clear" class="inActiveStatus"> {{visited.name}}</ion-button>
+            </div>
+          </ion-row>
+
+          <ion-row class="margin-top-16">
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              Select Unit
+            </p>
+          </ion-row>
+          <ion-row>
+            <ion-button fill="clear" [ngClass]="isSelect_1_BHK?'activeStatus':'inActiveStatus'" required
+              (click)="unitselection('1BHK')"> 1 BHK</ion-button>
+            <ion-button fill="clear" [ngClass]="isSelect_2_BHK?'activeStatus':'inActiveStatus'" required
+              (click)="unitselection('2BHK')"> 2 BHK</ion-button>
+            <ion-button fill="clear" [ngClass]="isSelect_3_BHK?'activeStatus':'inActiveStatus'" required
+              (click)="unitselection('3BHK')"> 3 BHK</ion-button>
+            <ion-button fill="clear" [ngClass]="isSelect_4_BHK?'activeStatus':'inActiveStatus'" required
+              (click)="unitselection('4BHK')"> 4 BHK</ion-button>
+            <ion-button fill="clear" [ngClass]="isSelect_5_BHK?'activeStatus':'inActiveStatus'" required
+              (click)="unitselection('5BHK')"> 5 BHK</ion-button>
+          </ion-row>
+          <ion-row class="margin-top-16">
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              Unit No *
+            </p>
+          </ion-row>
+          <ion-row>
+            <ion-input class="inActiveStatus" id="unitnum-{{i}}" style="margin-right: 0;" required></ion-input>
+          </ion-row>
+
+          <ion-row class="margin-top-16">
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              Dimension *
+            </p>
+          </ion-row>
+          <ion-row>
+            <ion-input class="inActiveStatus" (input)="setCustomValidity('dimension',i,$event)" id="dimension-{{i}}"
+              style="margin-right: 0;" required></ion-input>
+          </ion-row>
+
+          <ion-row class="margin-top-16">
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              Rate Per Sqft *
+            </p>
+          </ion-row>
+          <ion-row>
+            <ion-input class="inActiveStatus" (input)="setCustomValidity('rate',i,$event)" id="ratepersquarfeet-{{i}}"
+              style="margin-right: 0;" required></ion-input>
+          </ion-row>
+
+          <ion-row class="margin-top-16">
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              Remarks
+            </p>
+          </ion-row>
+          <ion-row class="custom-textArea">
+            <ion-textarea placeholder="Write remarks" [(ngModel)]="textarearemarks"
+              (ngModelChange)="checkAlphanumericSpaces()" id="remarks-{{i}}" name="remark" required></ion-textarea>
+          </ion-row>
+
+          <ion-row class="margin-top-16">
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              Upload Document *
+            </p>
+            <p class="font-size12-familyPoppins font-weight400" style="color: rgba(0, 0, 0, 0.40);">(Eg: Booking Form,
+              Pricesheets)</p>
+          </ion-row>
+          <ion-row>
+            <ion-input placeholder="Choose File" name="file" class="inActiveStatus" style="margin-right:0;"
+              [(ngModel)]="selectedFileName" readonly></ion-input>
+          </ion-row>
+          <ion-row>
+            <input type="file" (change)="onFileSelected(i,$event)" class="file-input" id="customFile{{i}}"
+              style="display: none;" accept="image/gif,image/jpeg,image/jpg,image/png" multiple>
+            <ion-button fill="clear" class="saveButton" [ngClass]="uploads.length===0?'saveButton':'activeSaveButton'"
+              (click)="browseFiles(i)">Browse</ion-button>
+            <div style="display: flex;flex-direction: column;">
+              <span style="color: #999;font-size: 12px;">Accepted File Size: 1MB</span>
+              <span style="color: #999;font-size: 12px;">Supported Formats: JPG,PNG,PDF</span>
+            </div>
+          </ion-row>
+          <ion-row>
+            <ion-col style="height: 109px;width: 146px;" size="6" *ngFor="let img of uploads  let i = index">
+              <div style="height: 100%;position:relative" [photoGalleryGroup]>
+                <span [photoGallery]="img">
+                  <img [src]="img" style="height:100%;width:100%;object-fit: fill;">
+                  <ion-icon (click)="removeImage(i)" name="close-outline" class="close-icon"></ion-icon>
+                </span>
+                <!-- <ion-img [src]="img" style="height:100%;width:100%;object-fit: fill;"></ion-img>
+                      <ion-icon (click)="removeImage(i)"  name="close-outline" class="close-icon"></ion-icon> -->
+              </div>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="submitForm">
+            <ion-col class="paddingZero">
+              <ion-button fill="clear" type="reset" (click)="resetAll()">Cancel</ion-button>
+            </ion-col>
+            <ion-col class="paddingZero">
+              <ion-button fill="clear" [ngClass]="submitForm.invalid || hasOnlySpaces?'saveButton':'activeSaveButton'"
+                type="submit" [disabled]="submitForm.invalid || hasOnlySpaces">Save</ion-button>
+            </ion-col>
+          </ion-row>
+        </span>
+      </span>
+    </form>
+
+  </span>
+  <input type="hidden" id="property" #propertyInput>
+  <p [hidden]="visitedpropertylists?.length" class="text-center p-5 font-size12-familyPoppins">
+    No Visited properties Found</p>
+</div>

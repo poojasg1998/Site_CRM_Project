@@ -1,0 +1,349 @@
+<ion-header>
+  <ion-toolbar class="ion-text-center header">
+    <ion-row>
+      <ion-col size="2" class="content_center">
+        <ion-icon name="arrow-back" (click)="onBackbutton()">back</ion-icon>
+      </ion-col>
+      <ion-col size="8">
+        <ion-row *ngIf="localStorage.getItem('Role') !== '1'">
+          <ion-col class="font-size16-familyPoppins">
+            Activities
+          </ion-col>
+        </ion-row>
+        <ion-row class="retailMandate" *ngIf="localStorage.getItem('Role') == '1'">
+          <ion-col (click)="filteredParams.htype = 'retail';reset_filter(); onHtype('retail')" class="content_center"
+            [ngClass]="filteredParams.htype=='retail'?'activeHtype':''">
+            <div>
+              <span class="font-size16-familyPoppins">Retail</span>
+            </div>
+          </ion-col>
+          <ion-col (click)="filteredParams.htype = 'mandate';reset_filter();onHtype('mandate')" class="content_center"
+            [ngClass]="filteredParams.htype=='mandate'?'activeHtype':''">
+            <div>
+              <span class="font-size16-familyPoppins">Mandate</span>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col size="2" (click)="openEndMenu()" class="content_center">
+        <ion-icon name="menu" class="menu_icon"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+<div style="background:#e7e7e7">
+  <ion-searchbar style="--border-radius:25px" [(ngModel)]="execPropName"
+    (ionInput)="onPropertySearch()"></ion-searchbar>
+</div>
+<ion-content style="--background:#e7e7e7">
+  <div *ngFor="let prop of propertyList1"
+    style="margin: 10px; border: 1px solid #e7e7e7; padding: 2px; border-radius: 3px; background: #ffffff;">
+
+    <!-- Edit Icon (Top Right Corner) -->
+    <ion-img src="../../../assets/CRMimages/edit_icon.svg" (click)="onEditProperty(prop)"
+      style="width: 25px; height: 25px; position: absolute; right: 14px;">
+    </ion-img>
+
+    <!-- Property Image (At the top) -->
+    <ion-img [src]="'https://superadmin.homes247.in/images/uploadPropertyImgs/' + prop.PropImageName"
+      style="width: 100%; border-radius: 15px;">
+    </ion-img>
+
+    <!-- Text Container (Below the Image) -->
+    <div class="propertyResourcesCss">
+      <ion-row>
+        <ion-col><span style="color:#0B7AB2">{{prop.PropName}}</span></ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="font-size12-familyPoppins" style="display: flex;"
+          [ngClass]="{'blurred': (prop?.PropInfo == null || prop?.PropInfo == '')}">
+          <ion-img style="height: 18px;padding-right: 5px;"
+            src="../../assets/CRMimages/propertyInfo_icon.svg"></ion-img>
+          Property Info</ion-col>
+        <ion-col class="font-size12-familyPoppins" style="display: flex;"
+          [ngClass]="{'blurred': (prop?.Floorplans?.length  == 0)}">
+          <ion-img style="height: 14px;padding-right: 5px;" src="../../assets/CRMimages/floorPlan_icon.svg"></ion-img>
+          Floor Plan</ion-col>
+        <ion-col class="font-size12-familyPoppins" style="display: flex;"
+          [ngClass]="{'blurred': (prop?.videos.length == 0) || prop?.videos == ''}">
+          <ion-img style="height: 15px;padding-right: 5px;" src="../../assets/CRMimages/video_icon.svg"></ion-img>
+          Video</ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="font-size12-familyPoppins" style="display: flex;"
+          [ngClass]="{'blurred': (prop?.Pricesheets?.length == 0)}">
+          <ion-img style="height: 17px;padding-right: 5px;" src="../../assets/CRMimages/pricesheet_icon.svg">
+          </ion-img>
+          PriceSheet
+        </ion-col>
+        <ion-col class="font-size12-familyPoppins" style="display: flex;"
+          [ngClass]="{'blurred': (prop?.Brochure == null || prop?.Brochure == '')}">
+          <ion-img style="height: 15px;padding-right: 5px;" src="../../assets/CRMimages/brochure_icon.svg"></ion-img>
+          Brochure
+        </ion-col>
+        <ion-col></ion-col>
+      </ion-row>
+    </div>
+  </div>
+</ion-content>
+
+<app-common-footer></app-common-footer>
+
+
+<ion-modal #addPropModal>
+  <ng-template>
+    <ion-header>
+      <ion-row>
+        <ion-col size="2" (click)="closeAddPropModal()" class="content_center">
+          <ion-icon style="font-size: 24px;" name="arrow-back"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="content_center">
+          <span *ngIf="!isEditProp" class="font-size16-familyPoppins">Add Property </span>
+          <span *ngIf="isEditProp" class="font-size16-familyPoppins">Edit Property </span>
+        </ion-col>
+        <ion-col size="2"></ion-col>
+      </ion-row>
+    </ion-header>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+    <ion-content class="ion-padding">
+      <ion-row class="info-row-heading">
+        <ion-col size="12" *ngIf="!isEditProp">
+          <div>Builder</div>
+          <div class="exec">
+            <p-dropdown class="exec_css info-row-value" [options]="builderList" optionLabel="name"
+              [(ngModel)]="builderName" appendTo="body" placeholder="Select Builder" [virtualScroll]="true"
+              [virtualScrollItemSize]="38" (onChange)="onBuilderSelected($event)" />
+          </div>
+        </ion-col>
+        <ion-col size="12" *ngIf="!isEditProp">
+          <div>Property</div>
+          <div class="exec">
+            <p-dropdown class="exec_css info-row-value" [options]="builderPropertyList" optionLabel="name"
+              [(ngModel)]="builderPropertyName" appendTo="body" placeholder="Select Property" [virtualScroll]="true"
+              [virtualScrollItemSize]="38" (onChange)="onBuilderPropertySelected($event)" />
+            <!-- <p-dropdown class="exec_css info-row-value" optionLabel="Name"  placeholder="Select Property" appendTo="body"/> -->
+          </div>
+        </ion-col>
+
+        <!-- BROCHURE UPLOAD -->
+        <ion-col size="12">
+          <div>Brochure <span class="font-size10-familyPoppins">(Upto 100MB & PDF Only)</span></div>
+          <div class="custom-file info-row-value">
+
+            <input type="file" id="brochureInput" (change)="onBrochureFileSelected($event)" class="custom-file-input"
+              data-max-size="100000000" accept=".pdf">
+            <label
+              *ngIf="!(brochureFileData[0]?.fileName !== undefined && brochureFileData[0]?.fileName !== null && brochureFileData[0])"
+              class="custom-file-label content_center" for="brochureInput">
+              <span class="info-row-value">Upload Files</span>
+              <ion-img style="width: 18px; height: 18px" src="../assets/CRMimages/upload_icon.svg"></ion-img>
+            </label>
+
+            <ion-row
+              *ngIf="brochureFileData[0]?.fileName !== undefined && brochureFileData[0]?.fileName !== null && brochureFileData[0]"
+              [ngClass]="brochureFileData[0]?.fileName !== undefined && brochureFileData[0]?.fileName !== null && brochureFileData[0]?'backgroundLightColor':''"
+              style="padding: 6px;">
+              <ion-col class="center-vertically text_nowrap">
+                <label>
+                  <span *ngIf="brochureFileData[0]">
+                    {{this.brochureFileData[0]?.fileName}}
+                  </span>
+                </label>
+              </ion-col>
+              <ion-col size="3" class="center-vertically" style="justify-content: space-evenly;">
+                <label class="replace_file_icon" for="brochureInput">
+                  <ion-img src="../assets/CRMimages/replace_file_icon.svg"></ion-img>
+                </label>
+                <span *ngIf="!isEditProp" class="close_icon" (click)="removeBrochureFile()">
+                  <ion-img src="../assets/CRMimages/close_icon.svg"></ion-img>
+                </span>
+                <!-- <span *ngIf="isEditProp" class="close_icon">
+                  <ion-img src="../assets/CRMimages/delete_icon.svg"></ion-img>                
+                </span> -->
+              </ion-col>
+            </ion-row>
+          </div>
+        </ion-col>
+
+        <!-- PRICE SHEET UPLOAD -->
+        <ion-col size="12">
+          <div>Price Sheet <span class="font-size10-familyPoppins">(Upto 50MB & PDF/PNG/JPEG Only) </span></div>
+          <div class="custom-file">
+            <ion-row *ngFor="let fileType of fileTypes; let rowIndex = index"
+              [ngClass]="{'first-row': rowIndex === 0, 'second-row': rowIndex === 1 || rowIndex === 2}">
+              <ion-col class="info-row-value" *ngFor="let type of fileType;let colIndex = index"
+                style="padding: 0; margin: 2px;">
+                <input type="file" [id]="'customFile' + rowIndex + '-' + colIndex" class="custom-file-input"
+                  (change)="onPriceSheetFileSelected($event,( rowIndex + '-' + colIndex),type)"
+                  accept=".pdf,.png,.jpg,.jpeg">
+                <label *ngIf="!priceSheetFileData[rowIndex + '-' + colIndex]" class="custom-file-label content_center"
+                  [for]="'customFile' + rowIndex + '-' + colIndex">
+                  <span class="info-row-value">
+                    {{ type }} Upload Files
+                  </span>
+                  <ion-img style="width: 18px; height: 18px" src="../assets/CRMimages/upload_icon.svg"></ion-img>
+                </label>
+
+                <div [ngClass]="{'backgroundLightColor': priceSheetFileData[rowIndex + '-' + colIndex]}"
+                  *ngIf="priceSheetFileData[rowIndex + '-' + colIndex]" class="file-name custom-file-label">
+                  <ion-row>
+                    <ion-col class="center-vertically">
+                      <label [for]="'customFile' + rowIndex + '-' + colIndex">
+                        <span> {{ priceSheetFileData[rowIndex + '-' + colIndex].fileName }}</span>
+                      </label>
+                    </ion-col>
+                    <ion-col size="4" class="center-vertically">
+                      <label class="replace_file_icon" [for]="'customFile' + rowIndex + '-' + colIndex">
+                        <ion-img src="../assets/CRMimages/replace_file_icon.svg"></ion-img>
+                      </label>
+                      <span *ngIf="!isEditProp" (click)="removePriceSheet(rowIndex + '-' + colIndex)"
+                        class="close_icon"><ion-img src="../assets/CRMimages/close_icon.svg"></ion-img>
+                      </span>
+                      <span *ngIf="isEditProp" class="close_icon" (click)="deletepriceSheet(rowIndex + '-' + colIndex)">
+                        <ion-img style="width:20px" src="../assets/CRMimages/delete_icon.svg"></ion-img>
+                      </span>
+                    </ion-col>
+                  </ion-row>
+                </div>
+              </ion-col>
+            </ion-row>
+          </div>
+        </ion-col>
+
+        <!-- VIDEO FILE UPLOAD -->
+        <ion-col size="12">
+          <div>Video <span class="font-size10-familyPoppins">(Upto 100MB & Mp4 Only)</span></div>
+          <div>
+            <ion-row class="bhkButtonStyle">
+              <ion-col *ngFor="let bhkType of ['Common', '1BHK', '2BHK', '3BHK', '4BHK']"
+                (click)="onVideoFileUploadedType(bhkType)">
+                <div class="font-size12-familyPoppins content_center"
+                  [ngClass]="{'textBgColor': selectedVideoBHK === bhkType}">{{ bhkType }}</div>
+              </ion-col>
+            </ion-row>
+            <ion-row style="margin-top: 5px;">
+              <ion-col class="info-row-value paddingZero">
+                <input accept=".mp4" type="file" id="customVideoFile" class="custom-file-input"
+                  (click)="checkBHKBeforeFileUpload($event,'video')" (change)="onVideoFileSelected($event)" multiple>
+                <label [ngClass]="selectedVideoBHK?'textBorderColor':''" class="custom-file-label content_center"
+                  for="customVideoFile">
+                  <span [ngClass]="!selectedVideoBHK?'info-row-value':''">Common Upload Files</span>
+                  <ion-img *ngIf="!selectedVideoBHK" style="width: 18px; height: 18px"
+                    src="../assets/CRMimages/upload_icon.svg"></ion-img>
+                  <ion-img *ngIf="selectedVideoBHK" style="width: 18px; height: 18px"
+                    src="../assets/CRMimages/active_uploaded_icon.svg"></ion-img>
+                </label>
+              </ion-col>
+            </ion-row>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" class="paddingZero">
+          <div style="display: flex; overflow-x: scroll">
+            <div class="content_center videoCss backgroundLightColor"
+              *ngFor="let video of videoFileData[selectedVideoBHK];let i = index ">
+              <div class="font-size12-familyPoppins">{{video.fileName}}</div>
+              <ion-img (click)="viewVideo(video)" src="../assets/CRMimages/eye_icon.svg"
+                style="margin: 5px; width: 20px;"></ion-img>
+              <span *ngIf="!isEditProp">
+                <ion-img (click)="removeVideoFile(i)" src="../assets/CRMimages/close_icon.svg"
+                  style="width: 14px;margin: 5px;"></ion-img>
+              </span>
+              <span *ngIf="isEditProp" class="close_icon" (click)="deleteVideo(i)">
+                <ion-img style="width:20px" src="../assets/CRMimages/delete_icon.svg"></ion-img>
+              </span>
+            </div>
+          </div>
+        </ion-col>
+
+        <ion-col size="12">
+          <div>Floor Plan <span class="font-size10-familyPoppins">(Upto 10MB & PDF/PNG/JPEG Only)</span></div>
+          <div>
+            <ion-row class="bhkButtonStyle">
+              <ion-col *ngFor="let bhkType of ['Common', '1BHK', '2BHK', '3BHK', '4BHK']"
+                (click)="onFloorPlanUploadedType(bhkType)">
+                <div class="font-size12-familyPoppins content_center"
+                  [ngClass]="{'textBgColor': selectedFloorPlanBHK === bhkType}">{{ bhkType }}</div>
+              </ion-col>
+            </ion-row>
+            <ion-row style="margin-top: 5px;">
+              <ion-col class="info-row-value paddingZero">
+                <input type="file" id="floorPlanCustomFile" class="custom-file-input"
+                  (click)="checkBHKBeforeFileUpload($event,'floorPlan')" (change)="onFloorPlanFileSelected($event)"
+                  accept=".pdf,.png,.jpg,.jpeg" multiple>
+                <label class="custom-file-label content_center" for="floorPlanCustomFile"
+                  [ngClass]="selectedFloorPlanBHK?'textBorderColor':''">
+                  <span [ngClass]="!selectedFloorPlanBHK?'info-row-value':''">Common Upload Files</span>
+                  <ion-img *ngIf="!selectedFloorPlanBHK" style="width: 18px; height: 18px"
+                    src="../assets/CRMimages/upload_icon.svg"></ion-img>
+                  <ion-img *ngIf="selectedFloorPlanBHK" style="width: 18px; height: 18px"
+                    src="../assets/CRMimages/active_uploaded_icon.svg"></ion-img>
+                </label>
+              </ion-col>
+            </ion-row>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" class="paddingZero">
+          <ion-row style="margin: 5px;" *ngFor="let floorPlan of floorPlanFileData[selectedFloorPlanBHK];let i=index">
+            <ion-col size="7" class="floorPlanCss backgroundLightColor">
+              <ion-row style="width: 100%;">
+                <ion-col class="paddingZero content_center">
+                  <div class="font-size12-familyPoppins">{{floorPlan.fileName}}</div>
+                </ion-col>
+                <ion-col class="eyeCloseIcon">
+                  <ion-img (click)="onFloorePlanView(floorPlan)" src="../assets/CRMimages/eye_icon.svg"
+                    style="margin: 5px; width: 20px;"></ion-img>
+
+                  <span *ngIf="!isEditProp">
+                    <ion-img (click)="removeFloorPlanFile(i)" src="../assets/CRMimages/close_icon.svg"
+                      style="width: 14px;margin: 5px;"></ion-img>
+                  </span>
+
+                  <span *ngIf="isEditProp" class="close_icon" (click)="deleteFloorPlan(i)">
+                    <ion-img style="width:20px" src="../assets/CRMimages/delete_icon.svg"></ion-img>
+                  </span>
+
+                </ion-col>
+              </ion-row>
+            </ion-col>
+            <ion-col size="5">
+              <ion-row>
+                <ion-col class="paddingZero">
+                  <ion-input [ngClass]="isEditProp?'pointer_eventsNone':''" class="font-colorBlue"
+                    [(ngModel)]="floorPlanFileData[selectedFloorPlanBHK][i]['sqft']"
+                    style="min-height: 25px; border-bottom: 1px solid rgba(11, 122, 178, 0.5) !important;"></ion-input>
+                </ion-col>
+                <ion-col class="paddingZero sqftinput"><span
+                    class="font-size14-familyPoppins font-colorBlue">SQFT</span></ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <ion-col>
+          <div><span>Property Info</span></div>
+          <div>
+            <textarea class="textarea" [(ngModel)]="projectInfo" placeholder="Add property details...">
+            </textarea>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-content>
+    <ion-footer style="box-shadow:none">
+      <ion-row class="addPropertyBtn">
+        <ion-col>
+          <div (click)="isEditProp?updateFloorPlan_PropInfo(): addProperty()" class="textBgColor content_center">
+            {{isEditProp?'Update Property':'Add Property'}}</div>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<!-- Add Property Icon -->
+<ion-icon *ngIf="isAdmin" class="addPropIcon" name="add" expand="block"
+  (click)="closeAddPropModal();addPropModal.present();"></ion-icon>

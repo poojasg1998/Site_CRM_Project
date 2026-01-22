@@ -1,0 +1,669 @@
+<ion-header>
+  <ion-row class="retailMandate">
+    <ion-col class="content_center" size="2">
+      <ion-img src="../../assets/CRMimages/logo.png" class="logo"></ion-img>
+    </ion-col>
+    <ion-col class="content_center">
+      <span class="font-size16-familyPoppins">Inventory</span>
+    </ion-col>
+    <ion-col size="2" (click)="openEndMenu()" class="content_center">
+      <ion-icon name="menu" class="menu_icon"></ion-icon>
+    </ion-col>
+  </ion-row>
+</ion-header>
+
+<ion-row class="m-1">
+  <ion-col>
+    <p-dropdown class="exec_css" (onChange)="ondropdownFilter('property', $event)" [options]="properties"
+      optionLabel="property_info_name" [(ngModel)]="selectedProp" />
+  </ion-col>
+  <ion-col class="report_download_col">
+    <div class="content_center">
+      <span>Download Report</span>
+      <ion-img src="../../assets/CRMimages/inventory_page_icon/report_download_icon.svg"></ion-img>
+    </div>
+  </ion-col>
+</ion-row>
+
+<ion-content>
+  <ion-row>
+    <ion-col class="assignedLeads-card total_units_col">
+      <ion-card class="m-0">
+        <ion-img src="../../assets/CRMimages/inventory_page_icon/total_units_icon.svg"></ion-img>
+        <div>
+          <span>
+            <p>Total Units</p>
+            <h1>{{inventoryDashboardCounts?.total_units}}</h1>
+          </span>
+        </div>
+      </ion-card>
+    </ion-col>
+    <ion-col class="assignedLeads-card available_units_col">
+      <ion-card class="m-0">
+        <ion-img src="../../assets/CRMimages/inventory_page_icon/available_units_icon.svg"></ion-img>
+        <div>
+          <span>
+            <p>Available Units</p>
+            <h1>{{inventoryDashboardCounts?.available_units}}</h1>
+          </span>
+        </div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="assignedLeads-card total_booked_col">
+      <ion-card class="m-0">
+        <ion-img src="../../assets/CRMimages/inventory_page_icon/total_booked_icon.svg"></ion-img>
+        <div>
+          <span>
+            <p>Total Booked</p>
+            <h1>{{inventoryDashboardCounts?.total_booked_units}}</h1>
+          </span>
+        </div>
+      </ion-card>
+    </ion-col>
+    <ion-col class="assignedLeads-card cancelled_bookings_col">
+      <ion-card class="m-0">
+        <ion-img src="../../assets/CRMimages/inventory_page_icon/cancell_booked_icon.svg"></ion-img>
+        <div>
+          <span>
+            <p>Cancelled Bookings</p>
+            <h1>{{inventoryDashboardCounts?.cancelled_units}}</h1>
+          </span>
+        </div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="assignedLeads-card sale_agreement_col">
+      <ion-card class="m-0">
+        <ion-img src="../../assets/CRMimages/inventory_page_icon/sale_agreement_icon.svg"></ion-img>
+        <div>
+          <span>
+            <p>Sale Agreement Due</p>
+            <h1>{{inventoryDashboardCounts?.sale_agreement_units}}</h1>
+          </span>
+        </div>
+      </ion-card>
+    </ion-col>
+    <ion-col class="assignedLeads-card loan_due_col">
+      <ion-card class="m-0">
+        <ion-img src="../../assets/CRMimages/inventory_page_icon/loan_due_icon.svg"></ion-img>
+        <div>
+          <span>
+            <p>Loan Due</p>
+            <h1>{{inventoryDashboardCounts?.loan_disburse_units}}</h1>
+          </span>
+        </div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="assignedLeads-card registration_due_col">
+      <ion-card class="m-0">
+        <ion-img src="../../assets/CRMimages/inventory_page_icon/registration_due_icon.svg"></ion-img>
+        <div>
+          <span>
+            <p>Registration Due</p>
+            <h1>{{inventoryDashboardCounts?.reg_due_units}}</h1>
+          </span>
+        </div>
+      </ion-card>
+    </ion-col>
+    <ion-col class="assignedLeads-card sold_units_col">
+      <ion-card class="m-0">
+        <ion-img src="../../assets/CRMimages/inventory_page_icon/sold_units_icon.svg"></ion-img>
+        <div>
+          <span>
+            <p>Sold Units</p>
+            <h1>{{inventoryDashboardCounts?.sold_units}}</h1>
+          </span>
+        </div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col size="4" class="content_center p-0">
+      <span class="font-weight400 detail_units">Detailed Units</span>
+    </ion-col>
+    <ion-col>
+      <ion-row class="tableBlockView">
+        <ion-col class="content_center" (click)="toggleTableBlockView('1')"
+          [ngClass]="filteredParams.viewtype == '1'?'isTableView':''">
+          <span class="font-size12-familyPoppins">Table View</span>
+        </ion-col>
+        <ion-col [ngClass]="filteredParams.viewtype == '2'?'isTableView':''" class="content_center"
+          (click)="toggleTableBlockView('2')">
+          <span class="font-size12-familyPoppins">Block View</span>
+        </ion-col>
+      </ion-row>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="details_units_row">
+    <ion-col size="1.2" class="content_center serach">
+      <ion-img src="../../assets/CRMimages/inventory_page_icon/search_icon.svg"></ion-img>
+    </ion-col>
+    <ion-col size="2.8" class="content_center"><p-dropdown class="exec_css" [(ngModel)]="selectedTower"
+        (onChange)="ondropdownFilter('tower',$event)" [options]="towerData" optionLabel="tower_name"
+        placeholder="Tower" /></ion-col>
+    <ion-col size="2.5" class="content_center"><p-dropdown (onChange)="ondropdownFilter('bhk',$event)"
+        [options]="bhkData" class="exec_css" optionLabel="bhk" placeholder="BHK" [(ngModel)]="selectedbhk" /></ion-col>
+    <ion-col size="2.5" class="content_center"><p-dropdown (onChange)="ondropdownFilter('size',$event)"
+        [options]="sizeData" class="exec_css" optionLabel="unit_size" placeholder="Size"
+        [(ngModel)]="selectedSize" /></ion-col>
+    <ion-col size="3" class="content_center"><p-dropdown (onChange)="ondropdownFilter('status',$event)"
+        [options]="statusData" class="exec_css" optionLabel="unitstatus" placeholder="Status"
+        [(ngModel)]="selectedstatus" /></ion-col>
+  </ion-row>
+
+  <!-- TABLE VIEW -->
+  <span *ngIf="filteredParams.viewtype == '1'">
+    <ion-card class="tableView-details-card" *ngFor=" let data of inventoryData">
+      <ion-row class="tableView-details-header">
+        <ion-col><span>Unit No</span></ion-col>
+        <ion-col><span>Floor</span></ion-col>
+        <ion-col><span>BHK</span></ion-col>
+      </ion-row>
+
+      <ion-row class="tableView-details-row">
+        <ion-col><span>{{data.unit_name}}</span></ion-col>
+        <ion-col><span>{{data.floor_number == '0'?'G':data.floor_number}}</span></ion-col>
+        <ion-col><span>{{data.bhk}}</span></ion-col>
+      </ion-row>
+
+      <ion-row class="tableView-details-header">
+        <ion-col><span>Size</span></ion-col>
+        <ion-col><span>Facing</span></ion-col>
+        <ion-col><span>Updated By</span></ion-col>
+      </ion-row>
+
+      <ion-row class="tableView-details-row">
+        <ion-col><span>{{data.unit_size}} Sqft</span></ion-col>
+        <ion-col><span>{{data.doorfacing}}</span></ion-col>
+        <ion-col><span>{{data.updated_by?data.updated_by:'--'}}</span></ion-col>
+      </ion-row>
+
+      <ion-row class="tableView-status-row"
+        [ngClass]="data.unitstatus == 'Available'?'available_bg_text_color': data.unitstatus == 'Sold'?'sold_bg_text_color':data.unitstatus == 'Cancelled Refund Pending' || data.unitstatus == 'Cancelled Refund Completed'?'cancelled_bg_text_color':data.unitstatus == 'Registration Due'?'registration_bg_text_color':''">
+        <ion-col><span>{{data.unitstatus}}</span></ion-col>
+        <ion-col size="2" class="ion-flex ion-justify-content-end img-end" (click)="onEditInventoryUintDetails(data)">
+          <ion-img src="../../assets/CRMimages/inventory_page_icon/edit_icon.svg"></ion-img></ion-col>
+      </ion-row>
+    </ion-card>
+  </span>
+
+  <!-- BLOCK VIEW -->
+  <span *ngIf="filteredParams.viewtype == '2'">
+    <ion-row class="tower-row">
+      <ion-col size="3" class="pb-0 pl-0" *ngFor="let data of fullInventoryData" (click)="onBlock(data)">
+        <div class="content_center" [ngClass]="filteredParams.towerid==data.towerid?'selectedTower': 
+         (inventoryData[0].towerid == data.towerid && filteredParams.towerid == '') ?'selectedTower': ''">
+          {{data.towername}}</div>
+      </ion-col>
+    </ion-row>
+    <div *ngIf="selectedFloors?.length != 0">
+      <ion-card class="blockView-details-card">
+        <div *ngFor="let floor of selectedFloors" style="padding-bottom: 5px;
+    border-bottom: 1px solid #BCBCBC;">
+          <ion-row class="floor-summary-row">
+            <ion-col class="summary-title">Ground Floor : {{ floor.floor_units+" Units"}}</ion-col>
+            <ion-col size="2.5" class="summary-sold">Sold: {{floor.sold_units}}</ion-col>
+            <ion-col size="3.5" class="summary-available">Available: {{floor.available_units}}</ion-col>
+          </ion-row>
+          <div class="blockViewProp-details" *ngIf="floor.units.length != 0">
+            <ion-row>
+              <ion-col size="3"
+                [ngClass]="unit.unitstatus == 'Sold'?'sold-prop' : unit.unitstatus == 'Available'?'available-prop':'available-prop'"
+                *ngFor="let unit of floor.units">
+                <div class="status-badge">
+                  {{unit.doorfacing == "East"?'E':unit.doorfacing == "West"?'W':unit.doorfacing ==
+                  "South"?'S':unit.doorfacing == "North"?'N':''}}
+                </div>
+                <span>{{unit.unit_name}}</span>
+                <span>{{unit.bhk}}</span>
+                <span>{{unit.unit_size}} <span class="sqrt">Sqft</span></span>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+      </ion-card>
+    </div>
+  </span>
+</ion-content>
+
+
+<ion-modal #editUnitDetailsModal class="editUnitModal" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
+  <ng-template>
+    <ion-row class="unit-update-status">
+      <ion-col>
+        <!-- <span class="font-size20-familyPoppins">Update Unit Status</span> -->
+        <span class="font-size16-familyPoppins">Update Unit Status</span>
+      </ion-col>
+      <ion-col (click)="isEditUnitStatus = !isEditUnitStatus;" size="3.5"
+        class="unit-status-button center-vertically ion-justify-content-end pr-0">
+        <span class="font-size12-familyPoppins content_center">Unit Status <ion-icon
+            name="arrow-forward-outline"></ion-icon></span>
+      </ion-col>
+    </ion-row>
+
+    <!-- EDITING UNIT STATUS DETAILS SECTION -->
+    <form *ngIf="isEditUnitStatus" (ngSubmit)="updateUnit()" ngNativeValidate #unitEditForm="ngForm">
+      <ion-row class="editing-data-header">
+        <ion-col>
+          <span>Unit No</span>
+        </ion-col>
+        <ion-col>
+          <span>BHK</span>
+        </ion-col>
+      </ion-row>
+      <ion-row class="editing-data-row">
+        <ion-col>
+          <span><p-dropdown [options]="unitListingData" (onChange)="onUnitStatusEdit()" class="exec_css"
+              optionLabel="unit_name" [(ngModel)]="selectedUnitForEdit" name="unitName" required /></span>
+        </ion-col>
+        <ion-col>
+          <span>
+            <p-dropdown [options]="bhkData" class="exec_css" optionLabel="bhk" placeholder="BHK"
+              [(ngModel)]="selectedBHKForEdit" name="bhk" required />
+          </span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="editing-data-header">
+        <ion-col>
+          <span>Size</span>
+        </ion-col>
+        <ion-col>
+          <span>Builtup Area</span>
+        </ion-col>
+      </ion-row>
+      <ion-row class="editing-data-row">
+        <ion-col>
+          <div><span> <ion-input style="min-height:20px" [(ngModel)]="editToSelectedUnit.unit_size" name="unitSize"
+                pattern="^(?=.*[0-9])[0-9 ]+$" (input)="setCustomValidity($event)" required></ion-input></span><span
+              class="sqft">Sqft</span></div>
+        </ion-col>
+        <ion-col>
+          <div><span><ion-input style="min-height:20px" [(ngModel)]="editToSelectedUnit.unit_builtuparea"
+                name="builtupArea" pattern="^(?=.*[0-9])[0-9 ]+$" (input)="setCustomValidity($event)"
+                required></ion-input></span><span class="sqft">Sqft</span>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="editing-data-header">
+        <ion-col>
+          <span>carpet Area</span>
+        </ion-col>
+        <ion-col>
+          <span>SBA</span>
+        </ion-col>
+      </ion-row>
+      <ion-row class="editing-data-row">
+        <ion-col>
+          <div><span><ion-input style="min-height:20px" [(ngModel)]="editToSelectedUnit.unit_carpetarea"
+                name="carpetarea" pattern="^(?=.*[0-9])[0-9 ]+$" (input)="setCustomValidity($event)"
+                required></ion-input></span><span class="sqft">Sqft</span></div>
+        </ion-col>
+        <ion-col>
+          <div><span><ion-input style="min-height:20px" [(ngModel)]="editToSelectedUnit.unit_sba" name="unitSBA"
+                pattern="^(?=.*[0-9])[0-9 ]+$" (input)="setCustomValidity($event)" required></ion-input>
+            </span><span class="sqft">Sqft</span></div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="editing-data-header">
+        <ion-col>
+          <span>UDS</span>
+        </ion-col>
+        <ion-col>
+          <span>Facing</span>
+        </ion-col>
+      </ion-row>
+      <ion-row class="editing-data-row">
+        <ion-col>
+          <div><span><ion-input style="min-height:20px" [(ngModel)]="editToSelectedUnit.unit_uds" name="unitUDS"
+                pattern="^(?=.*[0-9])[0-9 ]+$" (input)="setCustomValidity($event)" required></ion-input></span><span
+              class="sqft">Sqft</span></div>
+        </ion-col>
+        <ion-col>
+          <span><p-dropdown [options]="doreFacingData" class="exec_css" optionLabel="doorfacing_names"
+              [(ngModel)]="selectedDoreFacing" name="doreFacing" required /></span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="editing-data-header">
+        <ion-col>
+          <span>Status</span>
+        </ion-col>
+      </ion-row>
+      <ion-row class="editing-data-row">
+        <ion-col size="6">
+          <span><p-dropdown [options]="statusData" class="exec_css" optionLabel="unitstatus"
+              [(ngModel)]="selectedstatus" name="status" required /></span>
+        </ion-col>
+        <ion-col size="3" class="content_center">
+          <span class="font-size14-familyPoppins">Balcony</span><ion-checkbox
+            [checked]="editToSelectedUnit.unit_balcony == '1'" class="pl-1 checkboxcss"
+            (ionChange)="onBalconyGardenEdit($event,'balcony')"></ion-checkbox>
+        </ion-col>
+        <ion-col size=" 3" class="content_center">
+          <span class="font-size14-familyPoppins">Garden</span><ion-checkbox
+            [checked]="editToSelectedUnit.unit_garden == '1'" (ionChange)="onBalconyGardenEdit($event,'gardern')" class=" pl-1
+              checkboxcss"></ion-checkbox>
+        </ion-col>
+      </ion-row>
+
+      <hr>
+      <ion-row class=" cancelSold-btn">
+        <ion-col class="cancel-btn">
+          <div class="font-size16-familyPoppins content_center">Cancel</div>
+        </ion-col>
+        <ion-col class="saveContinue-btn">
+          <ion-button type="submit" fill="clear"
+            class="textBgColor font-size16-familyPoppins content_center text-capitalize">
+            {{isEditUnitStatus?'Save':'Save & Continue'}}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+    </form>
+
+    <div *ngIf="!isEditUnitStatus">
+      <ion-row>
+        <ion-col size="3" class="content_center completedStage-bg-text-color"><span
+            class="font-size12-familyPoppins ion-text-center" style="line-height: 1.1;">Booking</span></ion-col>
+        <ion-col size="3" class="content_center pendingStage-bg-text-color"><span
+            class="font-size12-familyPoppins ion-text-center" style="line-height: 1.1;">Sale
+            Agreement</span></ion-col>
+        <ion-col size="3" class="content_center updatingStage-bg-text-color"><span
+            class="font-size12-familyPoppins ion-text-center" style="line-height: 1.1;">Loan
+            Disbursement</span></ion-col>
+        <ion-col size="3" class="content_center"><span class="font-size12-familyPoppins ion-text-center"
+            style="line-height: 1.1;">Registration</span></ion-col>
+      </ion-row>
+
+      <!-- Booking data section -->
+      <form class="editOrSaving-bookigData" (ngSubmit)="login()" ngNativeValidate #bookingForm="ngForm"
+        *ngIf="editToSelectedUnit.unitstatus_IDFK == '1' || editToSelectedUnit.unitstatus_IDFK == '2' || editToSelectedUnit.unitstatus_IDFK == '8'">
+        <div class="booking">
+          <ion-row class="editing-data-header">
+            <ion-col>
+              <span class="font-size12-familyPoppins">BHK Type</span>
+            </ion-col>
+            <ion-col>
+              <span class="font-size12-familyPoppins">Unit Number</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="editing-data-row">
+            <ion-col class="content_center">
+              <p-dropdown (onChange)="ondropdownFilter('bhk',$event)" [options]="bhkData" class="exec_css"
+                optionLabel="bhk" [(ngModel)]="selectedBHKForEdit" name="bhk" required />
+            </ion-col>
+            <ion-col class="content_center">
+              <p-dropdown (onChange)="ondropdownFilter('bhk',$event)" [options]="unitListingData"
+                class="exec_css unitdropdown" optionLabel="unit_name" name="unitName" [(ngModel)]="selectedUnitForEdit"
+                required />
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="editing-data-header">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Executive Name</span>
+            </ion-col>
+            <ion-col>
+              <span class="font-size12-familyPoppins">Lead Name</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="editing-data-row">
+            <ion-col class="content_center" size="6">
+              <p-dropdown [options]="executiveList" class="exec_css" optionLabel="name" [(ngModel)]="selectedExec"
+                name="exec" (onChange)="onExecutiveSelect($event)" required />
+            </ion-col>
+            <ion-col class="content_center" size="6">
+              <p-dropdown [options]="leadsBasedexecData" class="exec_css unitdropdown" optionLabel="customer_name"
+                name="leadName" [(ngModel)]="selectedLeadsBasedexec" required />
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="editing-data-header">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Dimension</span>
+            </ion-col>
+            <ion-col>
+              <span class="font-size12-familyPoppins">Rate Per Sqft</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="editing-data-row">
+            <ion-col>
+              <div><span class="font-size14-familyPoppins">
+                  <ion-input style="min-height:20px" type="text" [(ngModel)]="editToSelectedUnit.unit_sba"
+                    name="dimension" required pattern="^(?=.*[0-9])[0-9 ]+$" #dimension="ngModel"
+                    (input)="setCustomValidity($event)" readonly>
+                  </ion-input>
+                </span>
+              </div>
+
+            </ion-col>
+            <ion-col>
+              <div><span class="font-size14-familyPoppins"><ion-input style="min-height:20px"
+                    [(ngModel)]="editToSelectedUnit.unit_builtuparea" name="rateSquareFeet" required
+                    pattern="^(?=.*[0-9])[0-9 ]+$" (input)="setCustomValidity($event)"></ion-input></span>
+              </div>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="editing-data-header">
+            <ion-col class="center-vertically">
+              <span>Remarks</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="editing-data-row">
+            <ion-col>
+              <ion-textarea class="font-size14-familyPoppins" style="--padding-top: 0;"
+                [(ngModel)]="editToSelectedUnit.remarks" name="remark" required></ion-textarea>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="editing-data-header">
+            <ion-col><span>Upload Documents (Booking Form, Pricesheet)</span></ion-col>
+          </ion-row>
+
+          <ion-row class="uploading-file"
+            *ngIf="(editToSelectedUnit.unitstatus_IDFK == '1' || editToSelectedUnit.unitstatus_IDFK == '2' || editToSelectedUnit.unitstatus_IDFK == '8') && selectedFileName == ''">
+            <ion-col>
+              <input type="file" id="brochureInput" class="custom-file-input" (change)="onFileSelected($event)" multiple
+                accept="image/gif,image/jpeg,image/jpg,image/png" (input)="setCustomValidity($event)" required>
+              <label class="custom-file-label content_center" for="brochureInput">
+                <span class="font-size14-familyPoppins">Upload Files</span>
+                <ion-img style="width: 18px; height: 18px" src="../assets/CRMimages/upload_icon.svg"></ion-img>
+              </label>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="bookedLead-uploadedfile" *ngIf="selectedFileName != ''">
+            <ion-col size="9">
+              <div class="font-size14-familyPoppins text-center">{{selectedFileName}}</div>
+            </ion-col>
+            <ion-col size="1.5" class="content_center"><ion-icon name="eye-outline"></ion-icon></ion-col>
+            <ion-col size="1.5" class="content_center"><ion-img src="../assets/CRMimages/close_icon.svg"
+                style="width: 14px;margin: 5px;">
+              </ion-img></ion-col>
+          </ion-row>
+        </div>
+        <div class="approve-reject-booking-btn m-2" *ngIf="editToSelectedUnit.unitstatus == 'Hold'">
+          <ion-row>
+            <ion-col class="content_center"><span>Booking Status</span></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div class="font-size14-familyPoppins content_center">Approve Booking</div>
+            </ion-col>
+            <ion-col>
+              <div class="font-size14-familyPoppins content_center">Reject Booking</div>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <hr>
+        <ion-row class=" cancelSold-btn">
+          <ion-col class="cancel-btn">
+            <div class="font-size16-familyPoppins content_center">Cancel</div>
+          </ion-col>
+          <ion-col class="saveContinue-btn" (click)="isEditUnitStatus?updateUnit():saveAndContinue()">
+            <ion-button fill="clear" type="submit"
+              class="textBgColor font-size16-familyPoppins content_center m-0 text-capitalize">
+              Save & Continue
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </form>
+
+      <!-- Sale Agreement section -->
+      <!-- <div class="editOrSaving-saleAgreementData">
+        <ion-row>
+          <ion-col class="content_center" style="text-align: center;">
+            <span class="font-size12-familyPoppins">
+              “The A101 unit is booked. Now record sale agreement details
+              to proceed with loan & registration”
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <div class="agreement-div">
+          <span class="agreement-btn">
+            <ion-row>
+              <ion-col><span class="font-size12-familyPoppins">Agreement Status</span></ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <div class="font-size14-familyPoppins content_center">Pending</div>
+              </ion-col>
+              <ion-col>
+                <div class="font-size14-familyPoppins content_center">Signed</div>
+              </ion-col>
+            </ion-row>
+          </span>
+
+          <ion-row class="editing-data-header">
+            <ion-col><span>Upload Agreement File</span></ion-col>
+          </ion-row>
+          <ion-row class="uploading-file">
+            <ion-col>
+              <input type="file" id="brochureInput" class="custom-file-input" data-max-size="100000000" accept=".pdf">
+              <label class="custom-file-label content_center" for="brochureInput">
+                <span class="font-size14-familyPoppins">Upload Files</span>
+                <ion-img style="width: 18px; height: 18px" src="../assets/CRMimages/upload_icon.svg"></ion-img>
+              </label>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="editing-data-header">
+            <ion-col class="center-vertically">
+              <span>Remarks</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="editing-data-row">
+            <ion-col>
+              <ion-textarea></ion-textarea>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <ion-row class="m-2">
+          <div class="ion-justify-content-start completedStage-bg-text-color p-1 ">
+            <span class="center-vertically font-size12-familyPoppins">
+              <ion-icon name="arrow-back"></ion-icon>
+              Back to Booking
+            </span>
+          </div>
+        </ion-row>
+      </div> -->
+
+      <!-- Load Disbursement section -->
+      <!-- <div class="editOrSaving-loanDisbursement">
+        <ion-row>
+          <ion-col class="content_center" style="text-align: center;">
+            <span class="font-size12-familyPoppins">
+              “Update loan status. Mark as Disbursed when funds are released.”
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <div class="loan-disbursed-div">
+          <span class="loan-disbursed">
+            <ion-row>
+              <ion-col><span class="font-size12-familyPoppins">Loan Status</span></ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <div class="font-size14-familyPoppins content_center">Pending</div>
+              </ion-col>
+              <ion-col>
+                <div class="font-size14-familyPoppins content_center">Disbursed</div>
+              </ion-col>
+              <ion-col>
+                <div class="font-size14-familyPoppins content_center">Direct Cash</div>
+              </ion-col>
+            </ion-row>
+          </span>
+          <ion-row class="editing-data-header">
+            <ion-col><span>Amount <span>(Optional)</span></span></ion-col>
+          </ion-row>
+          <ion-row class="editing-data-row">
+            <ion-col>
+              <input>
+            </ion-col>
+          </ion-row>
+
+
+          <ion-row class="editing-data-header">
+            <ion-col class="center-vertically">
+              <span>Remarks</span>
+            </ion-col>
+          </ion-row>
+          <ion-row class="editing-data-row ">
+            <ion-col>
+              <ion-textarea></ion-textarea>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="m-2">
+            <div class="ion-justify-content-start completedStage-bg-text-color p-1 ">
+              <span class="center-vertically font-size12-familyPoppins">
+                <ion-icon name="arrow-back"></ion-icon>
+                Back to Agreement
+              </span>
+            </div>
+          </ion-row>
+        </div>
+
+      </div> -->
+
+      <!-- Cancel booking status -->
+      <div class="cancel-booking-div m-2 pt-2 pb-2"
+        *ngIf="editToSelectedUnit.unitstatus_IDFK != '1' && editToSelectedUnit.unitstatus_IDFK != '2' && editToSelectedUnit.unitstatus_IDFK != '8'">
+        <div class="content_center"><span class="cancel-text">Cancel this Booking</span> <ion-checkbox
+            class="checkboxcss pl-1"></ion-checkbox>
+        </div>
+        <div class="waring-text"><span>Once cancelled, A101 unit will be moved back to <span
+              class="text_color_green">"Available"</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- <hr>
+    <ion-row class=" cancelSold-btn">
+      <ion-col class="cancel-btn">
+        <div class="font-size16-familyPoppins content_center">Cancel</div>
+      </ion-col>
+      <ion-col class="saveContinue-btn" (click)="isEditUnitStatus?updateUnit():saveAndContinue()">
+        <div class="textBgColor font-size16-familyPoppins content_center">
+          {{isEditUnitStatus?'Save':'Save & Continue'}}
+        </div>
+      </ion-col>
+    </ion-row> -->
+  </ng-template>
+</ion-modal>

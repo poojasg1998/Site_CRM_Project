@@ -1,0 +1,246 @@
+.page-background {
+  background-image: url("../../assets/CRMimages/backgroundimage.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.center-content {
+  width: 100%;
+  margin-top: 12px;
+}
+
+ion-input {
+  --ion-font-family: Poppins;
+  font-size: 12px;
+  font-weight: 300;
+  color: black;
+  min-height: 56px !important;
+  border-radius: 8px;
+  border: 1px #ececec solid;
+  --highlight-color-focused: none;
+}
+
+::ng-deep ng-otp-input .otp-input {
+  --ion-font-family: Poppins;
+  font-size: 12px;
+  font-weight: 300;
+  width: 60px !important;
+  color: black;
+  min-height: 56px !important;
+  border-radius: 8px;
+  border: 1px #ececec solid;
+  --highlight-color-focused: none;
+}
+
+.page-background > ion-row {
+  margin: 23px;
+}
+.custom-login-button {
+  background: #0b7ab2;
+  border-radius: 8px;
+  width: 100%;
+  height: 56px;
+  color: white;
+  font-size: 15px;
+  font-family: Poppins;
+  font-weight: 600;
+  text-transform: none;
+  position: relative;
+}
+
+.password-input {
+  border-radius: 8px;
+  border: 1px #ececec solid;
+  width: 100%;
+  ion-icon {
+    cursor: pointer;
+  }
+}
+
+.otpValidation {
+  color: #080808;
+  font-size: 20px;
+  font-family: Poppins;
+  font-weight: 500;
+  line-height: 26px;
+  word-wrap: break-word;
+}
+.custom-col {
+  color: #aeaeae;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: 18px;
+  word-wrap: break-word;
+}
+
+.otpreceivedText {
+  color: #1e232c;
+  font-size: 14px;
+  font-family: Poppins;
+  font-weight: 500;
+  line-height: 19.6px;
+  letter-spacing: 0.14px;
+  word-wrap: break-word;
+}
+.otpResendText {
+  color: #aeaeae;
+  font-size: 14px;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: 19.6px;
+}
+
+.otpSection {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px 0 20px;
+}
+
+.backImage {
+  margin: 40px 0 0 40px;
+}
+.backImage ion-img {
+  width: 24px;
+  height: 24px;
+}
+.homes247logo {
+  margin: 40px 0 30px 0;
+}
+.homes247logo ion-img {
+  width: 118px;
+  height: 22px;
+}
+.mainSection {
+  position: relative;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.loginSection {
+  padding: 75px 25px 0 25px;
+  width: 100%;
+}
+.marginTop48 {
+  margin-top: 48px;
+}
+.span1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+ion-icon {
+  width: 20px !important;
+  height: 20px !important ;
+}
+
+.borderNone {
+  border: none;
+}
+::ng-deep .my-swal-error div:where(.swal2-container) h2:where(.swal2-title) {
+  padding: 0 !important;
+}
+
+::ng-deep .my-swal-error .swal2-popup .swal2-styled.swal2-confirm {
+  border: 0;
+  border-radius: 0.25em;
+  color: #fff;
+  font-size: 1.0625em;
+  background-color: #3085d6 !important;
+  width: 90px;
+}
+.enable-text {
+  span {
+    font-family: "Poppins";
+    font-weight: 600;
+    font-size: 24px;
+  }
+  p {
+    font-family: "Poppins";
+    font-weight: 400;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.1;
+    color: #7d7d7d;
+  }
+}
+.continue-notNow-row {
+  position: fixed;
+  width: 100%;
+  bottom: 8px;
+}
+.continue-notNow-row,
+.login-btn-row {
+  h2 {
+    background: linear-gradient(180deg, #00a9ff 0%, #0b7ab2 100%);
+    padding: 3vw;
+    border-radius: 30px;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-family: "Poppins";
+    font-weight: 400;
+    color: white;
+  }
+  p {
+    font-family: "Poppins";
+    font-weight: 400;
+    font-size: 18px;
+    text-align: center;
+    color: #0887c6;
+    font-size: 18px;
+  }
+}
+
+.passwordInput {
+  border: 0.6px solid #dadada;
+  opacity: 1;
+  border-radius: 4px;
+  font-family: "Poppins";
+  font-weight: 300;
+  font-size: 14px;
+  padding: 2px;
+  min-height: 42px !important;
+}
+
+::ng-deep .passwordInput label {
+  padding: 8px !important;
+}
+.loginwith-fingerPrint {
+  font-family: "Poppins";
+  font-weight: 300;
+  font-style: Light;
+  font-size: 14px;
+  color: #696969;
+}
+.login-container {
+  /* 1. Fill the whole <ion-content> height */
+  height: 100vh;
+
+  /* 2. Use flexbox */
+  display: flex;
+  flex-direction: column;
+
+  /* 3. This single line centers everything vertically */
+  justify-content: center;
+}
+
+/* You can keep these if you like */
+.or-divider {
+  flex-shrink: 0;
+}
+
+.fingerprint-wrapper {
+  flex-shrink: 0;
+  padding-bottom: 20px;
+}

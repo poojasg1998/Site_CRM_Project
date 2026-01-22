@@ -1,0 +1,567 @@
+<ion-menu side="end" contentId="app-content">
+  <ion-menu-toggle auto-hide="false">
+    <ion-row class="mainHeading" style="border-bottom: none;">
+      <ion-col size="2" (click)="onHomeicon()" style="display: flex;align-items: center;justify-content: center;">
+        <ion-img src="../../assets/CRMimages/logo.png" class="logo"></ion-img>
+      </ion-col>
+      <ion-col size="8" class="ion-text-center content_center">
+      </ion-col>
+      <ion-col size="2" class="content_center">
+        <ion-icon name="close" style="font-size: 30px;color: #0B7AB2;"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-row style="margin: 0 10px;background: linear-gradient(180deg, #F5F5F5 0%, #F0F0F0 100%);
+border: 0.5px solid #E4E4E4;border-radius: 4px;">
+      <!-- <ion-col class="content_center" size="4">
+        <ion-img style="width: 55px;" src="../../assets/CRMimages/profile_image.svg"></ion-img>
+      </ion-col> -->
+      <ion-col style="display: flex;flex-direction: column;justify-content: center;">
+        <p style="font-size: 20px;font-family: 'Poppins';" class="font-colorBlue ">{{name}}</p>
+        <span *ngIf="adminview" class="font-size12-familyPoppins ">Administrator</span>
+        <span *ngIf="RMTLview" class="font-size12-familyPoppins ">RM Teamleader</span>
+        <span *ngIf="RMEXview || builderexecview || MandateRMEXview" class="font-size12-familyPoppins ">Sales
+          Executive</span>
+        <span *ngIf="CSTLview" class="font-size12-familyPoppins ">CS Teamleader</span>
+        <span *ngIf="CSEXview" class="font-size12-familyPoppins ">CS Executive</span>
+      </ion-col>
+      <ion-col *ngIf="isAdmin ||  localStorage.getItem('mainAccount') !== null;"
+        class="d-flex justify-content-center align-items-center" (click)="onSwitchAcc()">
+        <div class="menu_switch_btn">
+          <ion-img src="../../assets/CRMimages/switch_account_icon.svg"></ion-img>
+          <span class="pl-1">Switch</span>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <div style="overflow: scroll;width: 100%;height: 100vh;">
+      <div class="bg-img" style="background-image: url(../../assets/CRMimages/menu-bg-img.svg);">
+        <div class="menuList">
+          <ion-row class="row-height" style="border-bottom: 1px solid #ECECEC;">
+            <ion-col class="center-vertically " size="10">
+              <ion-img class="img-height-width" src="../../assets/CRMimages/finger print.svg"></ion-img>
+              Authentication
+            </ion-col>
+            <ion-col class="center-vertically" size="2">
+              <ion-toggle [checked]="isFingureprintEnabled" [(ngModel)]="isFingureprintEnabled"
+                (ionChange)="enableFingerprint($event)"></ion-toggle>
+            </ion-col>
+          </ion-row>
+          <!-- <ion-row class="row-height" (click)="onDashboard()" [class.active-menu]="sharedService.isActiveRoute('home')">
+            <ion-col class="center-vertically"> <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/dashboard_icon.svg"></ion-img>Dashboard</ion-col>
+          </ion-row> -->
+
+          <!-- <ion-row class="row-height" routerLink="../call-dashboard"
+            [queryParams]="{htype:isRetail?'retail':'mandate',fromdate:getTodayDate(),todate:getTodayDate(),isDateFilter:'today',execid:isAdmin?null:localStorage.getItem('UserId'),callstage:'overall'}"
+            *ngIf="!iscpId" [class.active-menu]="sharedService.isActiveRoute('call-dashboard')">
+            <ion-col class="center-vertically"> <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/dashboard_icon.svg"></ion-img>Call Dashboard
+            </ion-col>
+          </ion-row> -->
+
+          <!-- <ion-row class="row-height" routerLink="../all-call-listing"
+            [queryParams]="{htype:isRetail?'retail':'mandate',isDateFilter:'today',execid:isAdmin?null:localStorage.getItem('UserId'),callstage:'overall'}"
+            *ngIf="!iscpId" [class.active-menu]="sharedService.isActiveRoute('all-call-listing')">
+            <ion-col class="center-vertically"> <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/callinsight_icon.svg"></ion-img>Call Insights
+            </ion-col>
+          </ion-row> -->
+          <!-- <ion-row *ngIf="!iscpId" class="row-height" routerLink="../source-dashboard"
+            [class.active-menu]="sharedService.isActiveRoute('source-dashboard')"
+            [queryParams]="{ htype:isRetail?'retail':'mandate',fromDate:getTodayDate(),toDate:getTodayDate(),isDateFilter:'today',status:'Total',activeCardKey:'total_card',leads:'1' }">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/visitsUpdate_icon.svg"></ion-img>
+              Source Dashboard
+            </ion-col>
+          </ion-row> -->
+
+          <!-- <ion-row *ngIf="!iscpId" class="row-height" routerLink="../overdues-dashboard"
+            [class.active-menu]="sharedService.isActiveRoute('overdues-dashboard')"
+            [queryParams]="{ htype:isRetail?'retail':'mandate',fromDate:getTodayDate(),toDate:getTodayDate(),isDateFilter:'today',status:'Followups',activeCardKey:'leads_card',leads:'1'}">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/visitsUpdate_icon.svg"></ion-img>
+              Overdues Dashboard
+            </ion-col>
+          </ion-row> -->
+
+          <!-- <ion-row class="row-height" (click)="sharedService.isBottom = false" routerLink="../all-and-live-call-details"
+            [queryParams]="{htype:isRetail?'retail':'mandate',isAllCallLogs:'false'}"
+            [class.active-menu]="sharedService.isActiveRoute('all-and-live-call-details')">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/callinsight_icon.svg"></ion-img>
+              <span>Live Calls</span>
+            </ion-col>
+          </ion-row> -->
+
+
+
+          <!-- Header (click toggles open/close) -->
+          <ion-row class="row-height"
+            [ngClass]="accordionOpen || sharedService.isActiveRoute('home') ||sharedService.isActiveRoute('source-dashboard') ||sharedService.isActiveRoute('today-dashboard') || sharedService.isActiveRoute('junk-dashboard') || sharedService.isActiveRoute('overdues-dashboard') ?'activedashboard fw-bolder':''"
+            (click)="toggleAccordion();$event.stopPropagation();">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/callinsight_icon.svg"></ion-img>
+              <span> Dashboards</span>
+              <ion-icon [name]="accordionOpen ? 'chevron-up' : 'chevron-down'" style="margin-left: auto;"></ion-icon>
+            </ion-col>
+          </ion-row>
+
+          <!-- Conditional Content (Only shown when true) -->
+          <div *ngIf="accordionOpen" [ngClass]="accordionOpen?'activedashboard':''">
+            <ion-row class="subdrop-row-height" (click)="onDashboard()"
+              [class.active-dashboard]="sharedService.isActiveRoute('home')">
+              <ion-col class="center-vertically" style="padding-left: 30px;">
+                <span>Main Dashboard</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="!iscpId && isAdmin" class="subdrop-row-height" routerLink="../source-dashboard"
+              [class.active-dashboard]="sharedService.isActiveRoute('source-dashboard')"
+              [queryParams]="{ htype:isRetail?'retail':'mandate',fromDate:getTodayDate(),toDate:getTodayDate(),isDateFilter:'today',status:'Total',activeCardKey:'total_card',leads:'1' }">
+              <ion-col class="center-vertically" style="padding-left: 30px;">
+                <span>Source Dashboard</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="!iscpId " class="subdrop-row-height" routerLink="../today-dashboard"
+              [class.active-dashboard]="sharedService.isActiveRoute('today-dashboard')"
+              [queryParams]="{ htype:isRetail?'retail':'mandate',activeCardKey:'scheduledVisits_card',executid:!isAdmin?localStorage.getItem('UserId'):'',status:'scheduledtoday'}">
+              <ion-col class="center-vertically" style="padding-left: 30px;">
+                <span>Today's Activities</span>
+              </ion-col>
+            </ion-row>
+
+            <!-- <ion-row *ngIf="!iscpId" class="subdrop-row-height" routerLink="../stage-dashboard"
+              [class.active-dashboard]="sharedService.isActiveRoute('stage-dashboard')"
+              [queryParams]="{ executid:!isAdmin?localStorage.getItem('UserId'):'',htype:isRetail?'retail':'mandate',fromDate:getTodayDate(),stage:'USV',stagestatus:'1',  toDate:getTodayDate(),isDateFilter:'today',activeCardKey:'fixed_card'}">
+              <ion-col class="center-vertically" style="padding-left: 30px;">
+                <span>Stage Dashboard</span>
+              </ion-col>
+            </ion-row> -->
+
+            <ion-row *ngIf="!iscpId" class="subdrop-row-height" routerLink="../overdues-dashboard"
+              [class.active-dashboard]="sharedService.isActiveRoute('overdues-dashboard')"
+              [queryParams]="{ htype:isRetail?'retail':'mandate',fromDate:getTodayDate(),toDate:getTodayDate(),executid:!isAdmin?localStorage.getItem('UserId'):'',isDateFilter:'today',status:'overdues',activeCardKey:'leads_card',leads:'1',stage: 'Fresh',}">
+              <ion-col class="center-vertically" style="padding-left: 30px;">
+                <span>Overdues Dashboard</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="!iscpId" class="subdrop-row-height" routerLink="../junk-dashboard"
+              [class.active-dashboard]="sharedService.isActiveRoute('junk-dashboard')"
+              [queryParams]="{ executid:!isAdmin?localStorage.getItem('UserId'):'',htype:isRetail?'retail':'mandate',assignedfromdate:getTodayDate(),assignedtodate:getTodayDate(),isDateFilter:'today',status:'junkleads',activeCardKey:'leads_card',stage: 'Fresh',}">
+              <ion-col class="center-vertically" style="padding-left: 30px;">
+                <span>Junk Dashboard</span>
+              </ion-col>
+            </ion-row>
+          </div>
+
+          <!-- Header (click toggles open/close) -->
+          <!-- <ion-row class="row-height" (click)="toggleAccordion();$event.stopPropagation();">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/callinsight_icon.svg"></ion-img>
+              <span>Call Insights</span>
+              <ion-icon [name]="accordionOpen ? 'chevron-up' : 'chevron-down'" style="margin-left: auto;"></ion-icon>
+            </ion-col>
+          </ion-row> -->
+
+          <!-- Conditional Content (Only shown when true) -->
+          <!-- <div *ngIf="accordionOpen">
+            <ion-row class="row-height" routerLink="../all-and-live-call-details"
+              [queryParams]="{fromdate:getTodayDate(),todate:getTodayDate(),isDateFilter:'today',htype:isRetail?'retail':'mandate',isAllCallLogs:'true',execid:isAdmin?null:localStorage.getItem('UserId')}"
+              routerLinkActive="active-menu">
+              <ion-col class="center-vertically" style="padding-left: 30px;">
+                <span>All Calls</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row class="row-height" routerLink="../all-and-live-call-details"
+              [queryParams]="{htype:isRetail?'retail':'mandate',isAllCallLogs:'false'}" routerLinkActive="active-menu">
+              <ion-col class="center-vertically" style="padding-left: 30px;">
+                <span>Live Calls</span>
+              </ion-col>
+            </ion-row>
+          </div> -->
+
+          <ion-row class="row-height" routerLink="../Enquiry" routerLinkActive="active-menu"
+            [queryParams]="{isFresh:'true',htype:isRetail?'retail':'mandate',count:'1',leads:'1'}"
+            *ngIf="localStorage.getItem('Role') === '1' && !iscpId"
+            [class.active-menu]="sharedService.isActiveRoute('Enquiry')">
+            <ion-col class="center-vertically"><ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/freshLead_icon.svg"></ion-img>Fresh Leads
+            </ion-col>
+          </ion-row>
+
+          <!-- <ion-row class="row-height" routerLink="../leads"
+            [queryParams]="{htype:isRetail?'retail':'mandate',FromDate:previousMonthDateForCompare,ToDate:todaysdateforcompare}"
+            *ngIf="localStorage.getItem('Role') === '1'" routerLinkActive="active-menu"
+            [class.active-menu]="sharedService.isActiveRoute('leads')">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/completeLead_icon.svg"></ion-img>
+              Complete Leads
+            </ion-col>
+          </ion-row> -->
+
+          <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height"
+            routerLink="../attendance"
+            [queryParams]="{fromdate:getTodayDate(),todate:getTodayDate(),htype:isRetail?'retail':'mandate',execid:localStorage.getItem('UserId'),isExecCheckInOutDetails:isAdmin?'false':'true',isDateFilter:'today'}"
+            *ngIf="!iscpId" [class.active-menu]="sharedService.isActiveRoute('attendance') && !accordionOpen">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width" src="../../assets/CRMimages/menubaricons/attendence_icon.svg"></ion-img>
+              <span>
+                {{localStorage.getItem('Role') == '1' || localStorage.getItem('RoleType') == '1' ?'Attendance Logs':
+                'My Attendance'}}
+              </span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height"
+            routerLink="../whatsapp-visits" [queryParams]="{htype:isRetail?'retail':'mandate',leads:'1'}"
+            routerLinkActive="active-menu"
+            *ngIf="localStorage.getItem('Role') === '1' && (!localStorage.getItem('ranavPropId')) && localStorage.getItem('cpId') !== '1'"
+            [class.active-menu]="sharedService.isActiveRoute('whatsapp-visits') && !accordionOpen">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/whatsappVisits_icon.svg"></ion-img>
+              Whatsapp Visits
+            </ion-col>
+          </ion-row>
+
+          <!-- Mandate Leads -->
+          <!-- <span *ngIf="!isRetail && localStorage.getItem('Role') !== '1'"> -->
+          <span *ngIf="!isRetail">
+            <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height"
+              routerLink="../leadassign" routerLinkActive="active-menu" [queryParams]="{ todaysvisits: '1',todaysfollowups:null,status:'scheduledtoday',htype:isRetail?'retail':'mandate',
+                teamlead:localStorage.getItem('RoleType') == '1'?localStorage.getItem('UserId'):null}">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width"
+                  src="../../assets/CRMimages/menubaricons/scheduledActivity_icon.svg"></ion-img>
+                {{localStorage.getItem('Role') == '1' || localStorage.getItem('RoleType') == '1'?
+                'Scheduled Activities':'Scheduled Activities'}}
+              </ion-col>
+            </ion-row>
+
+            <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height"
+              routerLink="../leadassign" routerLinkActive="active-menu"
+              [queryParams]="{teamlead:localStorage.getItem('RoleType') == '1'?localStorage.getItem('UserId'):null, todaysfollowups:'1', todaysvisits:null, status:'todaysfollowups',htype:isRetail?'retail':'mandate'}">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width"
+                  src="../../assets/CRMimages/menubaricons/followupBucket_icon.svg"></ion-img>
+                {{localStorage.getItem('Role') == '1'|| localStorage.getItem('RoleType') == '1'?
+                'Followup Bucket':'My Followups'}}
+              </ion-col>
+            </ion-row>
+
+            <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height"
+              routerLink="../mandate-lead-stages" routerLinkActive="active-menu"
+              [queryParams]="{ status:'pending',type:'Untouched',isDropDown:false,htype:isRetail?'retail':'mandate',teamlead:localStorage.getItem('RoleType') == '1'?localStorage.getItem('UserId'):null}"
+              [class.active-menu]="sharedService.isActiveRoute('mandate-lead-stages')&& !accordionOpen">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width" src="../../assets/CRMimages/menubaricons/allLeads_icon.svg"></ion-img>
+                {{localStorage.getItem('Role') == '1' || localStorage.getItem('RoleType') == '1'?'All Leads':
+                'My Leads'}}
+              </ion-col>
+            </ion-row>
+
+            <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height"
+              (click)="onAllVisitsMenu()" routerLinkActive="active-menu"
+              [class.active-menu]="sharedService.isActiveRoute('mandate-visit-stages')&& !accordionOpen">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width"
+                  src="../../assets/CRMimages/menubaricons/allVisits_icon.svg"></ion-img>
+                {{localStorage.getItem('Role') == '1' || localStorage.getItem('RoleType') == '1'?'All Visits':
+                'My Visits'}}
+              </ion-col>
+            </ion-row>
+            <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height"
+              routerLink="../mandate-myoverdues" routerLinkActive="active-menu"
+              [queryParams]="{stage:'Fresh',htype:isRetail?'retail':'mandate',status:'overdues',teamlead:localStorage.getItem('RoleType') == '1'?localStorage.getItem('UserId'):null}"
+              [class.active-menu]="sharedService.isActiveRoute('mandate-myoverdues') && !accordionOpen">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width" src="../../assets/CRMimages/menubaricons/overdue_icon.svg"></ion-img>
+                {{localStorage.getItem('Role') == '1' || localStorage.getItem('RoleType') == '1'?'All Overdues':
+                'My Overdues'}}
+              </ion-col>
+            </ion-row>
+            <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height"
+              routerLink="../mandate-plans" routerLinkActive="active-menu"
+              [queryParams]="{plan: '2',stage:'USV',fromDate:getUpcomingWeekendDates().fromdate,toDate:getUpcomingWeekendDates().todate,htype:isRetail?'retail':'mandate',teamlead:localStorage.getItem('RoleType') == '1'?localStorage.getItem('UserId'):null}"
+              [class.active-menu]="sharedService.isActiveRoute('mandate-plans')&& !accordionOpen">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width"
+                  src="../../assets/CRMimages/menubaricons/weekendPlan_icon.svg"></ion-img>
+                Weekend Plans
+              </ion-col>
+            </ion-row>
+            <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height"
+              *ngIf="!localStorage.getItem('ranavPropId')" routerLink="../mymandatereports"
+              routerLinkActive="active-menu"
+              [queryParams]="{htype:isRetail?'retail':'mandate',fromDate:todaysdateforcompare, toDate:todaysdateforcompare, status:'generalfollowups',isDateFilter:'today',teamlead:localStorage.getItem('RoleType') == '1'?localStorage.getItem('UserId'):null}"
+              [class.active-menu]="sharedService.isActiveRoute('mymandatereports')&& !accordionOpen">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width"
+                  src="../../assets/CRMimages/menubaricons/activityReport_icon.svg"></ion-img>
+                {{localStorage.getItem('Role') == '1' || localStorage.getItem('RoleType') == '1' ?
+                'Activities Report':'My Activities'}}
+              </ion-col>
+            </ion-row>
+
+            <ion-row (click)="accordionOpen= false; sharedService.isBottom = false"
+              *ngIf="localStorage.getItem('Role') == '1'" class="row-height" routerLink="../mandate-inactive-junk"
+              routerLinkActive="active-menu"
+              [queryParams]="{status:'inactive',counter:'1',htype:isRetail?'retail':'mandate'}"
+              [class.active-menu]="sharedService.isActiveRoute('mandate-inactive-junk')&& !accordionOpen">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width" src="../../assets/CRMimages/menubaricons/inactive_icon.svg"></ion-img>
+                <span>Inactive and Junk</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" class="row-height" *ngIf="(localStorage.getItem('Role') == '1' || localStorage.getItem('Role') == '50014' || 
+              localStorage.getItem('Role') == '50013') && !localStorage.getItem('ranavPropId')"
+              routerLinkActive="active-menu" routerLink="../mandate-feedback"
+              [queryParams]="{ status:'pending',htype:'mandate'}"
+              [class.active-menu]="sharedService.isActiveRoute('mandate-feedback')&& !accordionOpen">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width"
+                  src="../../assets/CRMimages/menubaricons/feebackCall_icon.svg"></ion-img>
+                <span>
+                  {{localStorage.getItem('Role') == '1' || localStorage.getItem('RoleType') == '1' ?
+                  'Feedback Calls':'My Feedback Calls'}}
+                </span>
+              </ion-col>
+            </ion-row>
+            <!-- <ion-row class="row-height" routerLink="../mandate-pricing-list"
+              [queryParams]="{htype:isRetail?'retail':'mandate'}">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width" src="../../assets/CRMimages/visits-update-icon.svg"></ion-img>
+                Property Price List
+              </ion-col>
+            </ion-row> -->
+          </span>
+
+
+
+          <ion-row (click)="accordionOpen= false; sharedService.isBottom = false" *ngIf="(!isRetail && !iscpId)"
+            class="row-height" routerLink="../visit-updates"
+            [class.active-menu]="sharedService.isActiveRoute('visit-updates')&& !accordionOpen"
+            [queryParams]="{ htype:isRetail?'retail':'mandate',currentPage:'PROPERTY_LIST'}">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/visitsUpdate_icon.svg"></ion-img>
+              Visit Updates
+            </ion-col>
+          </ion-row>
+
+          <ion-row (click)="accordionOpen= false; sharedService.isBottom = false"
+            *ngIf="(adminview || iscpId || isTL) && (!localStorage.getItem('ranavPropId'))" class="row-height"
+            [class.active-menu]="sharedService.isActiveRoute('addproperty')&& !accordionOpen"
+            routerLink="../addproperty"
+            [queryParams]="{type:adminview?'property':isTL?'cp':'',htype:isRetail ?'retail':'mandate'}">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/cpRegistration_icon.svg"></ion-img>
+              <!-- {{ isTL?'CP Registration':'Add Propetry'}} -->
+              {{iscpId?'Add Properties':'CP Registration'}}
+            </ion-col>
+          </ion-row>
+
+          <ion-row (click)="accordionOpen= false; sharedService.isBottom = false"
+            *ngIf="!iscpId && (!localStorage.getItem('ranavPropId'))" class="row-height" routerLink="../hourly-report"
+            [queryParams]="{fromdate:getTodayDate(),todate:getTodayDate(),htype:isRetail?'retail':'mandate',teamlead:localStorage.getItem('RoleType') == '1'?localStorage.getItem('UserId'):null}"
+            [class.active-menu]="sharedService.isActiveRoute('hourly-report')&& !accordionOpen">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width"
+                src="../../assets/CRMimages/menubaricons/hourlyReport_icon.svg"></ion-img>
+              Hourly Reports
+            </ion-col>
+          </ion-row>
+
+
+          <!-- <ion-row (click)="sharedService.isnewGroupCreation = false" class="row-height" routerLink="../chats"
+            [queryParams]="{htype:isRetail?'retail':'mandate'}" routerLinkActive="active-menu" *ngIf="!iscpId"
+            [class.active-menu]="sharedService.isActiveRoute('chats')">
+            <ion-col class="center-vertically paddingZero">
+              <ion-row style="width: 100%;">
+                <ion-col size="1.5" class="content_center paddingZero"> <ion-img
+                    src="../../assets/CRMimages/menubaricons/chats_icon.svg"
+                    name="chatbubbles-outline"></ion-img></ion-col>
+                <ion-col size="10.5" class="paddingZero"> <span>Chat</span> <span
+                    *ngIf="sharedService.unReadChatCount>0" class="unreadChat_count">{{sharedService.unReadChatCount}}
+                  </span></ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row> -->
+
+
+
+
+
+
+
+
+          <!-- <div class="lock-icon">
+        <ion-img src="../../assets/CRMimages/lock-icon.svg"></ion-img>
+        </div> -->
+          <!-- <ion-row class="row-height justify-content-center">
+          <ion-col class="center-vertically" size="12" class="text-center">
+            <ion-img class="img-height-width" src="../../assets/CRMimages/notification-icon.svg"></ion-img>
+            <span class="font-colorGray"> Notifications</span>
+            <ion-img class="main-icon" src="../../assets/CRMimages/lock-icon.svg"></ion-img>
+          </ion-col>
+        </ion-row> -->
+
+          <!-- <ion-row class="row-height" routerLink="../clients-chats"
+            [queryParams]="{htype:isRetail?'retail':'mandate',selectedChat:'all'}">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width" src="../../assets/CRMimages/call-recorder.svg"></ion-img>
+              <span class="font-colorGray"> What's app chats</span>
+            </ion-col>
+          </ion-row> -->
+
+          <!-- <ion-row class="row-height" routerLink="../inventory-dashboard"
+            [queryParams]="{htype:isRetail?'retail':'mandate',viewtype:'1',propid:'16793'}">
+            <ion-col class="center-vertically">
+              <ion-img class="img-height-width" src="../../assets/CRMimages/call-recorder.svg"></ion-img>
+              <span class="font-colorGray"> Inventory Dashboard</span>
+            </ion-col>
+          </ion-row> -->
+
+          <div
+            style="opacity: 0.4;background-image: url(../../assets/CRMimages/lock-icon.svg);background-repeat: no-repeat; height: 29%;background-size: 20%;background-position: center;">
+            <ion-row class="row-height">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width" src="../../assets/CRMimages/notification-icon.svg"></ion-img>
+                <span class="font-colorGray">Notifications</span>
+                <ion-img class="main-icon" src="../../assets/CRMimages/lock-icon.svg"></ion-img>
+              </ion-col>
+            </ion-row>
+
+            <ion-row class="row-height">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width" src="../../assets/CRMimages/reminder-icon.svg"></ion-img>
+                <span class="font-colorGray">Reminders</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row class="row-height">
+              <ion-col class="center-vertically">
+                <ion-img class="img-height-width" src="../../assets/CRMimages/call-recorder.svg"></ion-img>
+                <span class="font-colorGray">Call Records</span>
+              </ion-col>
+            </ion-row>
+          </div>
+
+          <div style="min-height: 205px;">
+            <!-- <ion-row class="content_center logOut">
+              <ion-col class="content_center" style="padding-bottom: 0;">
+              <div (click)="logOut()" class="content_center"><ion-img src="../../assets/CRMimages/logout.svg"></ion-img> LOG OUT</div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col class="ion-text-center font-size10-familyPoppins font-weight400">
+                <p>Version: {{mandateService.versionCode}}</p> 
+                © 2024 VSNAP Technology Solutions pvt ltd.<br>
+                  All rights reserved
+              </ion-col>
+            </ion-row> -->
+          </div>
+        </div>
+      </div>
+
+      <div style="position: fixed;bottom: 0;background: white;width: 100%;">
+        <div>
+          <ion-row class="content_center logOut">
+            <ion-col class="content_center" style="padding-bottom: 0;">
+              <div (click)="logOut()" class="content_center">
+                <ion-img src="../../assets/CRMimages/logout.svg"></ion-img> LOG OUT
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="ion-text-center font-size10-familyPoppins font-weight400">
+              <p>Version: {{sharedService.versionCode}}</p>
+              © 2024 VSNAP Technology Solutions pvt ltd.<br>
+              All rights reserved
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </div>
+  </ion-menu-toggle>
+</ion-menu>
+
+<ion-modal #switchAccountModal class="switchAccountModal">
+  <ng-template>
+    <ion-header class="switchacc-header">
+      <ion-row>
+        <ion-col class="d-flex align-items-center justify-content-center"><span>Switch Account</span></ion-col>
+        <ion-col size="2" (click)="onclose()" class="d-flex align-items-center justify-content-center"><ion-icon
+            name="close"></ion-icon></ion-col>
+      </ion-row>
+    </ion-header>
+    <!-- <app-header></app-header> -->
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+    </div>
+    <ion-content #content (ionScroll)="onScroll($event)" scrollEvents="true" class="main-content">
+      <ion-card class="exec_acc_switch" *ngFor="let exec of executiveNames">
+        <ion-row>
+          <ion-col class="d-flex flex-column justify-content-start">
+            <span class="name">{{exec.name}}</span>
+            <span class="role">{{exec.RoleName}}</span>
+          </ion-col>
+          <ion-col size="4" class="d-flex align-items-center justify-content-end"
+            (click)="selectedAcc = exec; switchAccountWarningModal.present()">
+            <div class="switch_btn">
+              <span class="pr-2">Switch</span><ion-img src="../../assets/CRMimages/switch_account_icon1.svg"></ion-img>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </ion-content>
+
+    <app-common-footer></app-common-footer>
+  </ng-template>
+</ion-modal>
+
+
+<ion-modal #switchAccountWarningModal class="switchAccountWarningModal">
+  <ng-template>
+    <ion-header>
+      <ion-row>
+        <ion-col class="d-flex align-items-center justify-content-center">
+          <span class="pr-1"> Confirm Switch</span>
+          <ion-img src="../../assets/CRMimages/switch_pop_icon.svg"></ion-img>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+    <div class="text-center d-flex flex-column p-2">
+      <span class="switch_header">
+        You’re about to switch accounts You will leave your Admin account and continue as
+      </span>
+      <span class="name_role mt-1">
+        Kiran - R.M Team Leader
+      </span>
+      <span class="warning_text  mt-2">
+        Do You Want To Proceed ?
+      </span>
+    </div>
+    <ion-footer>
+      <ion-row class="close-confirm-btn">
+        <ion-col size="4" class="d-flex align-items-center justify-content-center close_btn"
+          (click)="switchAccountWarningModal.dismiss()"><span>Close</span></ion-col>
+        <ion-col class="d-flex align-items-center justify-content-center switch_btn" (click)="onSwitch_acc()">
+          <span>Yes,
+            Switch
+            Account</span></ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

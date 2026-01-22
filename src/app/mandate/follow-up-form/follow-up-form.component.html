@@ -1,0 +1,89 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<div class="margin-top-16 followUpForm">
+  <form (ngSubmit)="addfollowupdata()" #submitForm="ngForm">
+    <div class="bg_border_color">
+      <ion-row>
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500"> Reason to follow up</p>
+      </ion-row>
+      <ion-row>
+        <span *ngFor="let section of followupsections;let i = index">
+
+          <!-- <div *ngIf="currentstage != 'Fresh' && section.followup_categories =='NC';else other_content"></div> -->
+          <div #other_content>
+            <div class="followUpResoncss" id="followupsection"
+              (click)="followupactionclick(i,section.followup_section_IDPK,section.followup_categories)">
+              <span [ngClass]="followsectiondata === section.followup_section_IDPK?'bg_textColor':'text_borderColor'"
+                *ngIf="currentstage=='Fresh'">
+                {{section.followup_categories}}
+              </span>
+
+              <span [ngClass]="followsectiondata === section.followup_section_IDPK?'bg_textColor':'text_borderColor'"
+                *ngIf="currentstage!='Fresh' && section.followup_categories != 'NC' ">
+                {{section.followup_categories}}
+              </span>
+            </div>
+          </div>
+        </span>
+      </ion-row>
+    </div>
+    <div class="margin-top-16 bg_border_color" [hidden]="!isFreshLead">
+      <ion-row>
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          Follow Up Date
+        </p>
+      </ion-row>
+      <ion-row class="center-content">
+        <div lines="none" class="input-with-image date-input">
+          <ion-input [(ngModel)]="followupDate" name="date" id="folloupdate" placeholder="Choose Date" required
+            inputmode="none"></ion-input>
+          <ion-popover trigger="folloupdate" #popover>
+            <ng-template>
+              <ion-datetime presentation="date" locale="en-US" [min]="date" [max]="maxDate"
+                (ionChange)="onDateChange($event);closePopover()"></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </ion-row>
+
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          Follow Up Time
+        </p>
+      </ion-row>
+
+      <ion-row class="center-content">
+        <div no-lines class="date-input inputTime-with-image">
+          <div style="width: 100%;height: 100%;">
+            <input style="width: 100%;height: 100%;" placeholder="Choose Time" id="followuptime"
+              aria-label="12hr format" [ngxTimepicker]="default" [(ngModel)]="followupTime" name="followupTime"
+              inputmode="none" (ngModelChange)="validateTime()" required>
+          </div>
+        </div>
+      </ion-row>
+      <ngx-material-timepicker #default></ngx-material-timepicker>
+
+      <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.</div>
+      <ion-row class="margin-top-16" *ngIf="this.followsectionname == 'NC' || this.followsectionname == 'Callback'">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</p>
+      </ion-row>
+      <ion-row class="custom-textArea" *ngIf="this.followsectionname == 'NC' || this.followsectionname == 'Callback'">
+        <ion-textarea placeholder="Write remarks" id="followuptextarearemarks" name="remark"
+          [(ngModel)]="followUpRemark" (ngModelChange)="checkAlphanumericSpaces()"></ion-textarea>
+      </ion-row>
+    </div>
+    <ion-row></ion-row>
+    <ion-row class="submitForm">
+      <ion-col class="paddingZero">
+        <ion-button fill="clear" type="reset">Cancel</ion-button>
+      </ion-col>
+      <ion-col class="paddingZero">
+        <ion-button fill="clear" class="saveButton"
+          [ngClass]="submitForm.invalid || hasOnlySpaces || timeError?'saveButton':'activeSaveButton'" type="submit"
+          [disabled]="isFreshLead? hasOnlySpaces || timeError:false">Save</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+</div>

@@ -1,0 +1,174 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <!-- <ion-spinner name="circular" style="color: white;"></ion-spinner> -->
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<ion-header>
+  <ion-toolbar class="ion-text-center">
+    <ion-row>
+      <ion-col size="2" class="content_center">
+        <ion-icon style="font-size: 24px" name="arrow-back" (click)="onBackbutton()">back</ion-icon>
+      </ion-col>
+      <ion-col size="8">
+        <ion-row>
+          <ion-col>
+            <span class="font-size16-familyPoppins">
+              {{filteredParams.isAllCallLogs == 'true'?'All Calls':filteredParams.callRecord?
+              'Call Records':'Live Calls'}}
+            </span>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col size="2" (click)="openEndMenu()" class="content_center">
+        <ion-icon name="menu" class="menu_icon"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+<!-- <pre>{{ filteredParams | json }}</pre> -->
+<span *ngIf="filteredParams.isAllCallLogs == 'true'">
+  <div class="m-2">
+    <ion-row>
+      <ion-col (click)="selectDateFilter('today')">
+        <div class="font-size12-familyPoppins content_center"
+          [ngClass]="filteredParams?.isDateFilter === 'today' ? 'bg_textColor' : 'text_borderColor'">
+          Today
+        </div>
+      </ion-col>
+      <ion-col (click)="selectDateFilter('lastsevenDay')">
+        <div [ngClass]="filteredParams.isDateFilter == 'lastsevendays' ? 'bg_textColor': 'text_borderColor'"
+          class="font-size12-familyPoppins content_center text_borderColor">Last 7 days</div>
+      </ion-col>
+      <ion-col>
+        <div [ngClass]=" this.filteredParams?.isDateFilter == 'custom'?'bg_textColor':'text_borderColor'"
+          class="font-size12-familyPoppins content_center text_borderColor">
+          <label for="liveCall_date_range">Custom</label>
+        </div>
+      </ion-col>
+      <ion-col size="1.4" (click)="reset()">
+        <div class="text_borderColor content_center">
+          <ion-icon class="icon-ion font-colorBlue" name="refresh-outline"></ion-icon>
+        </div>
+      </ion-col>
+
+      <p-calendar #calendar [ngStyle]="{ display: 'none' }" [hideOnDateTimeSelect]="true" [touchUI]="true"
+        inputId="liveCall_date_range" [(ngModel)]="dateRange" selectionMode="range" appendTo="body"
+        [dateFormat]="'yy-mm-dd'" (onSelect)="selectDateFilter('custom')" [maxDate]="today"></p-calendar>
+    </ion-row>
+  </div>
+  <ion-row class="pl-2 pr-2" *ngIf="isAdmin">
+    <ion-col size="6">
+      <!-- <ion-searchbar [ngClass]="filteredParams.execid !== ''?'pointer_eventsNone':''" class="execsearch" [(ngModel)]="execSearchName" (ionInput)="setFilteredExecutive()"></ion-searchbar> -->
+
+
+      <p-dropdown [options]="executiveslist" (onChange)="onExecutive($event)" [(ngModel)]="selectedExecName"
+        optionLabel="Name" [filter]="true" filterBy="Name" placeholder="Select a Executive" class="exec_css">
+      </p-dropdown>
+    </ion-col>
+  </ion-row>
+
+  <!-- filter chips -->
+  <ion-row *ngIf="this.filteredParams.isDateFilter == 'custom'" class="pl-3 pr-3">
+    <ion-col size="6">
+      <ion-button class="filterButtons" fill="clear" style="margin: 0;"
+        (click)="filteredParams.fromdate= getTodayDate();filteredParams.todate=getTodayDate();dateRange = null;filteredParams.isDateFilter = 'today'; addQueryParams()">
+        <span> {{filteredParams.fromdate+" to "+filteredParams.todate}}</span>
+        <ion-icon slot="end" name="close" style="font-size: 20px;"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col></ion-col>
+  </ion-row>
+</span>
+
+<ion-content>
+  <div class="m-2">
+    <ion-card style="border: 0.8px solid #198CC7" *ngIf="filteredParams.callRecord=='true'">
+      <ion-card-content class="p-0">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" class="p-0">
+              <p class="mb-0 font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                Lead Name
+              </p>
+              <p class="small font-size12-familyPoppins font-colorBlue"> {{filteredParams.leadName}} </p>
+
+              <p class="mt-2 mb-0 font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">Last
+                Updated</p>
+              <p class="small font-size12-familyPoppins font-colorBlue"
+                style="color: rgba(47, 47, 47, 1); font-weight: 400;">{{filteredParams.lastUpdate| date:'dd-MMM-yyyy'}}
+              </p>
+            </ion-col>
+            <ion-col sizesize="6" class="text-end p-0">
+              <p class="mb-0 font-size12-familyPoppins " style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                Mobile Number
+              </p>
+              <p class="small font-size12-familyPoppins font-colorBlue">{{filteredParams.clientnum}}</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+
+
+    <ion-card class="shadow-sm rounded-2xl" *ngFor="let callLogs of allAndLiveCallLogs1, let i = index">
+      <ion-card-content class="p-0">
+        <ion-grid>
+          <ion-row>
+            <!-- Left section -->
+            <ion-col size="6" class="p-0">
+              <p class="mb-0 font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                {{callLogs.leadname}}</p>
+              <p class="small font-size12-familyPoppins">{{callLogs.callto}}</p>
+
+              <p class="mt-2 mb-0 font-size12-familyPoppins">Start Time</p>
+              <p class="small font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                {{callLogs.starttime}}</p>
+
+              <p class="mt-2 mb-0 font-size12-familyPoppins">Call Duration</p>
+              <p class="small font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                {{ filteredParams.isAllCallLogs == 'true'? callLogs.answeredtime:timers[i] || '00h:00m:00s' }}</p>
+            </ion-col>
+
+            <!-- Right section -->
+            <ion-col size="6" class="text-end p-0">
+              <p class="mb-0 font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                {{callLogs.name}}</p>
+              <p class="small font-size12-familyPoppins">RM Executive</p>
+
+              <span *ngIf="filteredParams.isAllCallLogs == 'true'">
+                <p class="mt-2 mb-0 font-size12-familyPoppins">End Time</p>
+                <p class="small font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                  {{callLogs.endtime}}</p>
+              </span>
+
+              <span *ngIf="filteredParams.isAllCallLogs == 'false'">
+                <p class="mt-2 mb-0 font-size12-familyPoppins">Mode of Call</p>
+                <p class="small font-size12-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+                  {{callLogs.modeofcall}}</p>
+              </span>
+
+              <!-- <p class="mt-2 mb-0">Call Status</p>
+          <span class="badge bg-success">{{"callLogs"}}</span> -->
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+
+      <div class="bg-light p-2 d-flex align-items-center rounded-bottom"
+        style="background: rgb(183 216 233) !important;">
+        <audio controls style="width: 100% !important; height: 32px !important;">
+          <source [src]="callLogs.filename" type="audio/wav">
+        </audio>
+      </div>
+    </ion-card>
+
+    <ion-row *ngIf="allAndLiveCallLogs1?.length == 0" class="content_center">
+      <ion-col class="content_center">
+        <span class="font-size16-familyPoppins">No call logs found...</span>
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-content>
+
+<app-common-footer></app-common-footer>

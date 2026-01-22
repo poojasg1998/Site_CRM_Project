@@ -1,0 +1,335 @@
+<ion-header>
+  <ion-row class="mainHeading">
+    <ion-col size="2" class="ion-text-left content_center" (click)="onBackButton()"> 
+       <!-- <ion-back-button class="backButton"  defaultHref="/home" ></ion-back-button> -->
+       <ion-icon name="arrow-back">back</ion-icon>
+    </ion-col>
+    <ion-col size="8" class="ion-text-center content_center">Reminders</ion-col>
+    <ion-col size="2"></ion-col>
+  </ion-row>
+
+  <ion-row class="reminderHeading">
+    <ion-col [ngClass]="isUpComing?'bgColor':''" (click)="handleReminderView('upcoming')" class="content_center font-size12-familyPoppins font-weight500" style="border-right:1px solid #ECECEC">Upcoming</ion-col>
+    <ion-col [ngClass]="isCompleted?'bgColor':''" (click)="handleReminderView('completed')" class="content_center font-size12-familyPoppins font-weight500" style="border-right:1px solid #ECECEC">Completed</ion-col>
+    <ion-col [ngClass]="isCancelled?'bgColor':''" (click)="handleReminderView('cancelled')" class="content_center font-size12-familyPoppins font-weight500">Cancelled</ion-col>
+  </ion-row> 
+</ion-header>
+
+<ion-content>  
+  <span>
+    <span *ngFor="let leads of callerLeads let i = index">
+      <ion-row class="todayAndAllVisitsData">  
+        <ion-row>          
+          <ion-col>
+            <ion-row class="custom-column-heading margin-top-5">Lead Name</ion-row>
+            <ion-row class="custom-column-data" >
+              {{leads.registeredname}}
+              <span *ngIf="leads.visitedcount === '1'">({{leads.visitedcount}}st Visit)</span>
+              <span *ngIf="leads.visitedcount === '2'">({{leads.visitedcount}}nd Visit)</span>
+              <span *ngIf="leads.visitedcount === '3'">({{leads.visitedcount}}rd Visit)</span>
+              <span *ngIf="leads.visitedcount >= '4'">({{leads.visitedcount}}th Visit)</span>
+            </ion-row>
+            <ion-row class="custom-column-heading margin-top-5">Project</ion-row>
+            <ion-row class="custom-column-data" >{{leads.suggestedproperty}}</ion-row>
+            <ion-row class="custom-column-heading margin-top-5">Mobile Number</ion-row>
+            <ion-row class="custom-column-data" >+91 {{leads.number}}</ion-row>
+            <span *ngIf="isAdmin && leads.source.indexOf('Walkin') === -1">
+              <ion-row class="custom-column-heading margin-top-5">Lead Received on</ion-row>
+              <ion-row class="custom-column-data">{{leads.Date | date: 'dd-MMM-yyyy hh:mm: a'}}</ion-row>
+            </span>
+            <ion-row class="custom-column-heading margin-top-5">Visit Source</ion-row>
+            <ion-row class="custom-column-data">
+              <span class="font-size12-familyPoppins"> {{leads.source}}
+                <span *ngIf="leads.source.indexOf('Walkin') === -1">/ {{leads.registeredsource}}</span>
+             </span>
+            </ion-row>
+          </ion-col>
+          <ion-col  class="ion-text-end">
+            <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end" style="text-align: right;">Stage</ion-row>
+            <ion-row class="ion-justify-content-end">
+              <span class="custom-column-data" style="padding-right: 5px;" >{{leads.Leadphase}} </span>
+              <span *ngIf="leads.stagestatus === '1'" class="custom-column-data"><p> Fixed</p></span>
+              <span *ngIf="leads.stagestatus === '2'" class="custom-column-data"> Refixed</span>
+              <span *ngIf="leads.stagestatus === '3'" class="custom-column-data"> Done</span>
+            </ion-row>
+            <span *ngIf="leads.actions !== '3' && leads.actions !== '6' && leads.actions !== '7' && leads.actions !== '8'">
+              <!-- Fetching the Visit data if followup status is null -->
+              <span *ngIf="leads.followupstatus === null">
+                <span *ngIf="leads.formfilleddate?.indexOf(todaysdateforcompare) === -1 && todaysdateforcompare === leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Scheduled Visit</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Today, {{leads.nextactiontime}}</ion-row>
+                </span>   
+                <span *ngIf="yesterdaysdateforcompare === leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Visit Overdue</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Yesterday, {{leads.nextactiontime}}</ion-row>
+                </span>   
+                <span *ngIf="tomorrowsdateforcompare === leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end"> Next Visit </ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Tomorrow, {{leads.nextactiontime}}</ion-row>
+                </span>       
+                <span *ngIf="tomorrowsdateforcompare < leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end"> Next Visit </ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">{{leads.nextactiondate | date: 'dd-MMM-yyyy'}} {{leads.nextactiontime}}</ion-row>
+                </span>
+                <span *ngIf="yesterdaysdateforcompare > leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end"> Visit Overdue </ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">{{leads.nextactiondate | date: 'dd-MMM-yyyy'}} {{leads.nextactiontime}}</ion-row>
+                </span> 
+              </span>
+              <!-- Fetching the Visit data if followup status is null -->
+              <!-- Fetching the followup data if followup status is not null -->
+              <span *ngIf="leads.followupstatus === '4'"> 
+                <span *ngIf="yesterdaysdateforcompare === leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Followup Missed</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Yesterday, {{leads.nextactiontime}}</ion-row>
+                </span>
+                <span *ngIf="todaysdateforcompare === leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Scheduled Followup </ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Today, {{leads.nextactiontime}}</ion-row>
+                </span>
+                <span *ngIf="tomorrowsdateforcompare === leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Next Followup</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Tomorrow, {{leads.nextactiontime}}</ion-row>
+                </span>
+                <span *ngIf="tomorrowsdateforcompare < leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Next Followup</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">{{leads.nextactiondate | date: 'dd-MMM-yyyy'}} {{leads.nextactiontime}}</ion-row>
+                </span>
+                <span *ngIf="yesterdaysdateforcompare > leads.nextactiondate">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end"> Followup Missed</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">{{leads.nextactiondate | date: 'dd-MMM-yyyy'}} {{leads.nextactiontime}}</ion-row>
+                </span>
+              </span>
+      
+              <span>
+                <span *ngIf="leads.formfilleddate.indexOf(todaysdateforcompare) !== -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">   First Visit </ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Today {{leads.formfilleddate | date: 'hh:mm: a'}}</ion-row>
+                </span>
+                <span *ngIf="leads.formfilleddate.indexOf(yesterdaysdateforcompare) !== -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">   First Visit </ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Yesterday {{leads.formfilleddate | date: 'hh:mm: a'}}</ion-row>
+                </span>
+                <span *ngIf="leads.formfilleddate.indexOf(todaysdateforcompare) === -1 && leads.formfilleddate.indexOf(yesterdaysdateforcompare) === -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">   First Visit </ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">{{leads.formfilleddate | date: 'dd-MMM-yyyy hh:mm: a'}}</ion-row>
+                </span>
+              </span>
+      
+              <!-- Fetching the followup data if followup status is not null -->
+              <span *ngIf="leads.lastvisited !== null">
+                  <!-- Fetching the lastvisitdate as USV Done date till Second Visit -->
+                <span *ngIf="leads.lastvisit === null">
+                  <span *ngIf="leads.formfilleddate?.indexOf(todaysdateforcompare) !== -1">
+                    <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">  Last Visit </ion-row>
+                    <ion-row class="custom-column-data ion-justify-content-end">Today {{leads.formfilleddate | date: 'hh:mm: a'}}</ion-row>
+                  </span>
+                  <span *ngIf="leads.formfilleddate?.indexOf(yesterdaysdateforcompare) !== -1">  
+                    <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">  Last Visit </ion-row>
+                    <ion-row class="custom-column-data ion-justify-content-end">Yesterday {{leads.formfilleddate | date: 'hh:mm: a'}} </ion-row>
+                  </span>
+                  <span *ngIf="leads.formfilleddate?.indexOf(todaysdateforcompare) === -1 && leads.formfilleddate?.indexOf(yesterdaysdateforcompare) === -1">
+                    <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">  Last Visit </ion-row>
+                    <ion-row class="custom-column-data ion-justify-content-end">{{leads.formfilleddate | date: 'dd-MMM-yyyy hh:mm: a'}} </ion-row>
+                  </span>     
+                </span>
+                <!-- Fetching the lastvisitdate as USV Done date till Second Visit -->
+                <!-- Fetching the lastvisitdate after Finishing the Second Visit -->
+                <span *ngIf="leads.lastvisit !== null" >
+                  <span *ngIf="leads.lastvisit?.indexOf(todaysdateforcompare) !== -1">
+                    <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end"> Last Visited</ion-row>
+                    <ion-row class="custom-column-data ion-justify-content-end">Today {{leads.lastvisit | date: 'hh:mm: a'}}</ion-row>
+                  </span>
+                  <span *ngIf="leads.lastvisit?.indexOf(yesterdaysdateforcompare) !== -1">
+                    <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Last Visited</ion-row>
+                    <ion-row class="custom-column-data ion-justify-content-end">Yesterday {{leads.lastvisit | date: 'hh:mm: a'}}</ion-row>
+                  </span>
+                  <span *ngIf="leads.lastvisit?.indexOf(todaysdateforcompare) === -1 && leads.lastvisit?.indexOf(yesterdaysdateforcompare) === -1">
+                    <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Last Visited</ion-row>
+                    <ion-row class="custom-column-data ion-justify-content-end">{{leads.lastvisit | date: 'dd-MMM-yyyy hh:mm: a'}}</ion-row>
+                  </span>
+                </span>
+              </span>
+            </span>
+            <span *ngIf="leads.actions === '3'">    
+              <span>
+                <span *ngIf="leads.formfilleddate.indexOf(todaysdateforcompare) !== -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">First Visit</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Today {{leads.formfilleddate | date: 'hh:mm: a'}}</ion-row>
+                </span>
+                <span *ngIf="leads.formfilleddate.indexOf(yesterdaysdateforcompare) !== -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">First Visit</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Yesterday {{leads.formfilleddate | date: 'hh:mm: a'}}</ion-row>
+                </span>
+                <span *ngIf="leads.formfilleddate.indexOf(todaysdateforcompare) === -1 && leads.formfilleddate.indexOf(yesterdaysdateforcompare) === -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">First Visit</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">{{leads.formfilleddate | date: 'dd-MMM-yyyy hh:mm: a'}}</ion-row>
+                </span>
+              </span>
+      
+              <span *ngIf="leads.lastvisit === null">
+                <span *ngIf="leads.formfilleddate?.indexOf(todaysdateforcompare) !== -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Last Visited</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Today {{leads.formfilleddate | date: 'hh:mm: a'}}</ion-row>
+                </span>
+                <span *ngIf="leads.formfilleddate?.indexOf(yesterdaysdateforcompare) !== -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Last Visited</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Yesterday {{leads.formfilleddate | date: 'hh:mm: a'}} </ion-row>
+                </span>
+                <span *ngIf="leads.formfilleddate?.indexOf(todaysdateforcompare) === -1 && leads.formfilleddate?.indexOf(yesterdaysdateforcompare) === -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Last Visited</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">{{leads.formfilleddate | date: 'dd-MMM-yyyy hh:mm: a'}} </ion-row>
+                </span>
+              </span>
+              <span *ngIf="leads.lastvisit !== null">
+                <span *ngIf="leads.lastvisited?.indexOf(todaysdateforcompare) !== -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Last Visited</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Today {{leads.lastvisited | date: 'hh:mm: a'}}</ion-row>
+                </span>
+                <span *ngIf="leads.lastvisited?.indexOf(yesterdaysdateforcompare) !== -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Last Visited</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">Yesterday {{leads.lastvisited | date: 'hh:mm: a'}}</ion-row>
+                </span>
+                <span *ngIf="leads.lastvisited?.indexOf(todaysdateforcompare) === -1 && leads.lastvisited?.indexOf(yesterdaysdateforcompare) === -1">
+                  <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Last Visited</ion-row>
+                  <ion-row class="custom-column-data ion-justify-content-end">{{leads.lastvisited | date: 'dd-MMM-yyyy hh:mm: a'}}</ion-row>
+                </span>        
+              </span>
+            </span>    
+            
+            <span *ngIf="leads.actions === '6' || leads.actions === '7' || leads.actions === '8'">
+              <ion-row class="custom-column-heading margin-top-5 ion-justify-content-end">Booking Details</ion-row>
+              <ion-row class="custom-column-data ion-justify-content-end" *ngIf="leads.actions === '6'">Booked</ion-row>
+              <ion-row class="custom-column-data ion-justify-content-end" *ngIf="leads.actions === '7'">Booking Approval Pending</ion-row>
+              <ion-row class="custom-column-data ion-justify-content-end" *ngIf="leads.actions === '8'">Booking Request Rejected</ion-row>
+            </span>
+  
+            <span class="last-update-date">
+              <ion-row class="ion-justify-content-end  margin-top-5">Last Updated</ion-row>
+              <ion-row class="ion-justify-content-end">{{leads.lastupdated | date: 'dd-MMM-yyyy hh:mm: a'}}</ion-row>
+            </span>  
+            
+            <span>
+              <ion-row class="custom-text ion-justify-content-end" style="display: flex;align-items: center;">Assigned to <span class="highlight-text">{{leads.Executivename +" "}}</span></ion-row>
+            </span>
+          </ion-col>
+        </ion-row>
+
+        
+        <ion-row [ngClass]="isCancelled?'orangeBgColor':'custom-row-style'" style="height: 34px;">  
+         <ion-col [size]="isCompleted?'':isCancelled?8:10" [ngClass]="isCompleted?'content_center':'ion-text-start'">
+          <span style="display: flex;color: #fff;">
+            <ion-img *ngIf="isUpComing" src="../../assets/CRMimages/reminder-icon.png" style="margin-right: 5px;"></ion-img>
+            <span *ngIf="isUpComing" class="font-size12-familyPoppins font-weight500">{{ reminderInfo(leads.LeadID) }}</span>
+
+            <ion-img *ngIf="isCancelled" src="../../assets/CRMimages/reminder-icon.png" style="margin-right: 5px;"></ion-img>
+            <span *ngIf="isCancelled" class="font-size12-familyPoppins font-weight500">{{ reminderInfo(leads.LeadID) }}</span>
+            <span *ngIf="isCompleted" class="font-size12-familyPoppins font-weight500 content_center">{{ reminderInfo(leads.LeadID) }}<ion-img src="../../assets/CRMimages/markAsCompleted.png" style="margin-left:5px"> </ion-img></span>
+            
+          </span>
+         </ion-col>
+         <ion-col  *ngIf="isUpComing"  size="2" class="content_center" (click)="editReminder(leads.LeadID);">
+          <ion-img style="width: 16px;height: 16px;" src="../../assets/CRMimages/editing.png"></ion-img>
+        </ion-col>
+        <ion-col  *ngIf="isCancelled" size="4" class="ion-text-end content_center" >
+          <span class="font-size12-familyPoppins font-weight500" style="color: #fff;">Cancelled</span>
+        </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="isUpComing" style="height: 34px;" (click)="markToCompleted(leads.LeadID)">
+          <ion-col class="font-size12-familyPoppins font-weight500 content_center" style="color: #009045;height: 100%;">
+            Mark as Completed   
+            <i class="material-icons custom-icon">task_alt</i>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="isCancelled">
+          <ion-col class="font-size12-familyPoppins font-weight500 "  [ngClass]="otherReason1?'ion-text-start':'content_center'" style="color: #FF5151;height: 100%;padding: 10px;display: flex;">
+            <ion-img src="../../assets/CRMimages/cancel-reminder-icon.png" style="padding-right: 5px;"></ion-img>
+            {{selectedReason1}} {{otherReason1}}
+          </ion-col>
+        </ion-row>
+      </ion-row>  
+    </span>
+  </span>
+  <!-- <div *ngIf="callerLeads.length===0">
+    no record found
+  </div> -->
+  <div  class="content_center"  style="margin-top:10px">
+    <ion-spinner name="circular" *ngIf="showSpinner" style="color: white;"></ion-spinner>
+  </div>
+</ion-content>
+
+<!-- reschedule reminder date modal -->
+<ion-modal #edit_date class="edit-date" [ngClass]="isTimePickerOpen?'edit-date-time':'edit-date'"> 
+  <ng-template>
+    <ion-row style="height: 48px;border-bottom: 1px solid #ececec;">
+      <ion-col class="content_center" [ngClass]="isTimePickerOpen?'':'bgColor'" style="border-right:1px solid #ececec" (click)="showTimePicker($event,'')">Date</ion-col>
+      <ion-col class="content_center"  [ngClass]="isTimePickerOpen?'bgColor':''"  (click)="showTimePicker($event,'time')">Time</ion-col>
+    </ion-row>
+   <ion-row>
+    <ion-datetime style="width: 100%;" #datetime presentation="date" displayFormat="DD MM YYYY" (ionChange)="showTimePicker($event,'')"  [min]="date">
+      <ion-buttons slot="buttons" *ngIf="isTimePickerOpen">
+        <ion-button style="color:#0B7AB2" (click)="edit_date.dismiss()">Cancel</ion-button>
+        <ion-button style="color:#0B7AB2" (click)="saveDate()">Save</ion-button>
+      </ion-buttons>    
+    </ion-datetime>
+   </ion-row>
+  </ng-template>
+</ion-modal>
+
+<!-- edit reminder modal -->
+<ion-modal #edit_reminder trigger="edit-reminder" class="edit-reminder">
+  <ng-template>
+    <ion-toolbar>
+      <ion-title class="font-size12-familyPoppins font-weight400">Edit Reminder</ion-title>    
+      <ion-buttons slot="end" (click)="edit_reminder.dismiss()">
+        <ion-icon name="close" style="font-size: 20px;margin-right: 10px;"></ion-icon>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-row class="reschedulereminder font-size12-familyPoppins font-weight500">
+      <ion-col><ion-img src="../../assets/CRMimages/rescheduleReminder.png" style="width: 25px;height: 25px;" (click)="onResheduleReminder()"></ion-img> Reschedule the Reminder</ion-col>
+    </ion-row>
+    <ion-row class="cancelReminder  font-size12-familyPoppins font-weight500">
+      <ion-col><ion-img src="../../assets/CRMimages/cancelReminder.png" style="width: 25px;height: 25px;" (click)="onCancelReminder()"></ion-img> Cancel the Reminder</ion-col>
+    </ion-row>
+  </ng-template>  
+</ion-modal>
+
+<!--Cancel reminder modal -->
+<ion-modal #cancel_reminder class="cancel-reminder">
+  <ng-template>
+    <form (ngSubmit)="cancelReminder()">
+      <div style="margin: 15px;">
+        <ion-row class="font-size12-familyPoppins" style="font-weight: 600;">Why do you want to cancel the reminder?</ion-row>
+        <ion-row class="font-familyPoppins font-weight300" style="font-size: 10px;">Please provide the reason for cancel</ion-row>
+        <ion-row style="margin-top: 10px;">
+          <ion-radio-group name="radio" value="cancelreson" class="radio-group-right"  [(ngModel)]="selectedReason" (ionChange)="updateOtherReason($event)">
+            <ion-radio value="Reminder Set by Mistake" labelPlacement="end" justify="start">Reminder Set by Mistake</ion-radio>
+            <ion-radio value="Duplicate Reminder" labelPlacement="end" justify="start">Duplicate Reminder</ion-radio>
+            <ion-radio value="Reminder Set for Incorrect Lead" labelPlacement="end" justify="start">Reminder Set for Incorrect Lead</ion-radio>
+            <ion-radio value="Lead Handled by Another" labelPlacement="end" justify="start">Lead Handled by Another</ion-radio>
+            <ion-radio value="Lead Unreachable" labelPlacement="end" justify="start">Lead Unreachable</ion-radio>
+            <ion-radio value="Task Postponed Until Further Notice" labelPlacement="end" justify="start">Task Postponed Until Further Notice</ion-radio>
+          </ion-radio-group>
+        </ion-row>
+  
+        <ion-row style="margin-top: 10px;" [ngClass]="otherReason?'font-colorBlue':'font-colorBlack'" class="font-size12-familyPoppins font-weight400">Others</ion-row>
+        <ion-row>
+          <ion-textarea [(ngModel)]="otherReason" (ionInput)="checkRadio($event)" name="reson" style="border: 1px solid #ececec;" class="font-size12-familyPoppins font-weight400"></ion-textarea>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6" style="padding-left: 0;">
+            <ion-button fill="clear" class="font-size12-familyPoppins font-weight400 keep-reminder" (click)="cancel_reminder.dismiss()">Keep Reminder</ion-button>
+          </ion-col>
+        
+          <ion-col size="6" style="padding-right: 0;">
+            <ion-button [disabled]="!(selectedReason!=='' || otherReason!=='')" type="submit"  fill="clear" class="font-size12-familyPoppins font-weight400"  style="border: 1px solid;height: 32px;text-transform: none;border-radius: 4px;width: 100%;">Cancel Reminder</ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+    </form>
+  </ng-template>
+</ion-modal>
+
+

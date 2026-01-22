@@ -1,0 +1,135 @@
+div.bg_textColor,
+div.text_borderColor {
+  padding: 4px 1px;
+  border-radius: 4px;
+  width: 100%;
+  box-shadow: 0px 8px 24px 0px #959da533 !important;
+}
+audio::-webkit-media-controls-panel {
+  background: rgba(183, 216, 233, 1);
+}
+
+audio::-webkit-media-controls-play-button {
+  background-color: #fff;
+  border-radius: 50%;
+}
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+  color: rgba(114, 114, 114, 1);
+}
+
+ion-card {
+  box-shadow: 0px 8px 24px 0px #959da533 !important;
+  border-radius: 4px !important;
+  border: 1px solid #efefef;
+}
+
+ion-searchbar {
+  padding: 6px;
+  height: 100%;
+  border: 0.2px solid #bebfc8 !important;
+  border-radius: 25px;
+}
+
+::ng-deep ion-searchbar.execsearch .searchbar-input-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 79px;
+}
+
+::ng-deep .searchbar-input.sc-ion-searchbar-md {
+  --webkit-box-shadow: none;
+  font-size: 16px;
+  color: #060606 !important;
+  font-family: "Poppins";
+}
+
+::ng-deep ion-searchbar .searchbar-input {
+  padding: 0;
+  -webkit-padding-end: 0 !important;
+  -webkit-padding-start: 0 !important;
+  padding-inline-end: 25px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-inline-start: 40px !important;
+  border-radius: 25px !important;
+}
+// ::ng-deep .searchbar-search-icon.sc-ion-searchbar-md{
+//     inset-inline-start:5px !important;
+// }
+// ::ng-deep .searchbar-clear-button.sc-ion-searchbar-md {
+//     inset-inline-end: 5px !important;
+// }
+// ::ng-deep .searchbar-clear-icon.sc-ion-searchbar-md {
+//     width: 20px !important;
+//     color: #0B7AB2;
+// }
+
+// ::ng-deep .searchbar-search-icon.sc-ion-searchbar-md{
+//   inset-inline-start: 5px !important;
+//    top: 1px !important;
+//     width: 30px !important;
+//     height: 30px !important;
+//     color: #0B7AB2;
+// }
+
+::ng-deep .loading-wrapper.sc-ion-loading-md {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+.loader {
+  --backdrop-opacity: 0.8;
+  --background: none;
+  --spinner-color: white;
+  box-shadow: none;
+  -webkit-box-shadow: none !important;
+}
+.filterButtons {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 12px;
+  color: #000000;
+  text-transform: none;
+  height: 35px;
+  align-items: center;
+  border: 1px solid rgba(11, 122, 178, 0.5);
+  border-radius: 4px;
+  color: #009acb;
+}
+.bg_textColor {
+  background: #0b7ab2 !important;
+  color: white !important ;
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper span {
+  padding: 5px;
+  font-family: "Poppins";
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper span {
+  padding: 5px;
+  font-size: 12px;
+  font-family: "Poppins";
+  color: #0b7ab2;
+}
+::ng-deep p-dropdown.exec_css .p-inputwrapper {
+  width: 100% !important;
+  border: 0.5px #0b7ab2 solid;
+}
+::ng-deep p-dropdown.exec_css .p-inputwrapper .p-dropdown-trigger {
+  width: 30px !important;
+}
+::ng-deep
+  p-dropdown.exec_css
+  .p-inputwrapper
+  .p-dropdown-trigger
+  chevrondownicon {
+  width: 12px;
+  color: #0b7ab2;
+}
+::ng-deep .exec_css .p-element .p-dropdown-item {
+  padding: 5px !important;
+  font-size: 12px;
+}

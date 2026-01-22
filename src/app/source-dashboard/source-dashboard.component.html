@@ -1,0 +1,488 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+<app-header></app-header>
+
+<div style="background: #f6f6f6" *ngIf="!isOnCallDetailsPage">
+  <!-- DATE FILTER SECTION -->
+  <div class="mb-0 datefilter-div">
+    <ion-row>
+      <ion-col style="border: 0.5px solid #e6e6e6; border-radius: 20px; padding: 2px !important;">
+        <ion-row>
+          <ion-col size="3" (click)="dateFilter('today')" class="d-flex  align-items-center justify-content-center"
+            [ngClass]="filteredParams.isDateFilter == 'today' ? 'active_btn': ''">
+            <span>Today </span><i class="fi fi-tr-calendar"></i>
+          </ion-col>
+          <ion-col (click)="dateFilter('yesterday')" class="d-flex align-items-center justify-content-center"
+            [ngClass]="filteredParams?.isDateFilter == 'yesterday'?'active_btn':''">
+            <span>Yesterday</span>
+          </ion-col>
+          <ion-col (click)="dateFilter('lastsevenDay')" class="d-flex align-items-center justify-content-center"
+            [ngClass]="filteredParams?.isDateFilter == 'lastsevenDay'?'active_btn':''">
+            <span>Last 7 days</span>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col [ngClass]="filteredParams?.isDateFilter == 'custom'?'active_btn':'normal_btn'"
+        (click)="dateFilter('custom')"
+        class="d-flex align-items-center justify-content-center custom-datefilterIcon normal_btn p-2px" size="1.5">
+        <span class="d-flex align-items-center justify-content-center">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </span>
+      </ion-col>
+      <ion-col (click)="reset()" class="refresh-icon normal_btn d-flex align-items-center justify-content-center p-0"
+        size="1.2">
+        <ion-icon name="sync-outline"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <!-- DATE FILTER MODAL -->
+  <ion-modal #dashboard_custDate_modal [breakpoints]="[0.3]" [initialBreakpoint]="0.3"
+    [backdropDismiss]="!(dateRange?.fromdate && dateRange?.todate)"
+    (ionModalDidDismiss)="onCustomDateModalDismiss($event)" style="--backdrop-opacity:2.8">
+    <ng-template>
+
+      <div class="modal-container">
+        <!-- CONTENT -->
+        <div class="date-range-wrapper">
+          <h3 class="title">Select date range</h3>
+
+          <div class="date-inputs">
+            <div class="date-box" (click)="openFromDate()">
+              <label>From</label>
+              <span>{{ dateRange?.fromdate ? ('' + dateRange.fromdate).split('T')[0] : '' }}</span>
+            </div>
+
+            <div class="date-box" (click)="handleToDateClick()" [class.disabled]="!dateRange?.fromdate">
+              <label>To</label>
+              <span>{{ dateRange?.todate ? ('' + dateRange.todate).split('T')[0] : '' }}</span>
+            </div>
+          </div>
+
+          <p class="error-text" *ngIf="showFromDateError">
+            Please select From date first
+          </p>
+        </div>
+
+        <!-- STICKY FOOTER -->
+        <div class="mb-4">
+          <ion-button expand="block" class="confirm-btn" [disabled]="!(dateRange?.fromdate && dateRange?.todate)"
+            (click)="addQueryParams(); dashboard_custDate_modal.dismiss()">
+            Confirm
+          </ion-button>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+  <ion-modal #dashboard_fromDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+    [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+    <ng-template>
+      <ion-datetime presentation="date" [(ngModel)]="dateRange.fromdate"
+        (ionChange)="dateFilter('customfromDate')"></ion-datetime>
+    </ng-template>
+  </ion-modal>
+  <ion-modal #dashboard_toDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+    [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+    <ng-template>
+      <ion-datetime presentation="date" [min]="dateRange.fromdate" [(ngModel)]="dateRange.todate"
+        (ionChange)="dateFilter('customtoDate')"></ion-datetime>
+    </ng-template>
+  </ion-modal>
+  <!-- DATE FILTER MODAL END -->
+
+  <!-- SOURCE DROP DOWN -->
+  <ion-row class="m-1" *ngIf="roleid == '1'">
+    <ion-col class="overall">
+      <p-dropdown [options]="sourceList" [(ngModel)]="selectedSource" class="source-drop" (onChange)="onFilter($event)"
+        optionLabel="source" placeholder="Select a Source" />
+    </ion-col>
+  </ion-row>
+  <ion-row class="filteredChips" *ngIf="filteredParams.isDateFilter == 'custom'">
+    <div style="display: flex; overflow-x: scroll; padding: 0 5px;">
+      <ion-button fill="clear" (click)="removeDateFilter()">
+        {{filteredParams.fromDate+" To "+filteredParams.toDate}}
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-row>
+</div>
+
+<ion-content *ngIf="!isOnCallDetailsPage" class="main-content" #content (ionScroll)="onScroll($event)"
+  scrollEvents="true">
+  <div class="p-2 pt-0">
+    <ion-grid class="p-0">
+      <ion-row>
+        <ion-col [size]="depId != '10005'?'6':'5'" class="px-0 stats-card-col"
+          [ngClass]="filteredParams.activeCardKey == 'total_card' ?'active-card':'opacity50'">
+          <ion-card class="total_card m-0 p-0">
+            <ion-row class=" card-header">
+              <ion-col size="8" (click)="onStatus('Total','total_card')"
+                [ngClass]="filteredParams.status == 'Total' && depId != '10005'?'active-col left-top-sec':''">
+                <p class="mb-0">Total Leads</p>
+                <h2>{{leadscount?.total}}</h2>
+              </ion-col>
+              <ion-col class="icon-circle">
+                <ion-img src="../assets/CRMimages/assignedLeadsicon.svg"></ion-img>
+              </ion-col>
+            </ion-row>
+            <ion-row class="card_footer" *ngIf="depId != '10005'">
+              <ion-col (click)="onStatus('Assigned','total_card')"
+                [ngClass]="filteredParams.status == 'Assigned'?'active-col left-bottom-sec':''">
+                <p class="fw-light mb-0">Assigned</p>
+                <h2>{{leadscount?.Assigned}}</h2>
+              </ion-col>
+              <ion-col (click)="onStatus('Pending','total_card')"
+                [ngClass]="filteredParams.status == 'Pending'?'active-col right-bottom-sec':''">
+                <p class="fw-light mb-0">Pending</p>
+                <h2>{{leadscount?.pending}}</h2>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+
+        <!-- TOUCHED CARD -->
+        <ion-col size="6" class="pr-0 stats-card-col" *ngIf="depId != '10005'"
+          [ngClass]="filteredParams.activeCardKey == 'touched_card' ?'active-card':'opacity50'">
+          <ion-card class="touched_card m-0 total_card p-0">
+            <ion-row>
+              <ion-col (click)="onStatus('Touched','touched_card')"
+                [ngClass]="filteredParams.status == 'Touched'?'active-col left-top-sec':''">
+                <p class="fw-light mb-0">Touched</p>
+                <h2>{{leadscount?.Touched}}</h2>
+              </ion-col>
+              <ion-col (click)="onStatus('Untouched','touched_card')"
+                [ngClass]="filteredParams.status == 'Untouched'?'active-col right-top-sec ':''">
+                <p class="fw-light mb-0">Untouched</p>
+                <h2>{{leadscount?.Untouched}}</h2>
+              </ion-col>
+            </ion-row>
+            <ion-row class="card_footer">
+              <ion-col (click)="onStatus('Inactive','touched_card')"
+                [ngClass]="filteredParams.status == 'Inactive'?'active-col left-bottom-sec':''">
+                <p class="fw-light mb-0">Inactive</p>
+                <h2>{{leadscount?.Inactive}}</h2>
+              </ion-col>
+              <ion-col (click)="onStatus('JunkLeads','touched_card')"
+                [ngClass]="filteredParams.status == 'JunkLeads'?'active-col right-bottom-sec':''">
+                <p class="fw-light mb-0">Junk Leads</p>
+                <h2>{{leadscount?.JunkLeads}}</h2>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+
+        <!-- SOURCE LOGGED CARD -->
+        <ion-col class="pe-0 stats-card-col" *ngIf="depId == '10005'"
+          [ngClass]="filteredParams.activeCardKey == 'activeLeads_card' ?'active-card':'opacity50'">
+          <ion-card class="activeLeads_card m-0 p-0">
+            <ion-row class="card-header">
+              <ion-col size="4"
+                (click)="onStatus(localStorage.getItem('Department') == '10005'?'act_lds_hs_mb_count': 'ActiveLeads','activeLeads_card')"
+                [ngClass]="filteredParams.status == (localStorage.getItem('Department') == '10005'?'act_lds_hs_mb_count': 'ActiveLeads')?'active-col left-top-sec':''">
+                <p class="mb-0">Active</p>
+                <h2> {{(localStorage.getItem('Department') == '10005'?leadscount?.act_lds_hs_mb_count:
+                  leadscount?.ActiveLeads)}} </h2>
+              </ion-col>
+              <ion-col (click)="onStatus('Inactive','activeLeads_card')"
+                [ngClass]="filteredParams.status == 'Inactive'?'active-col left-bottom-sec':''">
+                <p class="fw-light mb-0">Inactive</p>
+                <h2>{{leadscount?.Inactive}}</h2>
+              </ion-col>
+              <ion-col (click)="onStatus('JunkLeads','activeLeads_card')"
+                [ngClass]="filteredParams.status == 'JunkLeads'?'active-col right-bottom-sec ':''">
+                <p class="fw-light mb-0">Junk</p>
+                <h2>{{leadscount?.JunkLeads}}</h2>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- ACTIVE LEADS -->
+    <ion-grid class="p-0" *ngIf="localStorage.getItem('Department') != '10005'">
+      <ion-row>
+        <ion-col class="px-0 stats-card-col"
+          [ngClass]="filteredParams.activeCardKey == 'activeLeads_card' ?'active-card':'opacity50'">
+          <ion-card class="activeLeads_card m-0 p-0">
+            <ion-row class="card-header">
+              <ion-col size="4"
+                (click)="onStatus(localStorage.getItem('Department') == '10005'?'act_lds_hs_mb_count': 'ActiveLeads','activeLeads_card')"
+                [ngClass]="filteredParams.status == (localStorage.getItem('Department') == '10005'?'act_lds_hs_mb_count': 'ActiveLeads')?'active-col left-top-sec':''">
+                <p class="mb-0">Active Leads</p>
+                <h2> {{(localStorage.getItem('Department') == '10005'?leadscount?.act_lds_hs_mb_count:
+                  leadscount?.ActiveLeads)}} </h2>
+              </ion-col>
+              <ion-col>
+                <div class="icon-circle">
+                  <ion-img src="../assets/CRMimages/activeLeadsicon.svg"></ion-img>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row class="card_footer">
+              <ion-col (click)="onStatus('GeneralFollowup','activeLeads_card')"
+                [ngClass]="filteredParams.status == 'GeneralFollowup'?'active-col left-bottom-sec':''">
+                <p class="fw-light mb-0">G. Followups</p>
+                <h2>{{leadscount?.GeneralFollowup}}</h2>
+              </ion-col>
+              <ion-col (click)="onStatus('NC','activeLeads_card')"
+                [ngClass]="filteredParams.status == 'NC'?'active-col midle-bottom-sec ':''">
+                <p class="fw-light mb-0">NC</p>
+                <h2>{{leadscount?.NC}}</h2>
+              </ion-col>
+              <ion-col (click)="onStatus('USVFix','activeLeads_card')"
+                [ngClass]="filteredParams.status == 'USVFix'?'active-col right-bottom-sec':''">
+                <p class="fw-light mb-0">USV Fix</p>
+                <h2>{{leadscount?.USV_fix}}</h2>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <!-- ALL VISITS -->
+    <ion-grid class="p-0">
+      <ion-row>
+        <ion-col class="px-0 stats-card-col"
+          [ngClass]="filteredParams.activeCardKey == 'allVisits_card' ?'active-card':'opacity50'">
+          <ion-card class="allVisits_card  m-0 p-0">
+            <ion-row class="card-header">
+              <ion-col size="4" (click)="onStatus('AllVisits','allVisits_card')"
+                [ngClass]="filteredParams.status == 'AllVisits'?'active-col left-top-sec':''">
+                <p class="mb-0">All Visits</p>
+                <h2>{{leadscount?.AllVisits}}</h2>
+              </ion-col>
+
+              <ion-col>
+                <div class="icon-circle">
+                  <ion-img src="../assets/CRMimages/visit-details-icon.svg"></ion-img>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row class="card_footer">
+              <ion-col (click)="onStatus('USV','allVisits_card')"
+                [ngClass]="filteredParams.status == 'USV'?'active-col left-bottom-sec':''">
+                <p class="fw-light mb-0">USV</p>
+                <h2>{{leadscount?.USV}}</h2>
+              </ion-col>
+              <ion-col (click)="onStatus('RSV','allVisits_card')"
+                [ngClass]="filteredParams.status == 'RSV'?'active-col midle-bottom-sec ':''">
+                <p class="fw-light mb-0">RSV</p>
+                <h2>{{leadscount?.RSV}}</h2>
+              </ion-col>
+              <ion-col (click)="onStatus('FN','allVisits_card')"
+                [ngClass]="filteredParams.status == 'FN'?'active-col right-bottom-sec':''">
+                <p class="fw-light mb-0">FN</p>
+                <h2>{{leadscount?.FN}}</h2>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- BOOKING REQUEST -->
+    <ion-grid class="p-0">
+      <ion-row>
+        <ion-col size="6" class="px-0 stats-card-col"
+          [ngClass]="filteredParams.activeCardKey == 'bookingrequest_card' ?'active-card':'opacity50'">
+          <ion-card class="bookingrequest_card m-0 p-0">
+            <ion-row class="card-header">
+              <ion-col size="8" (click)="onStatus('BRequest','bookingrequest_card')"
+                [ngClass]="filteredParams.status == 'BRequest'?'active-col left-top-sec':''">
+                <p class="mb-0">Booking Request</p>
+                <h2>{{leadscount?.BRequest}}</h2>
+              </ion-col>
+              <ion-col>
+                <div class="icon-circle">
+                  <ion-img src="../assets/CRMimages/booking-request-icon.svg"></ion-img>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row class="card_footer">
+              <ion-col (click)="onStatus('BRejected','bookingrequest_card')"
+                [ngClass]="filteredParams.status == 'BRejected'?'active-col left-bottom-sec':''">
+                <p class="fw-light mb-0">Rejected</p>
+                <h2>{{leadscount?.BRejected}}</h2>
+              </ion-col>
+              <ion-col (click)="onStatus('BPending','bookingrequest_card')"
+                [ngClass]="filteredParams.status == 'BPending'?'active-col right-bottom-sec':''">
+                <p class="fw-light mb-0">Pending</p>
+                <h2>{{leadscount?.BPending}}</h2>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+
+        <!-- INACTIVE CARD -->
+        <ion-col size="6" class="pr-0 stats-card-col"
+          [ngClass]="filteredParams.activeCardKey == 'closedLeads_card' && filteredParams.status != 'JunkVisits'  ?'active-card': filteredParams.status == 'JunkVisits' ?'junckVisitsBorder':'opacity50'">
+          <ion-card class="closedLeads_card m-0 p-0">
+            <ion-row>
+              <ion-col size="8" (click)="onStatus('BClosed','closedLeads_card')"
+                [ngClass]="filteredParams.status == 'BClosed'?'active-col left-top-sec':''">
+                <p class="fw-light mb-0">Closed Leads</p>
+                <h2>{{leadscount?.BClosed}}</h2>
+              </ion-col>
+              <ion-col>
+                <div class="icon-circle">
+                  <ion-img src="../assets/CRMimages/closed-icon.svg"></ion-img>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row class="card_footer">
+              <ion-col (click)="onStatus('JunkVisits','closedLeads_card')"
+                [ngClass]="filteredParams.status == 'JunkVisits'?'active-col left-bottom-sec':''">
+                <p class="fw-light mb-0">Junk Visits</p>
+                <h2>{{leadscount?.JunkVisits}}</h2>
+              </ion-col>
+              <ion-col>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- LEADS DATA -->
+  <div class="active-card" #leadsSection [ngClass]="filteredParams.status == 'JunkVisits'?'junckVisitsBorder':''">
+    <ion-row class="total_lead_heading border-start-0 border-end-0" [ngClass]="filteredParams.activeCardKey">
+      <ion-col [size]="filteredParams.status == 'Total'?'4':''"
+        class="d-flex align-items-center justify-content-center">
+        <span class="text_color">
+          {{ filteredParams.status == 'BRequest'?'Booking Request':filteredParams.status == 'BRejected'?
+          'Booking Request Rejected':filteredParams.status == 'BPending'?'Booking Request Pending':
+          filteredParams.status == 'BClosed'?'Closed Leads':(depId == '10005' && filteredParams.status ==
+          'act_lds_hs_mb_count') ?'Active Leads':filteredParams.status}}
+        </span>
+      </ion-col>
+      <ion-col *ngIf="filteredParams.status == 'Total'" class="d-flex align-items-center justify-content-end">
+        <div class="unique_duplicate_ctn">
+          <p [ngClass]="filteredParams.leads == '1'?'rightBorder':''" (click)="onDuplicateUnique('1')">
+            Unique-{{sourceLeadCountStats?.[1]?.unquiecounts || 0}}
+          </p>
+          <p [ngClass]="filteredParams.leads == '2'?'leftBorder':''" (click)="onDuplicateUnique('2')">
+            Duplicate-{{sourceLeadCountStats?.[0]?.duplicatecounts || 0}}</p>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ion-card class="lead-card" *ngFor="let lead of sourceListData;let i= index">
+      <div class="card-count">
+        <span>{{ i + 1 | number:'2.0' }}
+        </span>
+      </div>
+      <ion-grid class="p-0" (click)="navigateToDetailsPage(lead.leadid,lead.ExecId,lead)">
+        <ion-row>
+          <ion-col size="6">
+            <div class="section">
+              <p class="label">Lead Details</p>
+              <p class="value">{{lead.name}}</p>
+              <p class="sub-value">{{lead.number}}</p>
+            </div>
+          </ion-col>
+          <ion-col size="6">
+            <div class="section">
+              <p class="label">Source Details</p>
+              <p class="value">{{lead.source}}</p>
+              <p class="sub-value">{{lead.enquirydate}}</p>
+            </div>
+          </ion-col>
+        </ion-row>
+
+
+      </ion-grid>
+      <ion-row style="height: 7.8vw;">
+        <ion-col class="freshLead-btn d-flex align-items-center justify-content-center h-100">
+          <span>
+            {{lead.leadstage}}
+          </span>
+          <span *ngIf="lead.leadstage == null">
+            Not Assign
+          </span>
+        </ion-col>
+        <ion-col size="3" class="d-flex align-items-center justify-content-center h-100">
+          <div class="call_ctn_data d-flex align-items-center justify-content-center"
+            *ngIf="lead.activecall != '0' && lead.totalcall != '0'">
+            <span class="text_color_green">{{lead.activecall}}</span>/<span
+              class="font-colorBlue">{{lead.totalcall}}</span>
+          </div>
+        </ion-col>
+        <ion-col (click)="onHistoryView(lead)"
+          class="history-btn d-flex align-items-center justify-content-center h-100">
+          <span>View History</span><ion-icon name="document-text-outline"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+
+    <ion-row *ngIf="sourceListData?.length == 0">
+      <ion-col class="d-flex align-items-center justify-content-center">
+        <span>No Data Found...</span>
+      </ion-col>
+    </ion-row>
+
+    <ion-infinite-scroll *ngIf="showInfiniteScroll && sourceListData.length != 0" threshold="100px" #infiniteScroll
+      (ionInfinite)="loadMoreData($event)">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+</ion-content>
+
+
+<!-- HISTORY MODAL -->
+<ion-modal #historyModal [breakpoints]="[0.90]" [initialBreakpoint]="0.90">
+  <ng-template>
+
+    <ion-header class="history_modal_header">
+      <ion-row>
+        <ion-col class="d-flex align-items-center justify-content-start">
+          <span class="historyName">{{selectedLead['name']+"'s History"}}</span>
+        </ion-col>
+        <ion-col size="2" class="d-flex align-items-center justify-content-center"><ion-icon name="close-outline"
+            (click)="historyModal.dismiss()"></ion-icon></ion-col>
+      </ion-row>
+    </ion-header>
+
+    <ion-content class="history-content">
+      <div style="margin-bottom: 100px;">
+        <div class="timeline-item" *ngFor="let item of historyList;let i = index">
+          <ion-row class="date-header w-100" *ngIf="item.item_type=='message_date'">
+            <ion-col>
+              <span>{{item.timestamp+" , "+item.added_date}}</span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="timeline-row w-100" *ngIf="item.item_type!='message_date'">
+            <!-- LEFT (dot + line) -->
+            <ion-col size="1" class="timeline-left py-0">
+              <span class="dot"></span>
+              <span class="line" *ngIf="historyList[i + 1]?.item_type !== 'message_date'"></span>
+            </ion-col>
+
+            <!-- TIME -->
+            <ion-col size="2.5" class="time py-0">
+              {{ item.added_date |date:'hh:mm a' }}
+            </ion-col>
+
+            <!-- CONTENT -->
+            <ion-col size="8.5" class="timeline-right py-0">
+              <p class="text">
+                {{item.execname +" " + item.autoremarks}}
+              </p>
+              <p class="remarks">{{item.remarks}}</p>
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+
+      <div *ngIf="historyList?.length == 0" class="nodataFound">
+        <span>No History Found...</span>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<app-common-footer *ngIf="localStorage.getItem('Department') != '10005'"></app-common-footer>

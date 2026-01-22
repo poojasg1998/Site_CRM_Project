@@ -1,0 +1,926 @@
+// footer CSS
+.footer-toolbar {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  --min-height: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 -8px 10px rgb(0 0 0 / 0.2);
+}
+.footer-icons {
+  position: relative;
+  background-color: #ffffff;
+}
+ion-img.ion-filter-icon {
+  float: right;
+  height: 40px;
+  position: absolute;
+  right: 0;
+  bottom: 1px;
+}
+
+.addleadicon {
+  font-size: 45px;
+  color: #ffff;
+  font-size: 20px;
+  position: absolute;
+  right: 9px;
+  bottom: 115px;
+  background-color: #2196f3;
+  border-radius: 35px;
+  padding: 5px;
+  --ionicon-stroke-width: 60px;
+}
+
+.fab-overlay {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 999;
+  opacity: 0.6;
+  background-color: black !important ;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+//   ion-fab-button::part(native) {
+//     background-color: #b7f399;
+//     border-radius:3px;
+//     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+//     color: black;
+//   }
+ion-fab-button.floatingMain_icon::part(native) {
+  width: 33px;
+  height: 33px;
+  border-radius: 50px;
+}
+
+ion-fab-button::part(native) {
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: none;
+  // width: 32px;
+  // height: 32px;
+  color: #2196f3;
+}
+ion-fab-button ion-icon {
+  height: 33px;
+  width: 33px;
+}
+
+.floating_icon {
+  position: fixed;
+  right: 5px;
+  bottom: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ion-fab-list ion-fab-button {
+  height: 25px;
+  width: 100%;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+
+.custom-fab-button div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rightBorder {
+  border-right: 1px solid #bebebe;
+  border-radius: 30px;
+  background: #0b7ab2;
+  color: #ffff !important;
+  font-family: "Poppins";
+}
+.leftBorder {
+  border-left: 1px solid #bebebe;
+  border-radius: 30px;
+  background: #0b7ab2;
+  color: #ffff !important;
+  font-family: "Poppins";
+}
+
+.active_text_borederColor span {
+  color: #0b7ab2;
+}
+
+.info-row-heading {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 10px;
+  color: rgb(0, 0, 0, 0.6);
+}
+.info-row-heading ion-col {
+  padding-bottom: 0;
+  padding-right: 0;
+}
+.info-row-value {
+  font-family: "Poppins";
+  font-weight: 500;
+  font-size: 10px;
+  color: rgb(0, 0, 0, 0.8);
+}
+.info-row-value ion-col {
+  padding-top: 0;
+}
+
+.custom-ion-item {
+  --inner-padding-end: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  height: 28px;
+  display: flex;
+}
+
+::ng-deep ion-icon.ion-accordion-toggle-icon.md.hydrated {
+  width: 15px;
+  margin: 5px;
+}
+
+.lead-info {
+  box-shadow: 1px 2px 10px 0 rgb(99, 99, 99, 0.2);
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+  margin: 10px;
+  width: 100%;
+}
+
+.lead-info .ion-justify-content-center {
+  background-color: #ffd7c7;
+  font-size: 14px;
+  font-family: "Poppins";
+  font-weight: 500;
+  color: #e84c0a;
+  padding: 10px;
+}
+.lead-info ion-checkbox {
+  --border-color: rgb(114, 114, 114, 0.8) !important;
+  --border-color-checked: #0b7ab2;
+  --checkbox-background-checked: #0b7ab2;
+  --border-width: 1px;
+  --border-radius: 4px;
+  margin: 0;
+}
+ion-fab-button.active-button::part(native) {
+  background-color: #0b7ab2;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.split-layout {
+  display: flex;
+  align-items: stretch;
+  height: 100%; /* Ensure the content takes up the entire height */
+}
+.left-column {
+  flex: 2.5; /* Left column takes 1/4th of the space */
+  max-width: 41%; /* Set maximum width for left column */
+}
+.right-column {
+  flex: 3; /* Right column takes 3/4th of the space */
+}
+.divider {
+  width: 1px; /* Width of the divider line */
+  background-color: #ccc;
+}
+
+.filterButtons {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 12px;
+  color: #000000;
+  text-transform: none;
+  height: 35px;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+}
+.backgroundLightColor {
+  background-color: rgb(11, 122, 178, 0.1);
+}
+
+.showresultButton {
+  background: #0b7ab2;
+  color: white;
+  width: 70%;
+  border-radius: 10px;
+  text-transform: none;
+  font-size: 16px;
+  font-family: "Poppins";
+}
+.filteredChips ion-button {
+  color: #0b7ab2;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 400;
+  word-wrap: break-word;
+  border: 0.5px #0b7ab2 solid;
+  border-radius: 4px;
+  text-transform: capitalize;
+  height: 26px;
+  min-height: 26px;
+}
+.leadassignedbottom {
+  position: fixed;
+  bottom: 0;
+  background: white;
+  width: 100%;
+  border-radius: 10px;
+  border-top: 1px solid #c2c5cf;
+  box-shadow: 0 -8px 10px rgba(0, 0, 0, 0.2);
+}
+//reassign css
+.assigncountleads ion-col {
+  border: 1px solid #232323;
+  border-radius: 23px;
+  margin: 5px 0 5px 5px;
+  font-size: 10px;
+}
+.assignLeadbutton {
+  background: #0b7ab2;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-family: "Poppins";
+  font-weight: 400;
+}
+//end
+#assignLeads-modal ion-select::part(icon) {
+  position: absolute !important;
+  right: 10px !important;
+}
+
+::ng-deep p-dropdown .p-element.p-icon-wrapper {
+  width: 18px;
+}
+::ng-deep .mandateproperty p-dropdown .p-inputwrapper .p-dropdown-label,
+::ng-deep .mandateproperty .p-inputwrapper div chevrondownicon {
+  font-family: "Poppins";
+  font-size: 12px;
+  padding: 5px;
+}
+::ng-deep
+  .mandateproperty
+  p-dropdown
+  .p-inputwrapper
+  p-overlay
+  p-dropdownitem
+  li {
+  padding: 5px;
+  font-size: 12px;
+}
+::ng-deep .mandateproperty p-dropdown .p-inputwrapper {
+  width: 100%;
+  border: 1px solid #d8d8d8;
+  font-size: 14px;
+  border-radius: 2px;
+}
+::ng-deep p-dropdown .p-inputwrapper span {
+  padding: 5px;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+
+::ng-deep p-dropdown.teamSelectDropdown .p-inputwrapper {
+  width: 100% !important;
+}
+::ng-deep p-dropdown.teamSelectDropdown .p-inputwrapper .p-dropdown-trigger {
+  width: 30px !important;
+}
+::ng-deep
+  p-dropdown.teamSelectDropdown
+  .p-inputwrapper
+  .p-dropdown-trigger
+  chevrondownicon {
+  width: 12px;
+}
+::ng-deep .p-element .p-dropdown-item {
+  padding: 5px !important;
+}
+
+ion-select {
+  padding-left: 5px !important;
+}
+ion-modal#assignLeads-modal {
+  padding: 10px;
+  --height: auto;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+ion-modal#viewAssignLeadDetail {
+  padding: 10px;
+  --height: 75vh;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+::ng-deep ion-modal#assignLeads-modal .ion-page {
+  display: block !important;
+}
+ion-modal#assignLeads-modal ion-icon {
+  font-size: 20px;
+}
+ion-modal#assignLeads-modal .wrapper {
+  margin-bottom: 10px;
+}
+.assignLeaddselect {
+  border: 1px solid #d8d8d8;
+  font-size: 10px;
+  font-weight: 400;
+  min-height: 28px;
+  font-family: "Poppins";
+}
+.assignTaskHeading {
+  height: 42px;
+  align-items: center;
+  font-size: 16px;
+  font-family: "Poppins";
+  font-weight: 500px;
+  color: #0b7ab2;
+  border-bottom: 1px solid rgb(72, 72, 72, 0.78);
+}
+.assignTaskHeading1 {
+  height: 42px;
+  align-items: center;
+  font-size: 16px;
+  font-family: "Poppins";
+  font-weight: 500px;
+  color: #0b7ab2;
+}
+.assignTaskHeading ion-col {
+  padding-left: 20px;
+}
+.assignTaskHeading ion-icon {
+  color: black;
+  font-size: 20px;
+}
+.backgroundLightColor {
+  background-color: rgb(11, 122, 178, 0.1);
+}
+.fresh {
+  width: 75%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-top-left-radius: 15px;
+  border-left: 1px solid rgba(11, 122, 178, 0.1);
+  border-top: 1px solid rgba(11, 122, 178, 0.1);
+  color: #0b7ab2 !important;
+}
+
+.data-row > div:nth-child(even) {
+  background-color: #f2f2f2;
+}
+.data-row div {
+  padding: 5px;
+  ion-row {
+    width: 100%;
+    ion-col {
+      padding: 0;
+      font-weight: 400px;
+      font-family: "Poppins";
+      font-size: 8px;
+    }
+  }
+}
+.single-lead {
+  height: 50px;
+}
+
+.multiple-leads {
+  height: 145px;
+}
+
+::ng-deep p-multiselect .p-inputwrapper .p-multiselect-label-container {
+  padding: 0;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+::ng-deep p-multiselect .p-inputwrapper span {
+  padding: 0;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+::ng-deep
+  p-multiselect
+  .p-inputwrapper
+  .p-multiselect-label-container
+  .p-multiselect-label {
+  padding: 5px;
+}
+::ng-deep p-multiselect .p-inputwrapper {
+  width: 100% !important;
+}
+::ng-deep p-multiselect .p-inputwrapper .p-multiselect-trigger {
+  width: 30px !important;
+}
+::ng-deep p-multiselect .p-inputwrapper .p-multiselect-trigger chevrondownicon {
+  width: 12px;
+}
+::ng-deep .p-element .p-multiselect-item {
+  padding: 5px !important;
+}
+
+::ng-deep .p-multiselect-items-wrapper .p-multiselect-empty-message {
+  padding: 4px;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+
+::ng-deep .p-multiselect-header {
+  padding: 5px;
+}
+#teamSelectDropdown,
+#executiveDropdown {
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  padding: 0;
+}
+.randomleadAssign span {
+  font-size: 12px;
+  font-family: "Poppins";
+}
+.sideHeadings .bg_textColor {
+  border-radius: 0;
+  span {
+    color: #ffff;
+  }
+}
+.startAssign .bg_textColor {
+  border-radius: 44px;
+}
+.table-cell {
+  padding: 5px 0;
+  border-bottom: 1px solid #4398c3;
+  border-right: 1px solid #4398c3;
+  text-align: center;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+.table-header {
+  font-weight: bold;
+  background-color: #f1f1f1;
+  color: #4398c3;
+  border-top: 1px solid #4398c3;
+  border-left: 1px solid #4398c3;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+.italicText {
+  font-style: italic;
+}
+.suggestProp {
+  flex-direction: row-reverse;
+  padding: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.latestRemark ion-label,
+.latestRemark1 ion-label {
+  color: #000000b5;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+.latestRemark p {
+  padding: 5px;
+  color: black;
+  font-family: Poppins;
+  font-size: 9px;
+  padding-left: 15px;
+}
+
+::ng-deep .custom-popover-height {
+  .select-interface-option {
+    line-height: 20px;
+    --min-height: 0 !important;
+  }
+  .popover-viewport {
+    max-height: 200px !important;
+  }
+}
+.inactiveCounter {
+  overflow-x: scroll;
+  display: flex;
+  min-width: 100%;
+}
+
+.inactiveCounter .custom-col {
+  flex-shrink: 0;
+  padding: 5px;
+}
+.menu_icon {
+  font-size: 30px;
+  color: #0b7ab2;
+}
+
+.activeHtype {
+  border: 1px solid white;
+  border-radius: 25px;
+  background: #0b7ab2;
+  color: white;
+}
+.retailMandate {
+  border: 1px solid #0b7ab2;
+  border-radius: 25px;
+  // background: #0B7AB2;
+  color: #0b7ab2;
+  width: 100%;
+}
+
+.latest-remark > ion-row:first-child {
+  color: black;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 500;
+}
+
+ion-item::part(native) {
+  --inner-padding-end: 0 !important;
+  --padding-start: 0 !important;
+}
+
+.pointer_eventsNone {
+  filter: blur(0.8px);
+  pointer-events: none;
+  cursor: none;
+}
+p-multiselect {
+  width: 100% !important;
+}
+.paddingBottomLeft {
+  padding-left: 0;
+  padding-bottom: 0;
+}
+.assigned-title {
+  background: #558fa8;
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #ffffff;
+  padding: 4px;
+}
+.not-assigned-title {
+  background: #ffd7c7;
+  color: #9d2728;
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 0.8rem;
+  letter-spacing: 0%;
+  padding: 4px;
+}
+
+.assigned-col div {
+  border-bottom: 0.6px solid #8dcbe6;
+  background: #fbfdff;
+  padding-left: 4px;
+}
+.assigned-col {
+  span {
+    color: #005579;
+  }
+  p {
+    color: #00293b;
+  }
+}
+
+.assigned-col,
+.not-assigned-col,
+.untouched-div {
+  span {
+    font-family: "Poppins";
+    font-weight: 400;
+    font-size: 0.66rem;
+  }
+  p {
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: Medium;
+    font-size: 0.8rem;
+  }
+}
+.not-assigned-col {
+  .not-assigned-right-div {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    div {
+      border-bottom: 1px solid #ffd8c9;
+      background: #fff8f6;
+      padding-left: 2px;
+    }
+  }
+  .not-assigned-left-div {
+    border-left: 1px solid #ffd8c9;
+    border-right: 1px solid #ffd8c9;
+    div {
+      border-bottom: 1px solid #ffd8c9;
+      background: #fff8f6;
+      padding-left: 4px;
+    }
+  }
+  span {
+    color: #9d2728;
+  }
+  p {
+    color: #620001;
+  }
+}
+.header {
+  span {
+    border-radius: 4px 4px 0 0;
+    font-size: 0.8rem;
+  }
+}
+// .name {
+//   background: #d4ecff;
+//   color: #004b71;
+//   padding: 4px;
+// }
+
+.untouched-title {
+  background: #fff1c8;
+  color: #624a00;
+  font-size: 0.68rem;
+}
+.unto-item {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 0.68rem;
+}
+.untouched-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  span,
+  p {
+    color: #503c00;
+  }
+}
+.untouched-row {
+  ion-col {
+    border-right: 1px solid #fff1c8;
+  }
+}
+.assignies-row {
+  background: #3498db;
+  .assignies-col {
+    background: #006ab1;
+    color: white;
+    border-radius: 4px;
+
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    padding: 2px 6px;
+    .name {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .assign-date {
+      font-size: 0.58rem;
+      font-weight: 300;
+    }
+  }
+}
+.name {
+  font-size: 0.8rem;
+}
+
+.call-icon,
+.whatsapp-icon,
+.play_icon,
+.info-icon {
+  ion-img {
+    width: 20px;
+  }
+}
+.latest_remark_col {
+  background: #546d7e;
+  border-radius: 0 4px 4px 4px;
+  span {
+    color: white;
+    font-size: 0.9rem;
+  }
+}
+.pointer_eventsNone {
+  filter: blur(0.8px);
+  pointer-events: none;
+  cursor: none;
+}
+
+.divider-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.latest-remark-popover::part(content) {
+  width: auto;
+}
+.assigned-exec-count::part(content) {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+::ng-deep .assigned-exec-count .popover-viewport {
+  display: flex;
+  align-items: center;
+  padding: 10px 5px 3px;
+}
+.assigned-exe-col {
+  border: 0.4px solid #1f79a7;
+  background: #dbf3ff;
+  border-radius: 4px;
+  padding: 0 6px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  color: #00334c;
+}
+.card-count {
+  position: absolute;
+  right: 0px;
+  background: #9d9d9d;
+  padding: 0px 4px;
+  color: white;
+  font-size: 0.8rem;
+}
+.assign-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  color: rgb(52, 152, 219);
+  border-radius: 48px;
+  span {
+    color: #3498db;
+    border-radius: 41px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+}
+.assignies-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 4px;
+  flex-wrap: wrap; /* responsive wrap */
+}
+
+.assignies-col {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap; /* width based on text */
+}
+
+.divider-col {
+  display: flex;
+  align-items: center;
+}
+
+.horizontal-line {
+  width: 20px;
+  height: 1px;
+  background: #c4c4c4;
+}
+
+.virtical-line {
+  width: 1px;
+  height: 10px;
+  background: #0a0a0a;
+}
+.assign-count {
+  font-weight: 600;
+  white-space: nowrap;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.assignto-text {
+  background: white;
+  color: #006ab1;
+  border-radius: 0 4px 4px 0;
+  padding: 0 2px;
+  font-size: 0.8rem;
+}
+.card-count {
+  position: absolute;
+  right: 10px;
+  background: #9d9d9d;
+  padding: 0px 4px;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.latest-remark-popover {
+  p {
+    font-size: 0.714rem;
+  }
+}
+ion-modal.addPriorityModal {
+  --height: auto;
+  --border-radius: 6px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  padding: 20px;
+}
+
+ion-modal.addPriorityModal::part(backdrop) {
+  background: rgb(43 44 45);
+  opacity: 0.9 !important;
+}
+
+ion-modal.addPriorityModal ion-toolbar {
+  --background: rgb(14 116 144);
+  --color: white;
+}
+.priority-data-row {
+  gap: 2px;
+  ion-col {
+    border: 2px solid lightgrey;
+    color: #808080;
+    font-size: 0.9rem;
+    padding: 2px;
+  }
+}
+
+.update-btn-row {
+  span {
+    color: white;
+    background-color: #0b7ab2 !important;
+    border-color: #0b7ab2 !important;
+    padding: 2px 5px;
+    border-radius: 2px;
+  }
+}
+.priority {
+  span,
+  div {
+    font-size: 0.7rem;
+    font-family: "Poppins";
+  }
+  ion-img {
+    padding-left: 2px;
+  }
+  display: flex;
+  flex-direction: column;
+}
+.hot_txt {
+  background: #ffe2d7;
+  border: 0.6px solid #f2591f;
+  width: fit-content;
+  color: #f2591f;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+.warm_txt {
+  background: #fff5d4 !important;
+  border: 0.6px solid #f5bd00 !important;
+  width: fit-content;
+  color: #f5bd00;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+.cold_txt {
+  background: #e4f6ff;
+  border: 0.6px solid #008cd2;
+  width: fit-content;
+  color: #008cd2;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+.addPriority {
+  display: flex;
+  align-items: center;
+  color: #960035 !important;
+  font-weight: 0.8rem;
+  ion-icon {
+    color: #960035;
+  }
+}
+
+::ng-deep .addPriorityModal .ion-delegate-host {
+  padding: 4px;
+}
+.label {
+  color: black;
+}

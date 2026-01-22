@@ -1,0 +1,1234 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<!-- <ion-header *ngIf="!isOnCallDetailsPage">
+  <ion-toolbar class="ion-text-center header">
+    <ion-row>
+      <ion-col size="2" class="content_center">
+        <ion-icon style="font-size: 24px;" name="arrow-back" (click)="onBackbutton()">back</ion-icon>
+      </ion-col>
+      <ion-col size="8">
+        <ion-row>
+          <ion-col>
+            <span style="font-size: 24px;"
+              *ngIf="filterParams.isnewGroupCreation != 'true' && filterParams.isGroupNaming != 'true'">Chat </span>
+            <span style="font-size: 24px;" *ngIf="filterParams.isnewGroupCreation == 'true'">Add Members</span>
+            <span style="font-size: 24px;" *ngIf="filterParams.isGroupNaming == 'true'">New Group</span>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col size="2" (click)="openEndMenu()" class="content_center">
+        <ion-icon name="menu" class="menu_icon"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header> -->
+
+<!-- popover to create new group -->
+<ion-popover
+  *ngIf="filterParams.isnewGroupCreation !== 'true' && filterParams.isGroupNaming != 'true' && !isOnCallDetailsPage"
+  trigger="newgrp" side="bottom" alignment="center" class="newAndselect_popover">
+  <ng-template>
+    <ion-row>
+      <ion-col (click)="newGroupCreation()">
+        <span> New Group </span>
+      </ion-col>
+    </ion-row>
+    <!-- <ion-row>
+      <ion-col>
+        <span> Selects Chats </span>
+      </ion-col>
+    </ion-row> -->
+  </ng-template>
+</ion-popover>
+
+<ion-row *ngIf="filterParams.isnewGroupCreation == 'true' || filterParams.isGroupNaming == 'true'"
+  [ngClass]="filterParams.isnewGroupCreation == 'true'?'': 'newgroupcreation-sec'">
+  <ion-col class="pb-0">
+    <span *ngIf="filterParams.isnewGroupCreation == 'true'" class="font-colorBlue">Add Members</span>
+    <span *ngIf="filterParams.isGroupNaming == 'true'">New Group</span>
+  </ion-col>
+  <ion-col size="2" (click)="onBackbutton()" class="content_center pb-0">
+    <ion-icon name="close" class="menu_icon"></ion-icon>
+  </ion-col>
+</ion-row>
+
+<div style="background-color: rgb(11, 122, 178, 0.1);"
+  *ngIf="filterParams.isGroupNaming != 'true' && !isOnCallDetailsPage && filterParams.isnewGroupCreation == 'true'">
+  <ion-row>
+    <ion-col class="paddingZero">
+      <ion-searchbar class="chatSearch pt-0" [(ngModel)]="chatSearchedName"
+        (ngModelChange)="searchchatTrigger$.next($event)"></ion-searchbar>
+    </ion-col>
+    <ion-col size="2" class="content_center" id="newgrp" *ngIf="filterParams.isnewGroupCreation != 'true'">
+      <div class="verticleEllipsis content_center">
+        <ion-icon name="ellipsis-horizontal" style="font-size: 24px;"></ion-icon>
+      </div>
+    </ion-col>
+  </ion-row>
+
+  <div *ngIf="filterParams.isnewGroupCreation == 'true'" style="display: flex;overflow: scroll;">
+    <div class="selectedUsers content_center" *ngFor="let user of selectedUsers">
+      {{user.executives_name}}<ion-icon name="close" (click)="ongrpSelectionCheckboxChange('',user)"
+        style="padding: 0 0 0 4px; color:rgba(11, 122, 178, 1)"></ion-icon>
+    </div>
+  </div>
+</div>
+
+<div class="chat_filters pt-2"
+  *ngIf="filterParams.isnewGroupCreation != 'true' && !mainsearch && filterParams.isGroupNaming != 'true'">
+  <ion-row>
+    <ion-col size="1.5" (click)="onChatFilterSelected('all')" class="flex  align-items-center justify-content-center"
+      [ngClass]="chatFilterSelectedValue == 'all'?'bg_textColor':''">
+      <span>All</span>
+    </ion-col>
+    <ion-col (click)="onChatFilterSelected('Unread')" class="flex  align-items-center justify-content-center"
+      [ngClass]="chatFilterSelectedValue == 'Unread'?'bg_textColor':''">
+      <span>Unread</span>
+    </ion-col>
+    <ion-col (click)="onChatFilterSelected('Groups')" class="flex  align-items-center justify-content-center"
+      [ngClass]="chatFilterSelectedValue == 'Groups'?'bg_textColor':''">
+      <label for="dashboard-customDate">Groups</label>
+    </ion-col>
+    <ion-col (click)="newGroupCreation()" class="flex align-items-center justify-content-center" size="1.2">
+      <ion-icon name="add" class="add_icon"></ion-icon>
+    </ion-col>
+    <ion-col size="3" (click)="onMainSearch()" id="mainsearch">
+      <div class="content_center font-size12-familyPoppins">
+        Search<ion-icon name="search"></ion-icon>
+      </div>
+    </ion-col>
+  </ion-row>
+</div>
+<!-- <ion-row class="mainSearch" *ngIf="mainsearch" [ngClass]="searchAnimationClass">
+  <ion-col>
+    <ion-searchbar class="chatSearch pt-0" [(ngModel)]="chatSearchedName"
+      (ngModelChange)="searchchatTrigger$.next($event)"></ion-searchbar>
+  </ion-col>
+</ion-row> -->
+
+
+<div *ngIf="mainsearch" class="mainSearch" [ngClass]="searchAnimationClass">
+  <ion-icon name="arrow-back" class="arrow-back" (click)="closeMainSearch()"></ion-icon>
+  <ion-searchbar class="addMemberSearch" [(ngModel)]="chatSearchedName"
+    (ngModelChange)="searchchatTrigger$.next($event)" [showClearButton]="'never'" [showCancelButton]="false"
+    placeholder="Search name ..."></ion-searchbar>
+</div>
+
+
+
+<!-- All Chats Overview *ngIf="chatSearchedName == ''" -->
+<div #chat_list_content *ngIf="!isOnCallDetailsPage">
+  <span
+    *ngIf="(filterParams.isnewGroupCreation != 'true' && chatSearchedName == '' && filterParams.isGroupNaming != 'true') || (filterParams.isnewGroupCreation == 'true')">
+    <ion-row class="borderBottom" *ngFor="let chat of allChats1">
+      <ion-col size="2" class="content_center profile-wrapper">
+        <div class="profile-image-wrapper">
+          <ion-img *ngIf="chat.chat_type == 'group'" src="../../assets/CRMimages/gpChat_icon.svg"
+            class="chat-icon"></ion-img>
+          <ion-img *ngIf="chat.chat_type == 'individual'" src="../../assets/CRMimages/individualChatIcon.svg"></ion-img>
+          <div class="offOnline"
+            [ngClass]="chat.online_status == 'offline' ? 'redbgwhiteborder' :chat.online_status == 'online' ? 'greenbgwhiteborder':''">
+          </div>
+          <div class="disappear_24" *ngIf="chat.encryptid == 1">
+            <img src="../../assets/CRMimages/24-hour-disappear-icon.png">
+          </div>
+        </div>
+      </ion-col>
+      <!-- without search -->
+      <ion-col size="10" class="chat-message-preview"
+        [ngClass]="filterParams.isnewGroupCreation == 'true'?'newGpcreation content_center':''">
+        <ion-row>
+          <ion-col size="9" class="center-vertically"
+            (click)="filterParams.isnewGroupCreation == 'true'?'': openChat_previewModal(chat)"><span
+              class="ellipse_span">{{chat.executives_name}}</span></ion-col>
+          <ion-col size="3" class="content_center">
+            <span
+              *ngIf="filterParams.isnewGroupCreation != 'true'">{{formatLatestMessageTime(chat.latest_message_time)}}
+            </span>
+            <ion-checkbox [checked]="isUserSelected(chat)" (ionChange)="ongrpSelectionCheckboxChange($event,chat)"
+              *ngIf="filterParams.isnewGroupCreation == 'true'" class="checkboxcss"></ion-checkbox>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="filterParams.isnewGroupCreation != 'true'">
+          <ion-col size="0.5" class="content_center">
+            <!-- <ion-img src="../../assets/CRMimages/double-tick-read.svg"></ion-img> -->
+          </ion-col>
+          <ion-col size="9" class="center-vertically">
+            <span class="latest_message_content">
+              {{chat.latest_message_content}}
+            </span>
+          </ion-col>
+          <ion-col *ngIf="chat.unreadcount" size="2" class="content_center">
+            <div class="unreadChat_count">{{chat.unreadcount?chat.unreadcount:''}}</div>
+            <!-- <ion-img src="../../assets/CRMimages/double-tick-read.svg"></ion-img> -->
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </span>
+
+  <!-- with search -->
+  <ng-container *ngIf="filterParams.isnewGroupCreation !== 'true' && chatSearchedName != ''">
+    <div *ngIf="this.searchResults['status'] ===  'True'">
+      <!--Chat Filter -->
+      <ion-row *ngIf="chatsSearch1.length != 0">
+        <ion-col>
+          <span style="color:#8e8e8e" class="font-size16-familyPoppins message">Chats</span>
+        </ion-col>
+      </ion-row>
+      <span *ngFor="let msg_chats of chatsSearch1">
+        <ion-row class="borderBottom">
+          <ion-col size="2" class="content_center profile-wrapper">
+            <div class="profile-image-wrapper">
+              <ion-img *ngIf="msg_chats.chat_type == 'group'" src="../../assets/CRMimages/gpChat_icon.svg"
+                class="chat-icon"></ion-img>
+              <ion-img *ngIf="msg_chats.chat_type == 'individual'"
+                src="../../assets/CRMimages/individualChatIcon.svg"></ion-img>
+              <div class="offOnline"
+                [ngClass]="msg_chats.chat_type == 'individual' && msg_chats.online_status == 'offline' ? 'redbgwhiteborder' : msg_chats.online_status == 'online' ? 'greenbgwhiteborder' : ''">
+              </div>
+              <div class="disappear_24" *ngIf="msg_chats.encryptid == 1">
+                <img src="../../assets/CRMimages/24-hour-disappear-icon.png">
+              </div>
+            </div>
+          </ion-col>
+
+          <ion-col size="10" class="chat-message-preview"
+            [ngClass]="filterParams.isnewGroupCreation == 'true' ? 'newGpcreation content_center' : ''">
+            <ion-row>
+              <ion-col size="9" class="center-vertically" (click)="openChat_previewModal(msg_chats)">
+                <span class="ellipse_span font-size16-familyPoppins"
+                  [innerHTML]="msg_chats.executives_name?(msg_chats.executives_name| highlight:chatSearchedName:'chat-highlight'):(msg_chats.group_name | highlight:chatSearchedName:'chat-highlight')">
+                </span>
+              </ion-col>
+
+              <ion-col size="3" class="ion-text-end">
+                <span *ngIf="filterParams.isnewGroupCreation != 'true'" style="font-size: 10px;">
+                  {{formatLatestMessageTime(msg_chats.latest_message_time) }}</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="filterParams.isnewGroupCreation != 'true'">
+              <ion-col size="0.5" class="content_center"></ion-col>
+              <ion-col size="9" class="center-vertically">
+                <span class="latest_message_content" style="font-size: 10px;"
+                  [innerHTML]=" msg_chats.latest_message_content | highlight:chatSearchedName:'chat-highlight'"></span>
+              </ion-col>
+              <ion-col *ngIf="msg_chats.unreadcount" size="2" class="content_center">
+                <div class="unreadChat_count">{{ msg_chats.unreadcount }}</div>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+      </span>
+
+      <!-- Message filter -->
+      <ion-row *ngIf="messageSearch1.length != 0">
+        <ion-col>
+          <span style="color:#8e8e8e" class="font-size16-familyPoppins">Messages</span>
+        </ion-col>
+      </ion-row>
+
+      <div *ngFor="let msg_chats of messageSearch1">
+        <ion-row class="borderBottom">
+          <!-- <ion-col size="2" class="content_center profile-wrapper">
+            <div class="profile-image-wrapper">
+              <ion-img *ngIf="msg_chats.chat_type == 'group'" src="../../assets/CRMimages/gpChat_icon.svg"
+                class="chat-icon"></ion-img>
+              <ion-img *ngIf="msg_chats.chat_type == 'individual'"
+                src="../../assets/CRMimages/individualChatIcon.svg"></ion-img>
+              <div class="offOnline"
+                [ngClass]="msg_chats.chat_type == 'individual' && msg_chats.online_status == 'offline' ? 'redbgwhiteborder' : msg_chats.online_status == 'online' ? 'greenbgwhiteborder' : ''">
+              </div>
+              <div class="disappear_24" *ngIf="msg_chats.encryptid == 1">
+                <img src="../../assets/CRMimages/24-hour-disappear-icon.png">
+              </div>
+            </div>
+          </ion-col> -->
+
+          <ion-col class="chat-message-preview"
+            [ngClass]="filterParams.isnewGroupCreation == 'true' ? 'newGpcreation content_center' : ''">
+            <ion-row>
+              <ion-col size="9" class="center-vertically" (click)="openChat_previewModal(msg_chats)">
+                <span class="ellipse_span" style="font-size: 14px;"
+                  [innerHTML]="msg_chats.executives_name?(msg_chats.executives_name| highlight:chatSearchedName:'chat-highlight'):msg_chats.group_name | highlight:chatSearchedName:'chat-highlight'">
+                </span>
+              </ion-col>
+
+              <ion-col size="3" class="ion-text-end">
+                <span *ngIf="filterParams.isnewGroupCreation != 'true'">
+                  {{formatLatestMessageTime(msg_chats.latest_message_time) }}</span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="filterParams.isnewGroupCreation != 'true'">
+              <ion-col class="center-vertically">
+                <span class="latest_message_content font-size10-familyPoppins" style="color: rgb(106, 113, 117);"
+                  [innerHTML]=" msg_chats.latest_message_content | highlight:chatSearchedName:'chat-highlight'"></span>
+              </ion-col>
+              <!-- <ion-col *ngIf="msg_chats.unreadcount" size="2" class="content_center">
+                <div class="unreadChat_count">{{ msg_chats.unreadcount }}</div>
+              </ion-col> -->
+            </ion-row>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+  </ng-container>
+
+  <ion-row *ngIf="allChats1?.length==0 || this.searchResults['status'] ===  'False'">
+    <ion-col class="content_center">
+      <span class="font-size12-familyPoppins">
+        No results found...
+      </span>
+    </ion-col>
+  </ion-row>
+</div>
+
+<!--ADD MEMBER MODAL -->
+<ion-modal id="addMemberModal" #addMember trigger="open-modal" [enterAnimation]="enterAnimation"
+  [leaveAnimation]="leaveAnimation">
+  <ng-template>
+    <div class="search-wrapper">
+      <ion-row style="width: 100%; position: relative;" [ngClass]="!searchVisible?'borderBottom':''">
+        <ion-col style="position: relative;" class="paddingZero">
+          <div class="center-vertically">
+            <ion-icon name="arrow-back" class="arrow-back" (click)="onAddMemberbackButton()"></ion-icon>
+            <span class="add-members-label" *ngIf="!isForwardMsg"> Add Members</span>
+            <span class="add-members-label" *ngIf="isForwardMsg"> Forward to...</span>
+          </div>
+          <div class="searchbar-wrapper" [ngClass]="searchAnimationClass">
+            <ion-icon name="arrow-back" class="arrow-back" *ngIf="searchVisible" (click)="closeSearch()"></ion-icon>
+            <ion-searchbar class="addMemberSearch" [(ngModel)]="chatSearchedName"
+              (ngModelChange)="searchchatTrigger$.next($event)" [showClearButton]="'never'" [showCancelButton]="false"
+              placeholder="Search name ..."></ion-searchbar>
+          </div>
+        </ion-col>
+        <ion-col size="2" *ngIf="!searchVisible" class="content_center">
+          <ion-icon name="search" (click)="searchMembers()"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <div style="display: flex;overflow: scroll;margin: 5px;">
+      <div class="selectedUsers content_center active_text_borederColor" *ngFor="let user of selectedUsers">
+        {{user.executives_name}}<ion-icon name="close" (click)="ongrpSelectionCheckboxChange('',user)"
+          style="padding: 0 0 0 4px; color:rgba(11, 122, 178, 1)"></ion-icon>
+      </div>
+    </div>
+
+    <ion-content>
+      <ion-row *ngIf="allChats1.length==0">
+        <ion-col class="content_center">
+          <span class="font-size12-familyPoppins">
+            No results found...
+          </span>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let chat of (isForwardMsg?allChats:allChats1)"
+        (click)="ongrpSelectionCheckboxChange($event,chat)" [ngClass]="isUserSelected(chat)?'bgColorGreen':''">
+        <ion-col size="2">
+          <!-- <ion-img style="width: 40px;" class="group-icon" #groupIcon
+         src="../../assets/CRMimages/individualChatIcon.svg">
+        </ion-img> -->
+
+          <ion-img style="width: 40px;" *ngIf="chat.chat_type == 'group'" src="../../assets/CRMimages/gpChat_icon.svg"
+            class="chat-icon"></ion-img>
+          <ion-img style="width: 40px;" *ngIf="chat.chat_type == 'individual'"
+            src="../../assets/CRMimages/individualChatIcon.svg"></ion-img>
+          <ion-checkbox *ngIf="isUserSelected(chat)" class="forwardmsg_addgroupmemb" [checked]="isUserSelected(chat)"
+            (ionChange)="ongrpSelectionCheckboxChange($event,chat)"></ion-checkbox>
+        </ion-col>
+
+        <ion-col size="8" class="center-vertically font-size14-familyPoppins">
+          {{chat.executives_name}}
+        </ion-col>
+        <ion-col size="2">
+        </ion-col>
+      </ion-row>
+    </ion-content>
+
+    <ion-footer *ngIf="selectedUsers.length !== 0">
+      <ion-button *ngIf="!isForwardMsg" style="float: right;background-color: #0d7bb2;color: white;" fill="clear"
+        (click)="addMembe1r()">Add</ion-button>
+      <ion-button *ngIf="isForwardMsg" style="float: right;background-color: #0d7bb2;color: white;" fill="clear"
+        (click)="forwardingMessage()">Send</ion-button>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<!-- group info modal -->
+<ion-modal class="group-info" #groupInfoModal trigger="open-modal" [enterAnimation]="enterAnimation"
+  [leaveAnimation]="leaveAnimation">
+  <ng-template>
+    <span *ngIf="isGroupNameChange">
+      <ion-row style="padding: 5px;  border-bottom:1px solid #ECECEC;padding-bottom: 10px">
+        <ion-col class="font-size16-familyPoppins">Group name</ion-col>
+      </ion-row>
+      <div class="group-nameChange-wrapper">
+        <ion-row>
+          <ion-col>
+            <!-- selectedChat.executives_name -->
+            <ion-input class="group-nameChange-input" [(ngModel)]="groupName"></ion-input>
+          </ion-col>
+        </ion-row>
+      </div>
+
+      <ion-row class="action-row">
+        <ion-col class="ion-text-center" (click)="isGroupNameChange = false">
+          <ion-button fill="clear" class="text_color_green">Cancel</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" (click)="groupNameChanging()" [disabled]="groupName == ''"
+            class="text_color_green">Ok</ion-button>
+        </ion-col>
+      </ion-row>
+    </span>
+
+
+    <div *ngIf="!isGroupNameChange" style="height: 100vh;">
+      <ion-row style="margin: 5px;">
+        <ion-col style="padding: 0;display: flex;align-items: center; justify-content: flex-start;">
+          <ion-icon name="arrow-back" class="arrow-back" style="font-size: 24px;"
+            (click)="onGroupInfoModalClose()">back</ion-icon>
+        </ion-col>
+        <ion-col></ion-col>
+        <ion-col class="ion-text-end" id="groupNamechange"
+          style="padding: 0;display: flex;align-items: center; justify-content: flex-end;">
+          <ion-icon name="ellipsis-vertical"></ion-icon>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col></ion-col>
+        <ion-col class="paddingZero">
+          <!-- Centered Image -->
+          <div class="group-icon-wrapper">
+            <ion-img style="width: 90px;" (click)="openGroupInfo()" class="group-icon" #groupIcon
+              src="../../assets/CRMimages/gpChat_icon.svg">
+            </ion-img>
+          </div>
+        </ion-col>
+        <ion-col class="ion-text-end"></ion-col>
+
+        <ion-popover trigger="groupNamechange" side="bottom" alignment="center" style="--width:200px">
+          <ng-template>
+            <ion-row>
+              <ion-col (click)="onAddMember();">
+                <span class="font-size14-familyPoppins"> Add Members </span>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col (click)="onGroupNameChange()">
+                <span class="font-size14-familyPoppins"> Change group name </span>
+              </ion-col>
+            </ion-row>
+          </ng-template>
+        </ion-popover>
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="content_center font-size16-familyPoppins" style="padding-bottom: 0;">
+          <span *ngIf="!isGroupNameEditing ">{{selectedChat.executives_name}}</span>
+          <span><ion-input #groupInput [(ngModel)]="groupName" *ngIf="isGroupNameEditing"></ion-input></span>
+          <ion-icon *ngIf="isGroupNameEditing && !showSpinner" class="pl-1" name="checkmark"
+            (click)="groupName != selectedChat.executives_name? groupNameChanging():isGroupNameEditing = !isGroupNameEditing;"
+            style="color:#0b7ab2 !important;font-size: 22px;"></ion-icon>
+
+          <ion-spinner name="circular" *ngIf="showSpinner"></ion-spinner>
+          <ion-img (click)="editGroupName(groupInput); " src="../../assets/CRMimages/leadinfo_edit-icon.svg"
+            class="pl-2" *ngIf="!isGroupNameEditing && !showSpinner"></ion-img>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="content_center font-size12-familyPoppins" style="padding-top: 0;">Group
+          {{this.gpMembers.length}} members</ion-col>
+
+      </ion-row>
+      <ion-searchbar class="chatSearch" [(ngModel)]="gpMemberSearchedName"
+        (ionInput)="onGroupMemberSearch()"></ion-searchbar>
+      <ion-content>
+        <ion-row *ngIf="(isGroupAdmin && this.isMember) || isAdmin">
+          <ion-col size="2"><i class="fa fa-user-plus add_members"></i></ion-col>
+          <ion-col size="10" class="font-size14-familyPoppins center-vertically" (click)="onAddMember();">Add
+            Members</ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="gpMembers1.length==0">
+          <ion-col class="content_center">
+            <span class="font-size12-familyPoppins">
+              No results found...
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngFor="let gpMember of gpMembers1">
+          <ion-col size="2">
+            <ion-img style="width: 40px;" class="group-icon" #groupIcon
+              src="../../assets/CRMimages/individualChatIcon.svg">
+            </ion-img>
+          </ion-col>
+
+          <ion-col style="display: flex;justify-content: space-between;" size="10"
+            class="center-vertically font-size14-familyPoppins"
+            (click)="(isGroupAdmin && gpMember.grouprole == 2 && this.isMember)? deleteMember(gpMember):''">
+
+            {{localStorage.getItem('UserId') == gpMember.memberid?'You': gpMember.membername}}
+            <span *ngIf="gpMember.grouprole == '1'" class="font-size12-familyPoppins group-admin">Group Admin</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="isMember">
+          <ion-col size="2" class="content_center">
+            <ion-icon name="log-out-outline" style="font-size: 20px;color: red;"></ion-icon>
+          </ion-col>
+          <ion-col size="10" class="center-vertically font-size14-familyPoppins" (click)="leaveGroup()">
+            <span class="font-size14-familyPoppins" style="color: red;">Exit Group</span>
+          </ion-col>
+        </ion-row>
+      </ion-content>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- Individual Chat Overview -->
+<ion-modal #chat_preview trigger="open-modal">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar
+        *ngIf="!isOnetoOneChatSearch && (selectedMessageId.length == 0 && selectedMessage.selectedAttachmentId.length == 0)">
+        <ion-buttons slot="start">
+          <ion-icon style="font-size: 24px;" class="arrow-back" name="arrow-back"
+            (click)="onIndividualChatBack()">back</ion-icon>
+        </ion-buttons>
+        <ion-row>
+          <ion-col size="2" class="content_center relative">
+            <ion-img (click)="openGroupInfo()" class="group-icon absolute" #groupIcon
+              *ngIf="selectedChat?.chat_type == 'group'" src="../../assets/CRMimages/gpChat_icon.svg"></ion-img>
+            <ion-img class="group-icon" #groupIcon *ngIf="selectedChat?.chat_type == 'individual'"
+              src="../../assets/CRMimages/individualChatIcon.svg"></ion-img>
+            <div style="position: relative;top: 13px;left: 18px;" *ngIf="selectedChat?.encryptid == 1">
+              <img src="../../assets/CRMimages/24-hour-disappear-icon.png">
+            </div>
+          </ion-col>
+          <ion-col size="10" class="chat-message-preview center-vertically">
+            <ion-row style="width: 100%;">
+              <ion-col size="10.6">
+                <div>
+                  <div class="ellipse_span">
+                    <span>{{selectedChat?.executives_name}}</span>
+                  </div>
+                  <div style="display: flex;overflow: scroll;" *ngIf="selectedChat?.chat_type == 'group'">
+                    <div *ngFor="let gpMember of gpMembers1" class="gp-member"
+                      style="font-size: 10px;padding: 2px;font-family: 'Poppins';white-space: nowrap;">
+                      {{gpMember.membername +","}}
+                    </div>
+                  </div>
+                </div>
+              </ion-col>
+              <ion-col size="1.4" class="verticleEllipsis content_center" id="search">
+                <ion-icon name="ellipsis-vertical"></ion-icon>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+
+        <ion-popover trigger="search" side="bottom" alignment="center" class="newAndselect_popover">
+          <ng-template>
+            <ion-row>
+              <ion-col (click)="onOnetoOneChatSearch()">
+                <span style="font-size: 14px !important"> Search </span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col (click)="disappear24('1')"
+                *ngIf="selectedChat.chat_type == 'group' && selectedChat?.encryptid == '0' && (localStorage.getItem('Role') == '1' || localStorage.getItem('Role') == '2')">
+                <span style="font-size: 14px !important"> Enable 24Hrs Disappear </span>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col (click)="disappear24('0')"
+                *ngIf="selectedChat.chat_type == 'group' && selectedChat?.encryptid == '1' && (localStorage.getItem('Role') == '1' || localStorage.getItem('Role') == '2')">
+                <span style="font-size: 14px !important"> Disable 24Hrs Disappear </span>
+              </ion-col>
+            </ion-row>
+
+            <!-- <ion-row>
+              <ion-col>
+                <span> Selects Chats </span>
+              </ion-col>
+            </ion-row> -->
+          </ng-template>
+        </ion-popover>
+
+        <ion-buttons slot="end">
+          <!-- <ion-icon name="close"></ion-icon> -->
+        </ion-buttons>
+      </ion-toolbar>
+      <!-- Delete, Forword Message heading -->
+      <ion-toolbar *ngIf="selectedMessageId.length != 0 || selectedMessage.selectedAttachmentId.length != 0">
+        <div>
+          <ion-row>
+            <ion-col class="ion-justify-start d-flex" (click)="onDeleteHeaderRemove() ">
+              <ion-icon style="font-size: 24px;" class="arrow-back" name="arrow-back"></ion-icon>
+
+              <span class="selected-msg-count"
+                *ngIf="selectedMessage.selectedMessageId.length!=0 ;else attachmentid">{{selectedMessage.selectedMessageId.length}}</span>
+              <ng-template #attachmentid>
+                <span *ngIf="selectedMessage.selectedAttachmentId.length!=0; else userBlock">
+                  {{selectedMessage.selectedAttachmentId.length}} </span>
+              </ng-template>
+              <ng-template #userBlock>
+                <p>0</p>
+              </ng-template>
+            </ion-col>
+            <ion-col size="2" [ngClass]="selectedMessageId.length>1?'pointerEvent':''" class="content_center"
+              (click)="onReplymsg()">
+              <!-- <ion-icon style="font-size: 22px;" name="return-up-back"></ion-icon> -->
+              <ion-img class="only-dark" src="../../assets/CRMimages/reply-icon.svg"></ion-img>
+              <ion-img class="only-light" src="../../assets/CRMimages/lightTheme_reply-icon.svg"></ion-img>
+            </ion-col>
+            <ion-col size="2" [ngClass]="selectedMessageId.length>1?'pointerEvent':''" class="content_center"
+              (click)="onReplymsgWithCopy()">
+              <ion-img src="../../assets/CRMimages/reply_with_msg.svg"></ion-img>
+            </ion-col>
+            <ion-col [ngClass]="ishideDelete || selectedMessageId.length>1?'pointerEvent':''" *ngIf="isreceiver"
+              size="2" class="content_center" (click)="onDeleteMessage()">
+              <ion-icon style="font-size: 22px;" name="trash-outline"></ion-icon>
+            </ion-col>
+            <ion-col size="2" class="content_center" (click)="onForwordMessage()"
+              [ngClass]="selectedMessage.selectedAttachmentId.length>=1?'pointerEvent':''">
+              <!-- <ion-icon style="font-size: 22px;" name="return-up-forward"></ion-icon> -->
+              <ion-img class="only-dark" src="../../assets/CRMimages/forward-icon.svg"></ion-img>
+              <ion-img class="only-light" src="../../assets/CRMimages/lightTheme_forward-icon.svg"></ion-img>
+            </ion-col>
+            <ion-col size="1"
+              [ngClass]="selectedMessageId.length>1 || selectedMessage.selectedAttachmentId.length>=1?'pointerEvent':''"
+              class="content_center" id="editMsg">
+              <ion-icon name="ellipsis-vertical"></ion-icon>
+            </ion-col>
+
+            <ion-popover trigger="editMsg" side="bottom" alignment="center">
+              <ng-template>
+                <ion-row>
+                  <ion-col *ngIf="isreceiver && (!ishideEdit)" (click)="onEditMessage()" style="padding-left:10px">
+                    <span>Edit</span>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col (click)="onCopyMessage('')" class="center-vertically" style="padding-left:10px">
+                    <span class="font-size14-familyPoppins">Copy</span>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row *ngIf="mesgContent.sender_id.toString() === localStorage.getItem('UserId')">
+                  <ion-col (click)="onMessageInfo()" class="center-vertically" style="padding-left:10px">
+                    <span class="font-size14-familyPoppins">Info</span>
+                  </ion-col>
+                </ion-row>
+              </ng-template>
+            </ion-popover>
+          </ion-row>
+        </div>
+      </ion-toolbar>
+
+      <ion-toolbar *ngIf="isOnetoOneChatSearch">
+        <div style="display: flex;align-items: center;">
+          <ion-icon name="arrow-back" class="arrow-back" style="font-size: 24px;"
+            (click)="isOnetoOneChatSearch = false;oneToOneSearchName='';  this.currentMatchIndex = -1; "></ion-icon>
+          <ion-searchbar class="addMemberSearch" [(ngModel)]="oneToOneSearchName" [showClearButton]="'never'"
+            [showCancelButton]="false" (ionInput)="onOneToOneSearchChange()"
+            (keyup.enter)="onOneToOneSearchEnter($event)" placeholder="Search ..."></ion-searchbar>
+          <ion-icon style="padding: 0 5px;" name="chevron-down-outline" class="chevron-down-outline"
+            (click)="navigateMatch('prev')"></ion-icon>
+          <ion-icon style="padding: 0 5px;" name="chevron-up-outline" class="chevron-up-outline"
+            (click)="navigateMatch('next')"></ion-icon>
+        </div>
+      </ion-toolbar>
+    </ion-header>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+    </div>
+
+
+    <div *ngIf="(oneToOneSearchName  && showNotFound)" class="no-data-message">
+      Not found
+    </div>
+
+    <!-- (longPress)=" (localStorage.getItem('Name') === msg.sender_name && msg.item_type !== 'member_left' && msg.item_type !== 'member_removed')?onMessageLongPress(msg.item_id):''"  //LONG PRESS ONLY FOR SENDER-->
+
+    <ion-content class="ion-padding bg-img" #chat_previewIon_content (ionScroll)="onScroll($event)" scrollEvents="true">
+      <div *ngIf="(isAtTop && (one2onelastmsgdate?.[0]?.['last_message_date'] != null && !isLoading))"
+        (click)="isLoading = true; getOneToOneAndGroupChat(selectedChat.chat_type === 'group'?selectedChat.chat_id: selectedChat.executives_IDPK,selectedChat.chat_type === 'group'?'group':'individual',true)"
+        class="member_removedText" style="margin-top: 5px;padding: 5px 10px;position: fixed;z-index: 9999;">
+        <span class="font-size12-familyPoppins" style=" font-size: 14px; font-weight: 500; border-radius: 4px;">
+          Click here to Load More
+        </span>
+      </div>
+      <div class="content_center relative" style="top: 10px !important;font-style: italic;"
+        *ngIf="localStorage.getItem('Role') != '1' && localStorage.getItem('Role') != '2' && selectedChat.chat_type == 'group' && selectedChat?.encryptid == 1">
+        <span class="disappear_date cursor-pointer"> <i class="fas fa-clock" style="color:#557482 ;"></i>24 hours
+          disappearing
+          Enabled</span>
+      </div>
+      <div *ngIf="isLoading" class="content_center">
+        <ion-spinner name="bubbles"></ion-spinner>
+      </div>
+      <div *ngIf="!isAtTop" class="member_removedText"
+        style="margin-top: 5px;padding: 5px 10px;position: fixed;z-index: 9999;border-radius: 4px;">
+        <span class="font-size12-familyPoppins">
+          {{currentDateLabel}}
+        </span>
+      </div>
+      <!-- <div *ngFor="let msg of one2oneChats let i = index;trackBy: trackByMsgId"  [attr.data-index]="i" appLongPress (longPress)="msg.deleted==0?onMessageLongPress(msg):''"
+            [ngStyle]="{ 'background-color': selectedMessageId.includes(msg.item_id) ? '#a6cf9f69' : 'transparent' }" 
+            [ngClass]="{'selected-match': ((currentMatchIndex !== -1 && matchedIndexes[currentMatchIndex] === i) || reply_msg_index === i )}"> -->
+
+      <!--(longPress)=" msg.deleted == 0 || msg.deleted == null ? onMessageLongPress(msg) : ''"  (click)="msg.deleted == 0  || msg.deleted == null ? onMessageClick(msg):''" //long press for attachment    -->
+
+      <div *ngFor="let msg of one2oneChats; let i = index; trackBy: trackByMsgId" [attr.data-index]="i"
+        [attr.data-id-index]="msg.item_id" appLongPress
+        (longPress)=" msg.deleted == 0 || msg.deleted == null ? onMessageLongPress(msg) : ''"
+        (click)="msg.deleted == 0  || msg.deleted == null ? onMessageClick(msg):''"
+        [ngClass]="{'selected-match': ((currentMatchIndex !== -1 && matchedIndexes[currentMatchIndex] === i) || reply_msg_index === i || (msg_id  ===  msg.item_id && chatSearchedName != '')),'bg-color':( msg.message_type === 'attachment')?(selectedMessage.selectedAttachmentId.includes(msg.item_id) ) : (selectedMessage.selectedMessageId.includes(msg.item_id)) }">
+        <!-- Member Removes -->
+        <div *ngIf="msg.item_type === 'member_removed'" class="member_removedText" style="margin-top: 5px;">
+          <span class="font-size12-familyPoppins">
+            {{(msg.event_admin_id == localStorage.getItem('UserId')?'You':msg.event_admin_name) + " removed " +
+            (msg.event_user_id == localStorage.getItem('UserId')?'You': msg.event_user_name)
+            }}
+          </span>
+        </div>
+        <!-- Member Left -->
+        <div *ngIf="msg.item_type === 'member_left'" class="member_removedText" style="margin-top: 5px;">
+          <span class="font-size12-familyPoppins">
+            {{(msg.event_user_id == localStorage.getItem('UserId')?'You':msg.event_user_name) + " left "}}
+          </span>
+        </div>
+
+        <div *ngIf="msg.item_type == 'message_date'" #dateLabels class="member_removedText"
+          style="margin-top: 5px;padding: 5px 10px;">
+          <span class="font-size12-familyPoppins">
+            {{msg.created_at }}
+          </span>
+        </div>
+
+        <!-- SENDER -->
+        <ion-item-sliding (ionSwipe)="onMessageLongPress(msg);onReplymsg()"
+          *ngIf="localStorage.getItem('Name') !== msg.sender_name && msg.item_type !== 'member_left' && msg.item_type !== 'member_removed' && msg.item_type !== 'message_date' ">
+          <ion-item style="--background: none;" lines="none">
+            <ion-row class="message-bubble">
+              <ion-col size="12" class="chat-align">
+                <div class="chat-wrapper">
+                  <ion-icon *ngIf="msg.item_type !== 'member_removed'" name="person-circle"
+                    style="color:rgb(11 122 178)" class="profile-icon"></ion-icon>
+
+                  <span *ngIf="msg.item_type !== 'member_removed'" aria-hidden="true" data-icon="tail-in" class="_amk7">
+                    <span class="only-light">
+                      <svg viewBox="0 0 8 13" height="13" width="8" preserveAspectRatio="xMidYMid meet" version="1.1"
+                        x="0px" y="0px" style="color:white">
+                        <path opacity="0.13" d="M1.533,3.568L8,12.193V1H2.812 C1.042,1,0.474,2.156,1.533,3.568z"></path>
+                        <path fill="currentColor" d="M1.533,2.568L8,11.193V0L2.812,0C1.042,0,0.474,1.156,1.533,2.568z">
+                        </path>
+                      </svg>
+                    </span>
+                    <span class="only-dark">
+                      <svg viewBox="0 0 8 13" height="13" width="8" preserveAspectRatio="xMidYMid meet" version="1.1"
+                        x="0px" y="0px" style="color:#242625">
+                        <path opacity="0.13" d="M1.533,3.568L8,12.193V1H2.812 C1.042,1,0.474,2.156,1.533,3.568z"></path>
+                        <path fill="currentColor" d="M1.533,2.568L8,11.193V0L2.812,0C1.042,0,0.474,1.156,1.533,2.568z">
+                        </path>
+                      </svg>
+
+                    </span>
+                  </span>
+
+
+                  <div class="received-chat-card" style="padding: 3px;" [photoGalleryGroup]
+                    *ngIf="msg.item_type !== 'member_removed'">
+
+                    <span *ngIf="selectedChat?.chat_type == 'group'" class="font-size12-familyPoppins font-colorBlue"
+                      style="padding: 2px 5px;">{{msg.sender_name}}</span>
+
+
+                    <span *ngIf="msg.deleted != 1">
+                      <!-- Image File  -->
+                      <ion-img [photoGallery]="'https://chat.right2shout.in' +  msg.attachment_path "
+                        *ngIf="msg.attachment_name?.toLowerCase().endsWith('.jpg') || msg.attachment_name?.toLowerCase().endsWith('.jpeg') || msg.attachment_name?.toLowerCase().endsWith('.png')"
+                        [src]="'https://chat.right2shout.in' + msg.attachment_path" style="width: 150px;"></ion-img>
+
+                      <!--  PDF File -->
+                      <a *ngIf="msg.attachment_name?.toLowerCase().endsWith('.pdf')"
+                        [href]="'https://chat.right2shout.in/'+msg.attachment_path" class="content_center"
+                        (click)="downloadFileFromUrl(msg.attachment_path,msg.attachment_name)" id="canvasId"
+                        style="padding: 2px 5px;">
+                        <ion-img style="width: 26px;" src="../../assets/CRMimages/pdfred.png"></ion-img>
+                        <span *ngIf="msg.attachment_name?.toLowerCase().endsWith('.pdf')"
+                          class="font-size12-familyPoppins"> {{msg.attachment_name}}</span>
+                      </a>
+
+                      <!-- video File -->
+                      <video #videoPlayer id="myVideo" (touchstart)="goFullScreen()"
+                        *ngIf="msg.attachment_path && msg.attachment_name?.toLowerCase().endsWith('.mp4')" controls=""
+                        height="100%" width="200">
+                        <source type="video/mp4" [src]="'https://chat.right2shout.in' +  msg.attachment_path"
+                          type="video/mp4"> Your browser does not support the video tag.
+                      </video>
+
+                      <!-- REPLY MSG  -->
+                      <div *ngIf="msg.reply_id" (click)="scrollToReplyMsg(msg)" class="replay-text-bg-color"
+                        style="border-left:5px solid #0b7ab2; border-radius: 4px; ;padding: 4px 2px;">
+                        <ion-row>
+                          <ion-col
+                            style="padding: 0 5px;color: #0b7ab2;font-weight: 600;font-size: 12px;font-family: 'Poppins';">{{localStorage.getItem('UserId')==msg.replied_to_whomid?'You':
+                            msg.replied_to_whom}}</ion-col>
+                        </ion-row>
+                        <ion-row class="replay-text-color">
+                          <ion-col
+                            style="padding: 0 5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"
+                            class="font-size12-familyPoppins">{{msg.replied_message}}</ion-col>
+                        </ion-row>
+                      </div>
+
+                      <ion-row *ngIf="msg.forwarded == '1'" class="forward-text">
+                        <ion-col>
+                          <ion-img style="width: 25px;" src="../../assets/CRMimages/forward-arrow.svg"></ion-img>
+                          forwarded
+                        </ion-col>
+                      </ion-row>
+                      <ion-row>
+                        <ion-col *ngIf="msg.content" #messageContainer>
+                          <!-- <span class="message-text font-size12-familyPoppins"  (click)="onNumberClick(msg.content)"
+                      [innerHTML]="msg.content | lineBreaks | highlight:oneToOneSearchName">
+                    </span> -->
+                          <div class="message-text" [title]="msg.content" style="white-space: normal;">
+                            <ng-container *ngFor="let part of msg.content | lineBreaks">
+                              <span *ngIf="part.isPhoneNumber" [innerHTML]="part.text | highlight:oneToOneSearchName"
+                                class="highlight-number" appLongPress (longPress)="onCopyMessage(part.text)"
+                                (click)="onNumberClick(part.text);">
+                              </span>
+                              <span *ngIf="!part.isPhoneNumber"
+                                [innerHTML]="part.text| highlight:oneToOneSearchName"></span>
+                            </ng-container>
+                          </div>
+                        </ion-col>
+                      </ion-row>
+                    </span>
+
+                    <ion-row *ngIf="msg.deleted == 1" class="deleted_msg">
+                      <ion-col class="paddingZero">
+                        <span class="font-size12-familyPoppins content_center">
+                          <ion-icon name="ban" style="font-size: 16px;"></ion-icon>
+                          This message was deleted.
+                        </span>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="timestamp">
+                        <span *ngIf="msg.edited=='1'" style="padding-right:5px;">Edited</span> <span>{{msg.created_at |
+                          date: 'hh:mm a'}}</span>
+                      </ion-col>
+                    </ion-row>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-item>
+          <ion-item-options side="start"></ion-item-options>
+        </ion-item-sliding>
+
+        <!-- RECEIVER -->
+        <ion-item-sliding (ionSwipe)="onMessageLongPress(msg);onReplymsg()"
+          *ngIf="localStorage.getItem('Name') === msg.sender_name && msg.item_type !== 'member_left' && msg.item_type !== 'member_removed' && msg.item_type !== 'message_date' ">
+          <ion-item style="--background: none;" lines="none">
+            <ion-row class="sender-message-bubble">
+              <ion-col class="chat-container">
+                <span class="only-light">
+                  <svg viewBox="0 0 8 13" height="13" width="8" preserveAspectRatio="xMidYMid meet"
+                    style="position: absolute;top: 5px;right: 6px;color: #d9fdd3;">
+                    <path opacity="0.13" d="M5.188,1H0v11.193l6.467-8.625 C7.526,2.156,6.958,1,5.188,1z"></path>
+                    <path fill="currentColor" d="M5.188,0H0v11.193l6.467-8.625C7.526,1.156,6.958,0,5.188,0z"></path>
+                  </svg>
+                </span>
+                <span class="only-dark">
+                  <svg viewBox="0 0 8 13" height="13" width="8" preserveAspectRatio="xMidYMid meet"
+                    style="position: absolute;top: 5px;right: 6px;color: #1E3F50;">
+                    <path opacity="0.13" d="M5.188,1H0v11.193l6.467-8.625 C7.526,2.156,6.958,1,5.188,1z"></path>
+                    <path fill="currentColor" d="M5.188,0H0v11.193l6.467-8.625C7.526,1.156,6.958,0,5.188,0z"></path>
+                  </svg>
+
+                </span>
+
+                <div class="send-chat-card" [photoGalleryGroup]>
+                  <span *ngIf="msg.deleted != 1">
+                    <!-- Image File  -->
+                    <ion-img [photoGallery]="'https://chat.right2shout.in' +  msg.attachment_path "
+                      *ngIf="msg.attachment_name?.toLowerCase().endsWith('.jpg') || msg.attachment_name?.toLowerCase().endsWith('.jpeg') || msg.attachment_name?.toLowerCase().endsWith('.png')"
+                      [src]="'https://chat.right2shout.in' + msg.attachment_path" style="width: 150px;"></ion-img>
+
+                    <!--  PDF File -->
+                    <a *ngIf="msg.attachment_name?.toLowerCase().endsWith('.pdf')"
+                      [href]="'https://chat.right2shout.in/'+msg.attachment_path" class="content_center"
+                      (click)="downloadFileFromUrl(msg.attachment_path,msg.attachment_name)" id="canvasId">
+                      <ion-img style="width: 26px;" src="../../assets/CRMimages/pdfred.png"></ion-img>
+                      <span *ngIf="msg.attachment_name?.toLowerCase().endsWith('.pdf')"
+                        class="font-size12-familyPoppins"> {{msg.attachment_name}}</span>
+                    </a>
+
+                    <!-- video File -->
+                    <video #videoPlayer id="myVideo" (touchstart)="goFullScreen()"
+                      *ngIf="msg.attachment_path && msg.attachment_name?.toLowerCase().endsWith('.mp4')" controls=""
+                      height="100%" width="200">
+                      <source type="video/mp4" [src]="'https://chat.right2shout.in' +  msg.attachment_path"
+                        type="video/mp4"> Your browser does not support the video tag.
+                    </video>
+
+                    <div *ngIf="msg.reply_id" (click)="scrollToReplyMsg(msg)" class="replay-text-bg-color"
+                      style="border-left:5px solid #0b7ab2; border-radius: 4px; padding: 4px 2px;">
+                      <ion-row>
+                        <ion-col
+                          style="padding: 0 5px;color: #0b7ab2;font-weight: 600;font-size: 12px;font-family: 'Poppins';">{{localStorage.getItem('UserId')=='msg.replied_to_whomid'?'You':
+                          msg.replied_to_whom}}</ion-col>
+                      </ion-row>
+                      <ion-row class="replay-text-color">
+                        <ion-col
+                          style="padding: 0 5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"
+                          class="font-size12-familyPoppins">
+                          {{msg.replied_message}}</ion-col>
+                      </ion-row>
+                    </div>
+                    <ion-row *ngIf="msg.forwarded == '1'" class="forward-text">
+                      <ion-col>
+                        <ion-img style="width:25px" src="../../assets/CRMimages/forward-arrow.svg">
+                        </ion-img>
+                        forwarded
+                      </ion-col>
+                    </ion-row>
+
+                    <ion-row *ngIf="msg.content">
+                      <ion-col>
+                        <div class="message-text" [title]="msg.content" style="white-space: normal;">
+                          <ng-container *ngFor="let part of msg.content | lineBreaks">
+                            <span *ngIf="part.isPhoneNumber" [innerHTML]="part.text | highlight:oneToOneSearchName"
+                              class="highlight-number" appLongPress (longPress)="onCopyMessage(part.text)"
+                              (click)="onNumberClick(part.text);">
+                            </span>
+                            <span *ngIf="!part.isPhoneNumber"
+                              [innerHTML]="part.text| highlight:oneToOneSearchName "></span>
+                          </ng-container>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </span>
+                  <ion-row *ngIf="msg.deleted == 1" class="deleted_msg">
+                    <ion-col class="paddingZero">
+                      <span class="font-size12-familyPoppins content_center" style="color: #4d4545;">
+                        <ion-icon name="ban" style="font-size: 16px;"></ion-icon> You deleted this message.
+                      </span>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col class="timestamp center-vertically">
+                      <span *ngIf="msg.edited=='1' " style="padding-right:5px;">Edited</span>
+                      <span>{{msg.created_at | date: 'hh:mm a'}}</span>
+                      <ion-img *ngIf="msg.item_id !=''" style="width: 18px;padding-left: 4px;"
+                        src="../../assets/CRMimages/double-tick-read.svg"></ion-img>
+                      <ion-icon *ngIf="msg.item_id ==''" name="time-outline"
+                        style="color: rgb(11, 122, 178);font-size: 14px; padding-left: 5px;">
+                      </ion-icon>
+                    </ion-col>
+                  </ion-row>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-item>
+          <ion-item-options side="start"></ion-item-options>
+        </ion-item-sliding>
+      </div>
+
+      <!-- Scroll to bottom icon -->
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!isAtBottom">
+        <ion-fab-button (click)="scrollMoveToBottom()" style="font-size: 21px; width: 32px;height: 32px;">
+          <i class="fas fa-angle-double-down"></i>
+        </ion-fab-button>
+      </ion-fab>
+    </ion-content>
+
+
+    <ion-footer class="bg-img">
+      <div *ngIf="!isMember && selectedChat.chat_type === 'group'" class="member_removedText">
+        <span class="font-size12-familyPoppins">
+          You can't send messages to this group because you're no longer a member.
+        </span>
+      </div>
+      <!-- <ion-button id="top-center">Side=Top, Alignment=Center</ion-button> -->
+      <!-- <ion-popover trigger="top-center" side="top" alignment="center">
+          <ng-template>
+            <ion-content class="ion-padding">
+              <div class="attachment-panel">
+                <ion-grid>
+                  <ion-row>
+                    <ion-col size="4" class="ion-text-center" (click)="openGallery()">
+                      <ion-icon name="image" size="large"></ion-icon>
+                      <div>Gallery</div>
+                    </ion-col>
+                    <ion-col size="4" class="ion-text-center" (click)="openCamera()">
+                      <ion-icon name="camera" size="large"></ion-icon>
+                      <div>Camera</div>
+                    </ion-col>
+                    <ion-col size="4" class="ion-text-center" (click)="openFilePicker()">
+                      <ion-icon name="document" size="large"></ion-icon>
+                      <div>Document</div>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </div>
+            </ion-content>
+          </ng-template>
+        </ion-popover> -->
+
+      <ion-row *ngIf="isMember || selectedChat.chat_type !== 'group'">
+        <ion-col class="paddingZero">
+          <ion-row class="message-row" id=messageRow>
+            <ion-row style="width: 100%;" *ngIf="isReply_msg">
+              <ion-col>
+                <!-- Reply Content -->
+                <div class="replay-text-bg-color" style="border-left: 5px solid #0b7ab2; border-radius: 6px; ">
+                  <ion-row>
+                    <ion-col
+                      style="padding: 0 5px;color: #0b7ab2;font-weight: 600;font-size: 14px;font-family: 'Poppins';">{{localStorage.getItem('Name')
+                      === reply_text?.[0]?.sender_name?'you':reply_text?.[0]?.sender_name}}</ion-col>
+                    <ion-col size="1" class="content_center paddingZero close" (click)="remove_reply_text()">
+                      <ion-icon name="close"></ion-icon>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row class="replay-text-color">
+                    <ion-col
+                      style="padding: 0 5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"
+                      class="font-size12-familyPoppins">
+                      {{reply_text?.[0]?.item_type == "attachment"?'photo': reply_text?.[0]?.content}}
+                    </ion-col>
+                  </ion-row>
+                </div>
+              </ion-col>
+            </ion-row>
+
+            <ion-row style="width: 100%;">
+              <ion-col [class.grow]="checkTextareaHeight()" size="1.5" class="content_center paddingZero">
+                <input type="file" #fileInput (change)="handleFile($event)" multiple style="display: none" />
+                <ion-icon name="add-circle" (click)="fileInput.click()" class="add-circle"
+                  style="font-size: 35px;"></ion-icon>
+              </ion-col>
+              <ion-col size="10.5" class="paddingZero content_center">
+                <ion-textarea rows="1" [(ngModel)]="message" #messageInput
+                  (ionInput)="selectedMessageId = [];checkTextareaHeight()" autoGrow="true"
+                  class="custom-textarea font-size14-familyPoppins" placeholder="Type your message..."></ion-textarea>
+              </ion-col>
+            </ion-row>
+          </ion-row>
+        </ion-col>
+
+        <ion-col size="1.5" class="pointerEvent msg_send_icon content_center"
+          [ngClass]="{'content_center': !checkTextareaHeight(),'align-bottom': checkTextareaHeight(),'pointerEvent': removePointerEvent()}"
+          (click)=" message.trim().length !== 0? sendMessage($event):''">
+          <i class="fa fa-paper-plane"></i>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<!-- Group Naming -->
+<div class="groupNaming" *ngIf="filterParams.isGroupNaming == 'true' && !isOnCallDetailsPage">
+  <div class="group-box">
+    <div class="group-image-wrapper">
+      <ion-img src="../../assets/CRMimages/grupCreationImage_icon.svg"></ion-img>
+      <ion-icon name="camera-outline" (click)="groupPhotoUpload.click()"></ion-icon>
+      <input type="file" style="display: none;" #groupPhotoUpload>
+    </div>
+    <ion-input placeholder="Enter Group Name" class="font-size14-familyPoppins"
+      [(ngModel)]="createNewGroup.groupname"></ion-input>
+    <ion-button fill="clear" class="activeSaveButton" [disabled]="createNewGroup.groupname.trim().length === 0"
+      (click)="createNewGroupChat()">Create a Group</ion-button>
+  </div>
+</div>
+
+<!-- this displayed only when we are in creating group section-->
+<div class="grpUserSelectedCount" *ngIf="!isOnCallDetailsPage">
+  <ion-row
+    *ngIf="selectedUsers.length != 0 && filterParams.isnewGroupCreation == 'true' && filterParams. isGroupNaming != 'true'">
+    <ion-col>
+      {{selectedUsers.length }}<span>Selected</span>
+    </ion-col>
+    <ion-col>
+      <ion-button class="m-0" (click)="onGroupNaming()" style="width: 100%;" fill="clear"
+        [disabled]="selectedUsers.length < 2">
+        Next
+      </ion-button>
+    </ion-col>
+  </ion-row>
+  <!-- footer Section -->
+</div>
+
+
+<!-- DIAL NUMBER MODAL -->
+<ion-modal #dialNumberModal id="dialNumberModal">
+  <ng-template>
+    <div>
+      <ion-row>
+        <ion-col (click)="ondialCall()" style="padding-bottom: 0;">
+          <span class="font-size14-familyPoppins">Dial {{" "+dialNumber}}</span>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col (click)="onCopyMessage(dialNumber)" style="padding-top: 0;">
+          <span class="font-size14-familyPoppins">Copy phone number</span>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- EDIT MESSAGE MODAL -->
+<ion-modal #editMessage class="edit-text-modal">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar class="ion-text-center header">
+        <ion-row>
+          <ion-col size="2">
+            <ion-icon style="font-size: 24px;" class="arrow-back" name="arrow-back"
+              (click)="onEdit_msg_back()">back</ion-icon>
+          </ion-col>
+          <ion-col class="ion-text-start">
+            <span>Edit message</span>
+          </ion-col>
+        </ion-row>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content style="--background: #1c1c1b;">
+      <ion-row class="message-bubble edit-text-row">
+        <ion-col class="chat-container" style="position:absolute;bottom: 0;">
+          <svg class="only-light" viewBox="0 0 8 13" height="13" width="8" preserveAspectRatio="xMidYMid meet"
+            style="position: absolute;top: 5px;right: 7px;color: #d9fdd3;">
+            <path opacity="0.13" d="M5.188,1H0v11.193l6.467-8.625 C7.526,2.156,6.958,1,5.188,1z"></path>
+            <path fill="currentColor" d="M5.188,0H0v11.193l6.467-8.625C7.526,1.156,6.958,0,5.188,0z"></path>
+          </svg>
+          <span class="only-dark">
+            <svg viewBox="0 0 8 13" height="13" width="8" preserveAspectRatio="xMidYMid meet" version="1.1" x="0px"
+              y="0px" style="color:#242625">
+              <path opacity="0.13" d="M1.533,3.568L8,12.193V1H2.812 C1.042,1,0.474,2.156,1.533,3.568z"></path>
+              <path fill="currentColor" d="M1.533,2.568L8,11.193V0L2.812,0C1.042,0,0.474,1.156,1.533,2.568z">
+              </path>
+            </svg>
+          </span>
+          <div class="send-chat-card">
+            <div *ngIf="edit_text?.[0]?.['replied_to_whomid']" class="replay-text-bg-color"
+              style="border-left: 5px solid #656d64; border-radius: 4px;">
+              <ion-row>
+                <ion-col style="padding: 0 5px;color: #0b7ab2;font-weight: 600;font-size: 14px;font-family: 'Poppins';">
+                  <span>{{localStorage.getItem('Name')
+                    === edit_text?.[0]?.['sender_name']?'you':edit_text?.[0]?.['sender_name']}}</span>
+                </ion-col>
+              </ion-row>
+              <ion-row class="replay-text-color">
+                <ion-col
+                  style="padding: 0 5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"
+                  class="font-size12-familyPoppins"><span>{{edit_text?.[0]?.['replied_message']}}</span></ion-col>
+              </ion-row>
+            </div>
+            <ion-row>
+              <ion-col *ngIf="edit_text?.[0]?.['content']" #messageContainer>
+                <span class="font-size12-familyPoppins">
+                  {{edit_text?.[0]?.['content']}}
+                </span>
+              </ion-col>
+            </ion-row>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-content>
+
+    <ion-footer style="box-shadow:none;background: #1c1c1b;">
+      <ion-row>
+        <ion-col>
+          <ion-textarea [(ngModel)]="message" #messageInput (ionInput)="selectedMessageId = [];"
+            style=" height: 100%;padding: 4px;max-height: 86px;--padding-bottom:0;min-height:0;border-radius: 4px;"
+            autoGrow="true" class="custom-textarea font-size12-familyPoppins"
+            placeholder="Type your message..."></ion-textarea>
+        </ion-col>
+        <ion-col size="2" class="content_center paddingZero" (click)=" sendMessage($event)">
+          <ion-icon style="font-size: 40px; color: #0f7722;" name="checkmark-circle"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #infoModal>
+  <ng-template>
+    <ion-header class="bg-img" style="padding: 8px;box-shadow: none;border-bottom: 1px solid lightgray;">
+      <ion-row>
+        <ion-col size="1" (click)="onInfoModalBack()"><ion-icon style="font-size: 24px;" name="arrow-back"
+            class="arrow-back">back</ion-icon></ion-col>
+        <ion-col><span class="font-size16-familyPoppins">Message info</span></ion-col>
+      </ion-row>
+    </ion-header>
+    <ion-content>
+      <div class="bg-img">
+        <ion-row class="ion-justify-content-end">
+          <ion-col size="12">
+            <div class="send-chat-card" style="line-height: normal;
+    padding: 10px;">
+              <p class="font-size12-familyPoppins">{{messageInfoData.Message}}</p>
+              <ion-row>
+                <ion-col class="timestamp center-vertically">
+                  <span>{{messageInfoData.created_at | date: 'hh:mm a'}}</span>
+                </ion-col>
+              </ion-row>
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
+
+
+      <ion-card>
+        <div style="border-bottom: 1px solid lightgray;padding: 6px;color: #3f8533;"
+          class="d-flex font-size14-familyPoppins">
+          {{selectedChat.chat_type == 'group'?'Read by':'Read'}}
+          <ion-img style="width:20px" src="../../assets/CRMimages/double-tick-read.svg"></ion-img>
+        </div>
+        <ion-row *ngFor="let read of messageInfoData['Read']">
+          <ion-col size="2" class="content_center">
+            <ion-img style="width:40px" src="../../assets/CRMimages/individualChatIcon.svg"></ion-img>
+          </ion-col>
+          <ion-col>
+            <div><span class="font-size16-familyPoppins" style="color:black">{{read.reciever_name}}</span></div>
+            <div style="line-height: 0.8;"><span class="font-size12-familyPoppins">{{read.read_at}}</span></div>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+
+      <ion-card>
+        <div style="border-bottom:1px solid lightgray;padding: 6px;color: #3f8533;"
+          class="d-flex font-size14-familyPoppins">
+          {{selectedChat.chat_type == 'group'?'Delivered to':'Delivered'}}
+          <ion-img style=" width:20px" src="../../assets/CRMimages/unread_icon.png"></ion-img>
+        </div>
+        <ion-row *ngFor="let read of messageInfoData['Delivered']">
+          <ion-col size="2" class="content_center">
+            <ion-img style="width:40px" src="../../assets/CRMimages/individualChatIcon.svg"></ion-img>
+          </ion-col>
+          <ion-col>
+            <div><span class="font-size16-familyPoppins" style="color:black">{{read.reciever_name}}</span></div>
+            <div style="line-height: 0.8;"><span class="font-size12-familyPoppins">{{read.delivered_at}}</span></div>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+
+
+    </ion-content>
+
+  </ng-template>
+</ion-modal>
