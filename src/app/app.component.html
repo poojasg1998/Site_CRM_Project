@@ -1,0 +1,179 @@
+<ion-app>
+  <!-- <div  class="content_center loader" *ngIf="showSpinner">
+    <ion-spinner name="circular" style="color: white;"></ion-spinner>
+  </div>
+     -->
+
+  <ion-modal [backdropDismiss]="true" [isOpen]="isLastOneHrReportOpen && !isCP" #lastOneHrReport
+    (ionModalDidDismiss)="closeLastOneHrReport();clearAutoCloseTimer()" (ionModalDidPresent)="startAutoCloseTimer()">
+    <ng-template>
+      <div class="content_center loader" *ngIf="showSpinner">
+        <ion-spinner name="circular" style="color: white;"></ion-spinner>
+      </div>
+      <ion-header>
+        <ion-row class="bg_textColor">
+          <ion-col size="11">
+            <span class="font-size14-familyPoppins">Last 1 Hour Report {{ "("+getLastHourRange()+")"}} </span>
+          </ion-col>
+          <ion-col size="1" class="content_center" (click)="isLastOneHrReportOpen = false">
+            <ion-icon style="font-size: 30px;" name="close"></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-header>
+      <ion-row class="reportType" *ngIf="_retailservice.isAdmin">
+        <ion-col (click)="selectedReportType = 'activity'" class="content_center"
+          [ngClass]="selectedReportType == 'activity'?'activeHtype':''">
+          <div>
+            <span class="font-size16-familyPoppins">Activities</span>
+          </div>
+        </ion-col>
+        <ion-col (click)="selectedReportType = 'zero'" class="content_center"
+          [ngClass]="selectedReportType == 'zero'?'activeHtype':''">
+          <div>
+            <span class="font-size16-familyPoppins">Zero Report</span>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-content>
+
+        <!-- If Admin Login -->
+        <!-- {{isAdmin}} -->
+        <span *ngIf="_retailservice.isAdmin">
+          <!-- Activity Report Table -->
+          <div *ngIf="selectedReportType === 'activity'">
+            <div style="background-color: #F6F6F6;margin: 10px;" *ngFor="let exec of this.activityRepExeutives">
+              <ion-row>
+                <ion-col class="execName">
+                  <span>{{exec.ExecName}}</span>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col class="execStatus">Fixed</ion-col>
+                <ion-col class="execStatus">Done</ion-col>
+                <ion-col class="execStatus">Others</ion-col>
+                <ion-col class="execStatus">Overall</ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col class="execStatusCount">{{exec?.counts[0]?.visitsfixed}}</ion-col>
+                <ion-col class="execStatusCount">{{exec?.counts[0]?.visitsdone}}</ion-col>
+                <ion-col class="execStatusCount">{{exec?.counts[0]?.others}}</ion-col>
+                <ion-col class="execStatusCount">{{exec?.counts[0]?.overall}}</ion-col>
+              </ion-row>
+            </div>
+            <ion-row *ngIf="activityRepExeutives?.length === 0" style="border-bottom:none;height:100%"
+              class="content_center">
+              <ion-col class="ion-text-center">
+                <span>No Data Found ...!</span>
+              </ion-col>
+            </ion-row>
+          </div>
+
+          <!-- Zero Report Table -->
+          <div *ngIf="selectedReportType == 'zero'" style="margin: 0 55px;">
+            <ion-row class="tableHeading font-size14-familyPoppins">
+              <ion-col class="content_center text_bgColor_orrange">Zero Activities Executives</ion-col>
+              <!-- <ion-col size="5.5" class="content_center text_bgColor_gray">Week-off Executives</ion-col> -->
+            </ion-row>
+            <div>
+              <ion-row class="zero_weekoff_exec" *ngFor="let exec of this.zeroRepExecutives"
+                style=" border-bottom: 1px solid #ECECEC;">
+                <ion-col class="content_center">
+                  <span class="font-size12-familyPoppins">{{exec.ExecName}}</span>
+                </ion-col>
+                <!-- <ion-col size="5.5" class="content_center">
+                      <span class="font-size12-familyPoppins">{{exec.ExecName}}</span>
+                    </ion-col> -->
+              </ion-row>
+              <ion-row *ngIf="zeroRepExecutives?.length === 0" style="border-bottom:none;height:100%"
+                class="content_center">
+                <ion-col class="ion-text-center">
+                  <span>No Data Found ...!</span>
+                </ion-col>
+              </ion-row>
+            </div>
+          </div>
+        </span>
+        <span *ngIf="!_retailservice.isAdmin">
+          <div class="activityReportDiv">
+            <ion-row>
+              <ion-col class="content_center ">
+                <span class="font-size14-familyPoppins">
+                  Here's a summary of your CRM activity in last 1 hour.
+                  Review and take necessary action
+                </span>
+              </ion-col>
+            </ion-row>
+
+            <ion-row class="status-row">
+              <ion-col class="font-size12-familyPoppins">Untouched <span>{{totalPendingCount}}</span> </ion-col>
+              <ion-col class="font-size12-familyPoppins">RSV Done <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.rsvdone}}</span></ion-col>
+            </ion-row>
+            <ion-row class="status-row">
+              <ion-col class="font-size12-familyPoppins">General Followups <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.generalfollowups}}</span></ion-col>
+              <ion-col class="font-size12-familyPoppins">FN Fix <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.fnfixed}}</span></ion-col>
+            </ion-row>
+            <ion-row class="status-row">
+              <ion-col class="font-size12-familyPoppins">NC <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.NC}}</span></ion-col>
+              <ion-col class="font-size12-familyPoppins">FN Done <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.fndone}}</span></ion-col>
+            </ion-row>
+            <ion-row class="status-row">
+              <ion-col class="font-size12-familyPoppins">USV Fix <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.usvfixed}}</span></ion-col>
+              <ion-col class="font-size12-familyPoppins">Inactive <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.inactive}}</span></ion-col>
+            </ion-row>
+            <ion-row class="status-row">
+              <ion-col class="font-size12-familyPoppins">USV Done <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.usvdone}}</span></ion-col>
+              <ion-col class="font-size12-familyPoppins">Junk Leads <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.junkleads}}</span></ion-col>
+            </ion-row>
+            <ion-row class="status-row">
+              <ion-col class="font-size12-familyPoppins">SV Fix <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.svfixed}}</span></ion-col>
+              <ion-col class="font-size12-familyPoppins">Junk Visits <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.junkvisits}}</span></ion-col>
+            </ion-row>
+            <ion-row class="status-row">
+              <ion-col class="font-size12-familyPoppins">SV Done <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.svdone}}</span></ion-col>
+              <ion-col class="font-size12-familyPoppins">Booking Requests
+                <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.closingrequest}}</span></ion-col>
+            </ion-row>
+            <ion-row class="status-row">
+              <ion-col class="font-size12-familyPoppins">RSV Fix <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.rsvfixed}}</span></ion-col>
+              <ion-col class="font-size12-familyPoppins">Booked <span
+                  *ngIf="executiveCounts && executiveCounts[0]">{{executiveCounts[0]?.closingrequest}}</span></ion-col>
+            </ion-row>
+          </div>
+        </span>
+      </ion-content>
+      <ion-footer style="box-shadow: none;">
+        <div class="content_center" *ngIf="!_retailservice.isAdmin">
+          <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/fileTransfer.gif"></ion-img>
+        </div>
+        <ion-row>
+          <ion-col class="content_center">
+            <span *ngIf="!_retailservice.isAdmin">Submitting Report</span>
+            <span (click)="onDetailedReport()" *ngIf="_retailservice.isAdmin" class="detailed_btn">View Detailed Report
+              <span class="rounded_btn"><i class="fa fa-greater-than"></i></span></span>
+          </ion-col>
+        </ion-row>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+
+  <div
+    *ngIf="sharedService.isMenuOpen && (localStorage.getItem('Department') != '10005' && localStorage.getItem('Department') != '10006')">
+    <app-menu></app-menu>
+  </div>
+
+  <ion-router-outlet id="app-content"></ion-router-outlet>
+</ion-app>

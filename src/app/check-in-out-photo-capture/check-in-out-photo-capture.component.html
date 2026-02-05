@@ -1,0 +1,192 @@
+<!-- CHECK-OUT BUTTON AND TIMER -->
+<!-- <ion-row *ngIf="localStorage.getItem('Role') != '1' && timer !== '00:00:00 Hrs'"> -->
+<ion-row *ngIf="timer !== '00:00:00 Hrs'" style="margin: 0 5px;">
+  <ion-col>
+    <div>
+      <span style="color: rgba(110, 111, 115, 1);font-size:22px">
+        {{timer}}
+      </span>
+    </div>
+  </ion-col>
+  <ion-col class="check-outBtn ion-text-end" (click)="onCheckOut()">
+    <div>
+      <span class="font-size16-familyPoppins">Check-Out</span>
+    </div>
+  </ion-col>
+</ion-row>
+
+<!-- <div >
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Location Details</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p *ngIf="locationError" class="ion-text-danger">{{ locationError }}</p>
+
+      <ion-item>
+        <ion-label position="stacked">Latitude:</ion-label>
+        <ion-input [value]="latitude || 'N/A'" readonly></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Longitude:</ion-label>
+        <ion-input [value]="longitude || 'N/A'" readonly></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Address:</ion-label>
+        <ion-textarea [value]="address || 'N/A'" rows="3" readonly></ion-textarea>
+      </ion-item>
+
+      <ion-button expand="block" (click)="getCurrentLocation()" [disabled]="isLoading">
+        <ion-icon name="locate-outline" slot="start"></ion-icon>
+        {{ isLoading ? 'Fetching Location...' : 'Fetch Current Location' }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</div> -->
+<!-- <ion-button (click)="check_in_AlertModal.present()" expand="block">Open Custom Dialog</ion-button> -->
+<!-- Chick_in Alert modal -->
+<ion-modal id="check-inAlertModal" [isOpen]='check_in_AlertModal1' class="chickInModal" #check_in_AlertModal
+  [backdropDismiss]="false">
+  <ng-template>
+
+    <ion-row class="mainHeading">
+      <ion-col size="2" class="content_center">
+        <ion-img src="../../assets/CRMimages/logo.png" class="logo"></ion-img>
+      </ion-col>
+      <ion-col class="content_center">
+        <span>{{depId != '10006'?'Dashboard':''}}</span>
+      </ion-col>
+      <ion-col size="2" class="font-size12-familyPoppins content_center" (click)="logOut()">
+        <!-- <ion-img style="width: 24px;" src="../../assets/CRMimages/check_out-icon.svg"></ion-img> -->
+        <ion-icon name="power" style="color: #b75861;width: 29px;"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-row style="padding: 5px 0;">
+      <ion-col size="8">
+        <span class="font-size16-familyPoppins">You are not checked in </span>
+      </ion-col>
+      <ion-col size="4" class="content_ceneter" (click)="onCheck_inPhotoCapture()">
+        <div class="check_in">
+          <span class="font-size16-familyPoppins">Check-in</span>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ng-template>
+</ion-modal>
+
+<!-- Click_in Photo Capture Modal -->
+<ion-modal id="photoCaptureModal" #photoCaptureModal [backdropDismiss]="false" keepContentsMounted="true">
+  <ng-template>
+    <ion-row class="mainHeading">
+      <ion-col size="1" class="content_center" (click)="photoCaptureModal.dismiss()">
+        <ion-icon name="arrow-back" style="font-size: 24px;"></ion-icon>
+      </ion-col>
+      <ion-col>
+        <span *ngIf="!capturedImage">Remote Attendance Punch</span>
+        <span *ngIf="capturedImage && timer === '00:00:00 Hrs'">Check-In</span>
+        <span *ngIf="capturedImage && timer !== '00:00:00 Hrs'">Check-Out</span>
+      </ion-col>
+    </ion-row>
+
+    <div class="retake_button" *ngIf="capturedImage">
+      <ion-img style="object-fit: fill; width: 100%; height: 100%;" [src]="capturedImage"></ion-img>
+      <ion-row class="activeSaveButton" (click)="takePicture($event)">
+        <ion-col class="content_center" style="padding: 2px;">
+          <span>Retake</span>
+          <ion-icon name="refresh-outline" style="font-size: 24px;"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <div style="padding: 5px;">
+      <span *ngIf="capturedImage">
+        <ion-row>
+          <ion-col class="center-vertically date">
+            <ion-icon name="time-outline" class="iconColor_fontSize"></ion-icon>
+            <span class="font-size16-familyPoppins">
+              {{ todayDate | date: 'hh:mm a' }}
+            </span>
+          </ion-col>
+          <ion-col class="center-vertically time" style="justify-content: flex-end;">
+            <ion-icon name="calendar-outline" class="iconColor_fontSize"></ion-icon>
+            <span class="font-size16-familyPoppins">
+              {{todayDate | date: 'yyyy-MM-dd'}}
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="1" class="location-icon">
+            <span>
+              <ion-icon name="location-outline" class="iconColor_fontSize"></ion-icon>
+            </span>
+          </ion-col>
+          <ion-col class="address">
+            <span class="font-size14-familyPoppins">
+              {{address}}
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <div class="content_center loader" *ngIf="isFetchingLocation">
+          <span style="color: white;" class="font-size14-familyPoppins">Fetching your location, please wait...</span>
+        </div>
+
+        <div class="content_center loader" *ngIf="isCheckInInProgress">
+          <span style="color: white;" class="font-size14-familyPoppins">Processing your {{checkStatus}}...</span>
+        </div>
+
+
+
+        <!-- <ion-item-sliding (ionSwipe)="onSwipeToCheck_in($event)" class="content_center">
+              <ion-item lines="none">
+                <ion-row class="activeSaveButton">
+                  <ion-col  size="1.5" style="border-radius: 3px;" class="content_center">
+                    <ion-icon class="icon-box" name="chevron-forward-outline"></ion-icon>
+                  </ion-col>
+                  <ion-col class="content_center text-box">
+                    <span style="color: rgba(255, 255, 255, 1);font-family: 'Poppins';font-size:6vw;">
+                      Swipe to Check-In > >
+                    </span>
+                  </ion-col>
+                </ion-row>
+              </ion-item> 
+                <ion-item-options side="start">
+                </ion-item-options>
+            </ion-item-sliding> -->
+
+
+
+        <ion-row class="check_inNowBtn">
+          <ion-col class="content_center">
+            <ion-button *ngIf="timer === '00:00:00 Hrs'" (click)="onCheckInOut('in')" class="activeSaveButton"
+              fill="clear">Check-In Now</ion-button>
+            <ion-button *ngIf="timer !== '00:00:00 Hrs'" (click)="onCheckInOut('out')" class="activeSaveButton"
+              fill="clear">Check-Out Now</ion-button>
+          </ion-col>
+        </ion-row>
+      </span>
+
+      <span *ngIf="!capturedImage">
+        <ion-row class="faceframe">
+          <ion-col class="content_center">
+            <span>
+              Make sure your face is the centre of the frame
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="1"></ion-col>
+          <ion-col class="content_center activeSaveButton" (click)="takePicture($event)">
+            <span style="color: rgba(255, 255, 255, 1);font-family: 'Poppins';font-size:24px">Capture</span>
+            <ion-icon name="camera" style="color:white;font-size: 34px;padding-left: 5px;"></ion-icon>
+          </ion-col>
+          <ion-col size="1"></ion-col>
+        </ion-row>
+      </span>
+    </div>
+  </ng-template>
+</ion-modal>

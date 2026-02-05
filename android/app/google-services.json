@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "906963469136",
+    "project_id": "testnotification-2cedf",
+    "storage_bucket": "testnotification-2cedf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906963469136:android:2abb10a3a20bdd8da7a255",
+        "android_client_info": {
+          "package_name": "io.lead247"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5EWyIbyF6hN6_yYrswovQF9tQap03x4Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

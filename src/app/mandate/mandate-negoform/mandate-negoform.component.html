@@ -1,0 +1,425 @@
+<!-- priority Level -->
+<!-- <div class="priority-level margin-top-16" *ngIf="!isLeadCloseSubForm && this.activestagestatus[0].stage !=='RSV' && this.activestagestatus[0].stage !=='USV'">
+    <ion-row>
+      <ion-col>Priority Level</ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col class="content_center" [ngClass]="isHot?'activeHot':'inactive'" (click)="onHotWarmCold('hot')">
+        <span>HOT</span> <ion-img [src]="isHot?'../../assets/CRMimages/activehoticon.svg':'../../assets/CRMimages/hoticon.svg'"></ion-img>
+        <input type="hidden" id="priorityhiddeninput" [value]="isHot?'1':isWarm?'2':isCold?'3':''">
+        </ion-col>
+      <ion-col class="content_center" [ngClass]="isWarm?'activeWarm':'inactive'" (click)="onHotWarmCold('warm')">
+        <span>WARM</span><ion-img [src]="isWarm?'../../assets/CRMimages/activewarmicon.svg':'../../assets/CRMimages/warmicon.svg'"></ion-img></ion-col>
+      <ion-col class="content_center" [ngClass]="isCold?'activeCold':'inactive'" (click)="onHotWarmCold('cold')">
+        <span>COLD</span> <ion-img [src]="isCold?'../../assets/CRMimages/activecoldicon.svg':'../../assets/CRMimages/coldicon.svg'"></ion-img></ion-col>
+    </ion-row>
+  </div> -->
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<div>
+  <div *ngIf="buttonhiders" class="negoform margin-top-16">
+    <ion-row>
+      <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+        Fixing FN
+      </p>
+    </ion-row>
+
+    <ion-row *ngIf="hidebeforefixed || hideafterfixed || commonhide">
+      <ion-col size="6" *ngIf="hideafterfixed">
+        <div class="content_center" fill="clear" [ngClass]="isNegoFixed?'activeStatus':'inActiveStatus'"
+          (click)="onnegoFixed()">Fix FN</div>
+      </ion-col>
+      <ion-col size="6" *ngIf="hidebeforefixed">
+        <div class="content_center" fill="clear" [ngClass]="isNegoReFix?'activeStatus':'inActiveStatus'"
+          (click)="onnegoreFix()">Refix FN</div>
+      </ion-col>
+      <ion-col size="6" *ngIf="hidebeforefixed">
+        <div class="content_center" fill="clear" [ngClass]="isNegoDone?'activeStatus':'inActiveStatus'"
+          (click)="onnegoDone()">FN Done</div>
+      </ion-col>
+      <!-- <ion-col size="6"  *ngIf="commonhide" >
+        <div class="content_center" fill="clear" [ngClass]="isFollowform?'activeStatus':'inActiveStatus'" (click)="onfollowup()">Follow Up</div>
+       </ion-col>
+      <ion-col size="6"  *ngIf="commonhide">
+        <div class="content_center" [ngClass]="isJunk?'activeStatus':'inActiveStatus'"  fill="clear"  (click)="onjunk()">Junk</div>
+       </ion-col>   -->
+    </ion-row>
+  </div>
+
+  <input type="hidden" id="sectionselector">
+  <input type="hidden" id="visitupdate">
+
+  <!-- negotiation fixed -->
+  <div *ngIf="isNegoFixed" class="negoform margin-top-16">
+    <form (ngSubmit)="negofixing()" ngNativeValidate #submitForm="ngForm">
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          <span> Negotiation Date</span>
+        </p>
+      </ion-row>
+      <ion-row class="center-content">
+        <div lines="none" class="input-with-image date-input">
+          <ion-input [(ngModel)]="negoDate" name="date" id="negonextactiondate" placeholder="Choose Date"
+            inputmode="none" required>
+          </ion-input>
+          <ion-popover trigger="negonextactiondate" #popover>
+            <ng-template>
+              <ion-datetime presentation="date" locale="en-US"
+                (ionChange)="onDateChange($event);closePopover()"></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </ion-row>
+
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          <span>Negotiation Time</span>
+        </p>
+      </ion-row>
+      <ion-row class="center-content">
+        <div no-lines class="date-input inputTime-with-image">
+          <div style="width: 100%;">
+            <input style="width: 100%;" pInputText placeholder="Choose Time" id="negonextactiontime"
+              aria-label="12hr format" [ngxTimepicker]="default" [(ngModel)]="negoTime" name="negoTime" inputmode="none"
+              (ngModelChange)="validateTime()" readonly>
+          </div>
+        </div>
+      </ion-row>
+      <ngx-material-timepicker #default></ngx-material-timepicker>
+      <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.</div>
+
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</p>
+      </ion-row>
+      <ion-row class="custom-textArea">
+        <ion-textarea placeholder="Write remarks" id="negotextarearemarks" name="remark" required
+          [(ngModel)]="textarearemarks" (ngModelChange)="checkAlphanumericSpaces()"></ion-textarea>
+      </ion-row>
+
+      <ion-row class="submitForm">
+        <ion-col class="paddingZero">
+          <ion-button fill="clear" type="reset">Cancel</ion-button>
+        </ion-col>
+        <ion-col class="paddingZero">
+          <ion-button fill="clear" class="saveButton" [ngClass]="submitForm.invalid?'saveButton':'activeSaveButton'"
+            type="submit" [disabled]="submitForm.invalid">Save</ion-button>
+        </ion-col>
+      </ion-row>
+    </form>
+  </div>
+
+  <!-- NEGOTIATION REFIX -->
+  <div *ngIf="isNegoReFix" class="negoform margin-top-16">
+    <form (ngSubmit)="negorefixing()" ngNativeValidate #submitForm="ngForm">
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          <span>Negotiation Refixed Date</span>
+        </p>
+      </ion-row>
+      <ion-row class="center-content">
+        <div lines="none" class="input-with-image date-input">
+          <ion-input [(ngModel)]="negoDate" name="date" id="refixdate" placeholder="Choose Date" inputmode="none"
+            required></ion-input>
+          <ion-popover trigger="refixdate" #popover>
+            <ng-template>
+              <ion-datetime [min]="minDate" [max]="maxDate" presentation="date" locale="en-US"
+                (ionChange)="onDateChange($event);closePopover()"></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </ion-row>
+
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          <span>Negotiation Refixed Time</span>
+        </p>
+      </ion-row>
+      <ion-row class="center-content">
+        <div no-lines class="date-input inputTime-with-image">
+          <div style="width: 100%;">
+            <input style="width: 100%;" pInputText placeholder="Choose Time" id="refixtime" aria-label="12hr format"
+              [ngxTimepicker]="default" [(ngModel)]="negoTime" name="negoTime" inputmode="none"
+              (ngModelChange)="validateTime()" required>
+          </div>
+        </div>
+      </ion-row>
+      <ngx-material-timepicker #default></ngx-material-timepicker>
+      <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.</div>
+
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</p>
+      </ion-row>
+      <ion-row class="custom-textArea">
+        <ion-textarea placeholder="Write remarks" id="refixtextarearemarks" name="remark" required
+          [(ngModel)]="Refixtextarearemarks" (ngModelChange)="checkAlphanumericSpaces()"></ion-textarea>
+      </ion-row>
+
+      <ion-row class="submitForm">
+        <ion-col class="paddingZero">
+          <ion-button fill="clear" type="reset">Cancel</ion-button>
+        </ion-col>
+        <ion-col class="paddingZero">
+          <ion-button fill="clear" class="saveButton"
+            [ngClass]="submitForm.invalid || hasOnlySpaces?'saveButton':'activeSaveButton'" type="submit"
+            [disabled]="submitForm.invalid || hasOnlySpaces">Save</ion-button>
+        </ion-col>
+      </ion-row>
+    </form>
+  </div>
+
+  <!-- negitiatioon done -->
+  <span *ngIf="isNegoDone">
+    <!-- Display Cancelled Property -->
+    <span *ngIf="cancelledpropertylists?.length">
+      <div *ngFor="let negocancelled of cancelledpropertylists" class="cancelledProperty">
+        <ion-row class="margin-top-16">
+          <ion-col size="8" class="font-size12-familyPoppins font-colorBlack font-weight500">
+            <p>Cancelled Properties</p>
+          </ion-col>
+          <ion-col size="4" class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="8"
+            class="font-size12-familyPoppins font-colorBlack font-weight500">{{negocancelled.name}}</ion-col>
+          <ion-col size="4"
+            class="font-size12-familyPoppins font-colorBlack font-weight500">{{negocancelled.remarks}}</ion-col>
+        </ion-row>
+      </div>
+      <p *ngIf="!cancelledpropertylists?.length">No Update Till Now</p>
+    </span>
+
+    <form ngNativeValidate #submitForm="ngForm">
+      <span *ngIf="negotiatedproperty?.length">
+        <span class="cancelledProperty">
+          <ion-row class="margin-top-16">
+            <ion-col size="8" class="font-size12-familyPoppins font-colorBlack font-weight500">
+              <p class="negoProperty">Negotiated Properties</p>
+            </ion-col>
+            <ion-col size="4" class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</ion-col>
+          </ion-row>
+          <ion-row *ngFor="let negovisited of negotiatedproperty">
+            <ion-col size="8"
+              class="font-size12-familyPoppins font-colorBlack font-weight500">{{negovisited.name}}</ion-col>
+            <ion-col size="4"
+              class="font-size12-familyPoppins font-colorBlack font-weight500">{{negovisited.remarks}}</ion-col>
+          </ion-row>
+        </span>
+      </span>
+
+      <span *ngFor="let suggested of selectedpropertylists; let i = index">
+        <!--interested and not interested section  -->
+        <div class="negoform margin-top-16">
+          <div class="projectname">
+            <ion-row class="custom-row">
+              <ion-col class="ion-text-center">{{suggested.name}}</ion-col>
+            </ion-row>
+            <ion-row class="content_center" style="padding: 5px;">
+              <ion-col style="margin-right: 2px;" [ngClass]="isInterested?'activeInteested':'inActiveInterested'"
+                class="content_center" (click)="visitclick()"><span>Done</span></ion-col>
+              <ion-col [ngClass]="isNotInterested?'activeInteested':'inActiveInterested'" class="content_center"
+                (click)="cancelclick()"><span>Not Done</span></ion-col>
+            </ion-row>
+          </div>
+
+
+
+          <span>
+            <form (ngSubmit)="updatepropertyvisit(suggested.propid,suggested.name,i)" ngNativeValidate
+              #submitForm="ngForm">
+              <ion-row class="margin-top-16">
+                <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+                  Site Visit Remarks
+                </p>
+              </ion-row>
+              <ion-row class="custom-textArea">
+                <textarea style="width: 100%;height: 100%;padding: 5px;" placeholder="Write remarks" name="remark"
+                  id="propertyremarks" [(ngModel)]="textarearemarks" (ngModelChange)="checkAlphanumericSpaces()"
+                  required>
+                </textarea>
+              </ion-row>
+
+              <ion-row class="submitForm" *ngIf="isNotInterested">
+                <ion-col class="paddingZero">
+                  <ion-button fill="clear" type="reset">Cancel</ion-button>
+                </ion-col>
+                <ion-col class="paddingZero">
+                  <ion-button fill="clear" class="saveButton" type="submit"
+                    [ngClass]="submitForm.invalid || hasOnlySpaces?'saveButton':'activeSaveButton'"
+                    [disabled]="submitForm.invalid || hasOnlySpaces">Save</ion-button>
+                </ion-col>
+              </ion-row>
+            </form>
+          </span>
+        </div>
+
+        <!-- Important Hidden Fields -->
+        <span [hidden]="propertybasedFilter?.length && propertybasedFilter[0]?.followupdate != null">
+          <ion-row class="margin-top-16">
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              <span>Negotiated Date</span>
+            </p>
+          </ion-row>
+          <ion-row class="center-content">
+            <div lines="none" class="input-with-image date-input">
+              <ion-input [(ngModel)]="negovisiteddate" name="date" id="negovisiteddate" placeholder="Choose Date"
+                inputmode="none" required></ion-input>
+              <ion-popover trigger="negovisiteddate" #popover>
+                <ng-template>
+                  <ion-datetime [min]="minDate" [max]="maxDate" presentation="date" locale="en-US"
+                    (ionChange)="onDateChange($event);closePopover()"></ion-datetime>
+                </ng-template>
+              </ion-popover>
+            </div>
+          </ion-row>
+
+          <ion-row class="margin-top-16">
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+              <span>Negotiated Time</span>
+            </p>
+          </ion-row>
+          <ion-row class="center-content">
+            <div no-lines class="date-input inputTime-with-image">
+              <div style="width: 100%;">
+                <input style="width: 100%;" pInputText placeholder="Choose Time" id="negovisitedtime"
+                  aria-label="12hr format" [ngxTimepicker]="default" [(ngModel)]="negovisitedtime" name="negoTime"
+                  inputmode="none" (ngModelChange)="this.negoTime = this.negovisitedtime; validateTime()" required>
+              </div>
+            </div>
+          </ion-row>
+          <ngx-material-timepicker #default></ngx-material-timepicker>
+          <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.</div>
+        </span>
+
+
+
+
+
+
+        <div *ngIf="isInterested" class="negoform margin-top-16">
+          <ion-row>
+            <p class="font-size12-familyPoppins font-colorBlack font-weight500"> Select the next Action</p>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <div class="content_center" [ngClass]="isFollowUpSubForm?'activeStatus':'inActiveStatus'"
+                (click)="followupdownbtn()">Follow Up</div>
+            </ion-col>
+            <ion-col size="6">
+              <div class="content_center" [ngClass]="isRsvSubForm?'activeStatus':'inActiveStatus'"
+                (click)="onrsvFixed()">Fix RSV</div>
+            </ion-col>
+            <ion-col size="6">
+              <div class="content_center" [ngClass]="isFnSubForm?'activeStatus':'inActiveStatus'"
+                (click)="onsubnegofixed()">Fix FN</div>
+            </ion-col>
+            <ion-col size="6">
+              <div class="content_center" [ngClass]="isLeadCloseSubForm?'activeStatus':'inActiveStatus'"
+                (click)="onleadclosed()">Closure</div>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <app-follow-up-form [selectedExecId]="selectedExecId" [selectedSuggestedProp]="selectedSuggestedProp"
+          *ngIf="isFollowUpSubForm" [onCallLeadDetails]="onCallLeadDetails"></app-follow-up-form>
+        <app-mandate-rsv-form [selectedExecId]="selectedExecId" [selectedSuggestedProp]="selectedSuggestedProp"
+          *ngIf="isRsvSubForm" [onCallLeadDetails]="onCallLeadDetails"></app-mandate-rsv-form>
+
+
+        <div *ngIf="isFnSubForm" class="negoform margin-top-16">
+          <form (ngSubmit)="negodonewithfixing()" ngNativeValidate #submitForm="ngForm">
+            <span *ngIf="isFnSubForm">
+              <ion-row class="margin-top-16">
+                <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+                  <span>Next Action Date</span>
+                </p>
+              </ion-row>
+
+              <ion-row class="center-content">
+                <div lines="none" class="input-with-image date-input">
+                  <ion-input [(ngModel)]="negoDate" name="date" id="subnegonextactionDate" placeholder="Choose Date"
+                    inputmode="none" required></ion-input>
+                  <ion-popover trigger="subnegonextactionDate" #popover>
+                    <ng-template>
+                      <ion-datetime [min]="minDate" [max]="maxDate" presentation="date" locale="en-US"
+                        (ionChange)="onDateChange($event);closePopover()"></ion-datetime>
+                    </ng-template>
+                  </ion-popover>
+                </div>
+              </ion-row>
+
+              <ion-row class="margin-top-16">
+                <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+                  <span>Next Action Time</span>
+                </p>
+              </ion-row>
+              <ion-row class="center-content">
+                <div no-lines class="date-input inputTime-with-image">
+                  <div style="width: 100%;"> <input style="width: 100%;" pInputText placeholder="Choose Time"
+                      id="refixtime" aria-label="12hr format" id="subnegonextactiontime" [ngxTimepicker]="default"
+                      [(ngModel)]="negoTime" (ngModelChange)="validateTime()" name="refixtime" inputmode="none"
+                      required></div>
+                </div>
+              </ion-row>
+              <ngx-material-timepicker #default></ngx-material-timepicker>
+              <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.
+              </div>
+
+              <ion-row class="margin-top-16">
+                <p class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</p>
+              </ion-row>
+              <ion-row class="custom-textArea">
+                <ion-textarea placeholder="Write remarks" id="subnegotextarearemarks" name="remark" required
+                  [(ngModel)]="subnegotextarearemarks" (ngModelChange)="checkAlphanumericSpaces1()"></ion-textarea>
+              </ion-row>
+
+              <ion-row class="submitForm">
+                <ion-col class="paddingZero">
+                  <ion-button fill="clear" type="reset">Cancel</ion-button>
+                </ion-col>
+                <ion-col class="paddingZero">
+                  <ion-button fill="clear" class="saveButton"
+                    [ngClass]="submitForm.invalid || hasOnlySpaces?'saveButton':'activeSaveButton'" type="submit"
+                    [disabled]="submitForm.invalid || hasOnlySpaces">Save</ion-button>
+                </ion-col>
+              </ion-row>
+            </span>
+          </form>
+        </div>
+        <!-- <app-closedform [selectedExecId]="selectedExecId" [selectedSuggestedProp]="selectedSuggestedProp"
+          *ngIf="isLeadCloseSubForm" [onCallLeadDetails]="onCallLeadDetails"></app-closedform> -->
+        <app-mandate-close-form [selectedExecId]="selectedExecId" [selectedSuggestedProp]="selectedSuggestedProp"
+          *ngIf="isLeadCloseSubForm" [onCallLeadDetails]="onCallLeadDetails"></app-mandate-close-form>
+      </span>
+    </form>
+  </span>
+
+  <app-follow-up-form [selectedExecId]="selectedExecId" [selectedSuggestedProp]="selectedSuggestedProp"
+    *ngIf="isFollowform" [onCallLeadDetails]="onCallLeadDetails"></app-follow-up-form>
+
+  <app-junkform [selectedExecId]="selectedExecId" [selectedSuggestedProp]="selectedSuggestedProp" *ngIf="isJunk"
+    [onCallLeadDetails]="onCallLeadDetails"></app-junkform>
+
+
+</div>
+<!-- Important Hidden Fields -->
+<!-- <div class="col-sm-6 form-group headingdesign" style="display: none;">
+  <label class="heads">Negotiated Date</label>
+  <div class="ui calendar visitedcalendardate">
+    <div class="ui input left icon datepickerdiv">
+      <i class="calendar icon"></i>
+      <input type="text" autocomplete="off" id="negovisiteddate" placeholder="Date">
+    </div>
+  </div>
+</div>
+<div class="col-sm-6 form-group headingdesign" style="display: none;">
+  <label class="heads">Negotiated Time</label>
+  <div class="ui calendar calendartime">
+    <div class="ui input left icon timepickerdiv" style="width: 100%;">
+      <i class="time icon"></i>
+      <input class="form-control" autocomplete="off" id="negovisitedtime" type="text" placeholder="Time">
+    </div>
+  </div>
+</div> -->

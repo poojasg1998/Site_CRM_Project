@@ -1,0 +1,377 @@
+.ion-filter-icon {
+  position: absolute;
+  bottom: 0;
+  z-index: 980;
+}
+
+.ion-filter-icon ion-img {
+  background: #ffff;
+  box-shadow: 0 -8px 10px rgb(0 0 0 / 0.2);
+  border-radius: 50px;
+}
+
+ion-footer {
+  height: 55px;
+}
+
+.footer-toolbar {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  --min-height: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 -8px 10px rgb(0 0 0 / 0.2);
+}
+
+.footer-icons {
+  position: relative;
+  background-color: #ffffff;
+}
+
+.backButton {
+  width: 20px;
+  height: 20px;
+  color: rgba(8, 8, 8, 0.4);
+}
+.menuList .row-height,
+.menuList div,
+.menuList .subdrop-row-height {
+  font-family: "Poppins";
+  background: #ffffff;
+  margin-bottom: 2px;
+  border-radius: 2px;
+  box-shadow: 0px 3px 5px 1px #ececec;
+}
+
+.menuList ion-accordion-group div {
+  padding: 10px 37px;
+}
+
+.submenu ion-col {
+  font-size: 12px;
+  padding-left: 25px;
+  font-family: "Poppins";
+}
+
+.logOut div {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 400;
+  font-family: "Poppins";
+  background: linear-gradient(180deg, #2196f3 0%, #0968b4 100%);
+  width: 145px;
+  height: 86%;
+  border-radius: 4px;
+}
+
+.logOut ion-col {
+  height: 45px;
+}
+
+.logOut ion-col ion-img {
+  padding-right: 5px;
+}
+
+.bg-img {
+  height: 100vh; /* Ensure the content takes up the full viewport height */
+  --background-image: url(../../assets/CRMimages/menu-bg-img.svg);
+}
+
+.row-height {
+  height: 48px;
+}
+.img-height-width {
+  width: 24px;
+  height: 24px;
+  padding-right: 5px;
+}
+.lock-icon {
+  width: 100%;
+  position: absolute;
+  display: flex;
+  height: 150px;
+  justify-content: center;
+  align-items: center;
+}
+
+.lock-icon ion-img {
+  height: 35%;
+  opacity: 0.4;
+}
+ion-item::part(native) {
+  background: #ffffff;
+  margin-bottom: 2px;
+  border-radius: 2px;
+  box-shadow: 0px 1px 5px 1px #ececec;
+  padding: 0;
+}
+
+ion-item ion-label {
+  font-family: "Poppins";
+}
+ion-accordion div span {
+  font-size: 14px;
+}
+.activestatusCss {
+  width: 100%;
+  border-radius: 30px;
+  border: 1px solid #bebebe;
+  ion-col span {
+    font-size: 16px;
+    font-family: "Poppins";
+  }
+}
+
+.leftBorder {
+  border-left: 1px solid #bebebe;
+  border-radius: 30px;
+  background: #0b7ab2;
+  color: #ffff !important;
+  font-family: "Poppins";
+}
+.rightBorder {
+  border-right: 1px solid #bebebe;
+  border-radius: 30px;
+  background: #0b7ab2;
+  color: #ffff !important;
+  font-family: "Poppins";
+}
+.logo::part(image) {
+  border-radius: 3px !important;
+  width: 24px;
+  height: 24px;
+}
+.retailMandate {
+  width: 100%;
+}
+
+.activeHtype {
+  border: 1px solid white;
+  border-radius: 25px;
+  background: #0b7ab2;
+  color: white;
+}
+.retailMandate {
+  border: 1px solid #0b7ab2;
+  border-radius: 25px;
+  // background: #0B7AB2;
+  color: #0b7ab2;
+}
+
+.main-icon {
+  width: 100%;
+  height: 120%;
+  display: flex;
+  margin-bottom: 21px;
+  align-items: center;
+  justify-content: center;
+  top: 10px;
+  position: absolute;
+  top: 45px;
+  opacity: 0.3;
+}
+.active-menu {
+  background-color: #e6f7ff; // light blue
+  border-left: 4px solid #0b7ab2;
+  font-weight: bold;
+  color: #0b7ab2;
+}
+
+.unreadChat_count {
+  background-color: green;
+  border: 2px solid white;
+  color: white;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5px;
+}
+
+ion-accordion-group {
+  position: relative;
+  z-index: 1;
+}
+
+::ng-deep .toggle-inner {
+  height: 14px !important;
+  width: 14px !important;
+  border: 1px solid #009acb !important;
+}
+
+::ng-deep .native-wrapper .toggle-icon {
+  width: 30px !important;
+  height: 10px !important;
+}
+
+::ng-deep .toggle-icon-wrapper {
+  width: 110% !important;
+}
+
+ion-toggle {
+  --handle-width: 15px;
+}
+ion-toggle::part(handle) {
+  height: 14px !important;
+  width: 14px !important;
+  border: 1px solid #009acb !important;
+}
+
+ion-toggle::part(track) {
+  width: 30px !important;
+  height: 10px !important;
+}
+
+::ng-deep .toggle-ltr.toggle-checked .toggle-inner {
+  border: 1px solid #ffff !important;
+}
+
+ion-toggle.toggle-checked::part(handle) {
+  border: 1px solid #fff !important;
+}
+.activedashboard {
+  color: #0b7ab2;
+  font-weight: 400;
+}
+
+.active-dashboard {
+  background: #ade4ff !important;
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.1215686275);
+  color: #006293 !important;
+}
+.subdrop-row-height {
+  height: 40px;
+}
+.fw-bolder {
+  border-left: 4px solid #0b7ab2;
+}
+
+.menu_switch_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 67px;
+  padding: 3px 4px;
+  span {
+    font-family: "Poppins";
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 0%;
+  }
+}
+
+.switchAccountModal {
+  * {
+    font-family: "Poppins";
+  }
+
+  .switch_btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    background: linear-gradient(180deg, #2196f3 0%, #0b7ab2 100%);
+    border-radius: 0.125rem !important;
+    padding: 0.3rem 0.4rem;
+
+    span {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: #ffffff !important;
+      white-space: nowrap;
+    }
+    ion-img {
+      width: 1.5rem;
+      height: auto;
+    }
+  }
+
+  .exec_acc_switch {
+    border: 0.6px solid #e6e6e6;
+  }
+
+  .name {
+    font-weight: 400;
+    font-size: 1rem;
+  }
+
+  .role {
+    font-weight: 300;
+    font-size: 0.75rem;
+  }
+  .switchacc-header {
+    ion-row {
+      background-color: #d3ecff;
+      color: #0b7ab2;
+    }
+    span {
+      font-size: 16px;
+    }
+    ion-icon {
+      font-size: 30px;
+    }
+  }
+}
+
+ion-modal.switchAccountWarningModal {
+  --backdrop-opacity: 0.8 !important;
+  --width: 90vw;
+  --min-width: 250px;
+  --height: auto;
+  --border-radius: 0.375rem;
+  --box-shadow: 0 1.75rem 3rem rgba(0, 0, 0, 0.4);
+  padding: 0.625rem;
+
+  ion-header {
+    background: #e8f7ff;
+
+    span {
+      color: #004b71;
+      font-size: 1rem;
+    }
+  }
+
+  ion-footer {
+    padding: 0.375rem;
+
+    .switch_btn {
+      background: linear-gradient(180deg, #2196f3 0%, #0b7ab2 100%);
+      color: #ffffff !important;
+    }
+
+    .close_btn {
+      border: 1px solid #1283c7;
+      color: #1a8dde;
+      border-radius: 0.125rem;
+      padding: 0.25rem 0.5rem;
+    }
+  }
+  .close-confirm-btn {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+  .switch_header {
+    font-weight: 300;
+    font-size: 0.75rem;
+    color: #767676;
+  }
+  .name_role {
+    color: #000000;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  .warning_text {
+    font-weight: 300;
+    font-size: 0.875rem;
+  }
+}

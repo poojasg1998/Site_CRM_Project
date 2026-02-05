@@ -1,0 +1,664 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+<!-- <ion-button (click)="dataService.isFilterModalOpen = true;">
+  Filter
+</ion-button>  
+<app-all-filter *ngIf="dataService.isFilterModalOpen"></app-all-filter> -->
+
+<app-header *ngIf="!isOnCallDetailsPage"></app-header>
+
+<ion-row *ngIf="!isOnCallDetailsPage" class="selectOption content_center marginTop10"
+  style="overflow-x: auto; white-space: nowrap;box-shadow: 0 -10px 33px rgb(0 0 0 / 0.1);border-radius: 78px">
+  <div style="display: inline-flex; width: 100%;">
+    <ion-col (click)="onTabPlan('weekends')" class="custom-col center-text font-weight500"
+      style="padding: 3px;display: flex;">
+      <div class="font-size12-familyPoppins content_center" [ngClass]="filteredParams.plan == '2'?'leftBorder':''"
+        style="padding: 4px;border-radius: 78px;width: 100%;">Weekend
+        <!-- - {{Week_plans_counts.weekend }} -->
+      </div>
+    </ion-col>
+
+    <ion-col (click)="onTabPlan('weekdays')" class="custom-col center-text font-weight500"
+      style="padding: 3px;display: flex;">
+      <div class="font-size12-familyPoppins content_center" [ngClass]="filteredParams.plan == '1'?'rightBorder':''"
+        style="padding: 4px;border-radius: 78px; width: 100%;"> Weekdays
+        <!-- - {{Week_plans_counts.weekdays }} -->
+      </div>
+    </ion-col>
+
+    <!-- <ion-col (click)="onTabPlan('ytc')" class="custom-col center-text font-weight500" style="padding: 3px;display: flex;">
+      <div class="font-size12-familyPoppins" [ngClass]="isYTC?'rightBorder':''" style="padding: 4px;border-radius: 78px">Yet To Confirm- {{'28'}}</div>
+    </ion-col> -->
+  </div>
+</ion-row>
+
+<ion-row *ngIf="!isOnCallDetailsPage" class="selectOption content_center marginTop10"
+  style="overflow-x: auto; white-space: nowrap;">
+  <div style="display: inline-flex; width: 100%;">
+    <ion-col class="content_center custom-col center-text font-weight500" style="padding: 3px;display: flex;"
+      (click)="onStage('USV')" routerLink="/retail-plans"
+      [queryParams]="{plan:filteredParams.plan,fromDate:filteredParams.fromDate,toDate:filteredParams.toDate}">
+      <span class="font-size12-familyPoppins usv_section" style="padding:5px 13px;border-radius: 4px"
+        [ngClass]="filteredParams.stage == 'USV'?'bg_textColor':'backGrayColor'">USV {{'('+Week_plans_counts.usv
+        +')'}}</span>
+    </ion-col>
+
+    <ion-col class="content_center custom-col center-text font-weight500" style="padding: 3px;display: flex;"
+      (click)="onStage('RSV')">
+      <span class="font-size12-familyPoppins rsv_section" style="padding:5px 13px;border-radius: 4px"
+        [ngClass]="filteredParams.stage == 'RSV'?'bg_textColor':'backGrayColor'">RSV{{'('+Week_plans_counts.rsv
+        +')'}}</span>
+    </ion-col>
+
+    <ion-col class="content_center custom-col center-text font-weight500" style="padding: 3px;display: flex;"
+      (click)="onStage('Final Negotiation')">
+      <span class="font-size12-familyPoppins fn_section" style="padding:5px 13px;border-radius: 4px"
+        [ngClass]="filteredParams.stage == 'Final Negotiation'?'bg_textColor':'backGrayColor'">FN{{'('+Week_plans_counts.fn
+        +')'}}</span>
+    </ion-col>
+  </div>
+</ion-row>
+
+<ion-row *ngIf="!isOnCallDetailsPage" class="filteredChips">
+  <div style="display: flex; overflow-x: scroll; padding: 0 5px;">
+    <ion-button fill="clear" class="filterButtons" style="padding: 0;"
+      *ngIf="this.filteredParams.fromDate && this.filteredParams.toDate">
+      <span> {{'Next Visits: '+this.filteredParams.fromDate }}{{ " to " + this.filteredParams.toDate }}</span>
+      <!-- <ion-icon slot="end" name="close"></ion-icon> -->
+    </ion-button>
+
+    <span *ngFor="let executive of executive">
+      <ion-button
+        *ngIf="filteredParams.executid?.includes(executive.id) && !filteredParams.executid?.includes(localStorage.getItem('UserId'))"
+        fill="clear" (click)="removeExecutive(executive.id)">
+        {{executive.name}}
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+    </span>
+
+    <span *ngFor="let prop of propertlist">
+      <ion-button *ngIf="filteredParams.propid === prop.property_idfk && localStorage.getItem('PropertyId') != '28773'"
+        fill="clear" (click)="filteredParams.propid = '';addQueryParams()">
+        {{prop.property_info_name}}
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+    </span>
+
+    <ion-button fill="clear" class="filterButtons marginBottom15px" style="padding: 0;"
+      *ngIf="this.filteredParams.visits" (click)="this.filteredParams.visits='';addQueryParams()">
+      <span>Visited Type:{{ this.filteredParams.visits === '2'?'Assigned':'Direct' }}</span>
+      <ion-icon slot="end" name="close"></ion-icon>
+    </ion-button>
+  </div>
+
+</ion-row>
+
+<ion-content *ngIf="!isOnCallDetailsPage" #mainscrollContainer (ionScroll)="onScroll($event)" scrollEvents="true">
+  <!-- card details -->
+  <ion-item-sliding #sliding *ngFor="let lead of leads_detail;let i=index" (ionSwipe)="onSwipe($event,lead)">
+    <ion-item lines="none">
+      <!-- {{i}} -->
+      <div class="lead-info">
+        <ion-row (click)="navigateToDetailsPage(lead.LeadID,'',lead)">
+          <ion-col>
+            <ion-row class="info-row-heading">
+              <ion-col size="6">
+                <div>Lead Name</div>
+                <div> <span class="info-row-value">{{lead.CustomerName}}</span></div>
+              </ion-col>
+              <ion-col size="6" *ngIf="localStorage.getItem('Role') == '1'">
+                <div>Source</div>
+                <div><span class="info-row-value">{{lead.source}}</span></div>
+              </ion-col>
+              <ion-col size="6">
+                <div>Visit Type</div>
+                <div><span class="info-row-value"> {{lead.Leadidentifier == 0?'Assigned':'Direct'}}
+                  </span></div>
+              </ion-col>
+
+
+
+              <ion-col size="6"
+                *ngIf="(!isRM || (isRM && ((lead.Leadphase == 'Fresh' && lead.followupreason == '8') || lead.Leadphase != 'Fresh' )))">
+                <div>Mobile No</div>
+                <div>
+                  <span *ngIf="localStorage.getItem('Name') != 'demo'" class="info-row-value">{{lead.number}}
+                  </span>
+                  <span *ngIf="localStorage.getItem('Name') == 'demo'" class="info-row-value">xxxxxxxxxx</span>
+                </div>
+              </ion-col>
+              <ion-col size="6">
+                <div>Confirmed On</div>
+                <div>
+                  <span class="info-row-value">{{lead.nextactiondate + " , " + lead.nextactiontime}}</span>
+                </div>
+              </ion-col>
+
+              <ion-col size="6">
+                <div *ngIf="localStorage.getItem('Role') == '1'">
+                  <span *ngIf="filteredParams.fromDate > todaysdateforcompare">Fixed Visits</span>
+                  <span *ngIf="filteredParams.fromDate  <= todaysdateforcompare">Visits</span>
+                </div>
+                <div *ngIf="localStorage.getItem('Role') != '1'">
+                  Property
+                </div>
+                <div>
+                  <span class="info-row-value">{{lead.propertyname}}</span>
+                </div>
+              </ion-col>
+              <ion-col>
+                <div>Status</div>
+                <div> {{lead.Leadstatus}}
+                  <span>
+                    {{lead.leadstagestatus == '1'?'Fixed':lead.leadstagestatus == '2'?'Re-Fixed':'Done'}}
+                  </span>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+        <div
+          *ngIf="localStorage.getItem('Role') === '1' && (lead.assigneddate | date:'yyyy-MM-dd') === todaysdateforcompare"
+          class="backgroundLightColor content_center fresh">
+          <span class="font-size12-familyPoppins">Fresh</span>
+        </div>
+        <ion-row class="assignies-row py-1">
+          <!-- <div class="assignies-wrapper" *ngIf="lead.latestvisit.length != 0">
+            <ng-container *ngFor="let visits of lead.latestvisit; let i = index">
+              <div class="assignies-col" *ngIf="i<2">
+                <span class="name">{{ visits.Executivename }}</span>
+                <span class="assign-date" *ngIf="i === 0">
+                  {{ lead.assigneddate | date:'dd MMM, yyyy ,hh:mma' }}
+                </span>
+              </div>
+
+              <div class="horizontal-line" *ngIf="i === 0">
+              </div>
+            </ng-container>
+            <span *ngIf="lead.latestvisit.length>2" class="d-flex" style="align-items: center;">
+              <div class="horizontal-line">
+              </div>
+              <div class="assign-count" [id]="'assign-count-' + i">
+                <span>{{lead.latestvisit.length}}</span>
+              </div>
+            </span>
+
+            <ion-popover [trigger]="'assign-count-' + i" triggerAction="click" class="assigned-exec-count">
+              <ng-template>
+
+                <ng-container *ngFor="let visits of lead.latestvisit; let i = index">
+                  <div class="assigned-exe-col">
+                    <span class="name">{{ visits.Executivename }}</span>
+                  </div>
+
+                  <div class="virtical-line" *ngIf="i != lead.latestvisit.length-1">
+                  </div>
+
+                  <div class="mt-1" *ngIf="i == lead.latestvisit.length-1">
+                    <span class="name" style="color: #555555;">
+                      {{ lead.assigneddate | date:'dd MMM, yyyy ,hh:mma' }}</span>
+                  </div>
+                </ng-container>
+              </ng-template>
+            </ion-popover>
+          </div> -->
+          <div class="assignies-wrapper m-0">
+            <div class="assignto-text">
+              <span>Assigned to</span>
+            </div>
+            <div class="assignies-col bg-transparent">
+              <span class="name fs-6">{{ lead.Executivename }}</span>
+              <span class="assign-date">
+                {{ lead.assigneddate | date:'dd MMM, yyyy ,hh:mma' }}
+              </span>
+            </div>
+          </div>
+        </ion-row>
+
+        <ion-row *ngIf="localStorage.getItem('Name') != 'demo'">
+          <ion-col [id]="'plan-latest-remark-trigger-' + i"
+            class="d-flex align-item-center justify-content-center latest_remark_col">
+            <span>Latest Remark</span>
+            <ion-img class="pl-1" src="../../assets/CRMimages/chat-bubble.svg"></ion-img>
+          </ion-col>
+          <ion-popover [trigger]="'plan-latest-remark-trigger-' + i" triggerAction="click"
+            class="latest-remark-popover">
+            <ng-template>
+              <div style="padding: 4px;border: 1px solid #546D7E;border-radius: 4px;">
+                <p
+                  *ngIf="(lead.visitremarks && lead.visitremarks != 'got this lead from Admin' && lead.visitremarks != 'got this new lead Admin')">
+                  {{lead.visitremarks}}</p>
+                <p
+                  *ngIf="(lead.visitremarks == null || lead.visitremarks == 'got this lead from Admin' || lead.visitremarks == 'got this new lead Admin')">
+                  No Remarks</p>
+              </div>
+            </ng-template>
+          </ion-popover>
+
+          <ion-col size="1.5" class="d-flex align-item-center justify-content-center">
+            <a (click)="this.outboundCall(lead)" class="ion-text-start call-icon">
+              <ion-img src="../../assets/CRMimages/call-icon.svg"></ion-img>
+            </a>
+          </ion-col>
+          <ion-col size="1.5" class="d-flex align-item-center justify-content-center">
+            <a href="https://wa.me/+91{{lead.number}}" class="whatsapp-icon">
+              <ion-img src="../../assets/CRMimages/what'sapp-icon.svg"></ion-img>
+            </a>
+          </ion-col>
+          <ion-col size="1.5" class="d-flex align-item-center justify-content-center">
+            <a (click)="onplayButton(lead)" class="play_icon">
+              <ion-img src="../../assets/CRMimages/play-icon.svg"></ion-img>
+            </a>
+          </ion-col>
+          <ion-col [id]="'mandate-lead-stage-click-trigger-' + i" size="1.5"
+            class="info-icon d-flex align-item-center justify-content-center">
+            <ion-img src="../../assets/CRMimages/info-apps-icon.svg"></ion-img>
+          </ion-col>
+        </ion-row>
+        <span *ngIf="lead.suggestedprop?.[0]?.propid === '16793'">
+          <p [innerHTML]="grSitaraPropertyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+        <span *ngIf="lead.suggestedprop?.[0]?.propid === '1830'">
+          <p [innerHTML]="grSamskruthiProperyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+        </span>
+        <ion-popover [trigger]="'mandate-lead-stage-click-trigger-' + i" triggerAction="click"
+          style="--max-width:150px;padding: 10px;">
+          <ng-template>
+            <div class="dropdown" style="padding: 5px;">
+              <div
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'info')"> <ion-img class="pr-3"
+                  src="../../assets/CRMimages/info_icon.svg"></ion-img><span
+                  class="font-size14-familyPoppins">Information</span></div>
+              <div
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'location')"><ion-img class="pr-2"
+                  src="../../assets/CRMimages/location_icon.svg"></ion-img><span
+                  class="font-size14-familyPoppins">Location</span></div>
+              <div
+                [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'brochure')"> <ion-img class="pr-2"
+                  src="../../assets/CRMimages/brochureIcon.svg"></ion-img><span
+                  class="font-size14-familyPoppins">Documents</span></div>
+            </div>
+          </ng-template>
+        </ion-popover>
+
+
+        <!-- <ion-row>
+          <span *ngIf="lead.propertyname === 'GR Sitara'">
+            <p [innerHTML]="grSitaraPropertyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+          </span>
+          <span *ngIf="lead.propertyname === 'GR Samskruthi' ">
+            <p [innerHTML]="grSamskruthiProperyInfo" #propInfo class="ptopinfo" [hidden]="true"></p>
+          </span>
+          <ion-accordion-group style="width: 100%">
+            <ion-accordion
+              *ngIf="(lead.visitremarks && lead.visitremarks !=='got this new lead Admin') || lead.manualremarks"
+              value="first" style="border-top: 0.75px #ECECEC solid;" class="latestRemark">
+              <ion-item slot="header" color="light" class="custom-ion-item" style="--inner-padding-end:0;padding: 0;">
+                <ion-label style="flex-grow: 1;margin: 5px">
+                  Latest Remark
+                </ion-label>
+              </ion-item>
+              <div style="border-top: 0.75px #ECECEC solid;" slot="content">
+                <p *ngIf="!lead.visitremarks">No Remarks</p>
+                <p *ngIf="lead.visitremarks !== 'got this new lead Admin'">{{lead.visitremarks}}</p>
+                <p>{{lead.manualremarks}}</p>
+                <p *ngIf="lead.manualremarks === null">{{lead.remarks}}</p>
+              </div>
+            </ion-accordion>
+
+          </ion-accordion-group>
+        </ion-row>
+
+
+        <ion-row class="custom-row-style" style="height: 39px;"
+          [ngStyle]="{ height: localStorage.getItem('Role') === '1' ? '33px' : '35px' }">
+          <ion-col size="7" class="paddingZero">
+            <ion-row class="center-vertically" *ngIf="localStorage.getItem('Role') == '1'">
+              <span class="custom-text">Assigned to </span>
+              <span class="highlight-text" style="padding:0 0 0 2px"> {{lead.Executivename +" "}}</span>
+            </ion-row>
+          </ion-col>
+
+          <ion-col size="5" class="content_center">
+            <div style="display: flex;" *ngIf="localStorage.getItem('Name') != 'demo'">
+              <a (click)="outboundCall(lead)" class="ion-text-start" style="padding-right: 8px;">
+                <ion-img src="../../assets/CRMimages/call-icon.svg" class="call-icon"></ion-img>
+              </a>
+              <a href="https://wa.me/+91{{lead.number}}">
+                <ion-img src="../../assets/CRMimages/what'sapp-icon.svg" class="whatsapp-icon"></ion-img>
+              </a>
+
+              <a (click)="onplayButton(lead)" class="playButton">
+                <ion-icon name="play" style="color: white;"></ion-icon>
+              </a>
+              <a [id]="'click-trigger-' + i" class="vertical_ellipse">
+                <ion-icon name="ellipsis-vertical" style="color: white;"></ion-icon>
+              </a>
+
+              <ion-popover [trigger]="'click-trigger-' + i" triggerAction="click"
+                style="--max-width:150px;padding: 10px;">
+                <ng-template>
+                  <div class="dropdown" style="padding: 5px;">
+                    <div
+                      [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                      class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'info')"> <ion-img class="pr-3"
+                        src="../../assets/CRMimages/info_icon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Information</span></div>
+
+                    <div
+                      [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                      class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'location')"><ion-img class="pr-2"
+                        src="../../assets/CRMimages/location_icon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Location</span></div>
+
+                    <div
+                      [ngClass]="(lead.suggestedprop?.[0]?.propid !== '1830') && (lead.suggestedprop?.[0]?.propid !== '16793' )?'pointer_eventsNone':''"
+                      class="d-flex" style="padding:0 6px" (click)="sendWhatsApp(lead,'brochure')"> <ion-img
+                        class="pr-2" src="../../assets/CRMimages/brochureIcon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Documents</span></div>
+                  </div>
+                </ng-template>
+              </ion-popover>
+            </div>
+
+            <div style="display: flex;" *ngIf="localStorage.getItem('Name') == 'demo'">
+              <a class="ion-text-start" style="padding-right: 8px;">
+                <ion-img src="../../assets/CRMimages/call-icon.svg" class="call-icon"></ion-img>
+              </a>
+              <a>
+                <ion-img src="../../assets/CRMimages/what'sapp-icon.svg" class="whatsapp-icon">
+                </ion-img>
+              </a>
+
+              <a class="playButton">
+                <ion-icon name="play" style="color: white;"></ion-icon>
+              </a>
+              <a [id]="'mandate-plan-click-trigger-' + i" class="vertical_ellipse">
+                <ion-icon name="ellipsis-vertical" style="color: white;"></ion-icon>
+              </a>
+              <ion-popover [trigger]="'mandate-plan-click-trigger-' + i" triggerAction="click"
+                style="--max-width:150px;padding: 10px;">
+                <ng-template>
+                  <div class="dropdown" style="padding: 5px;">
+                    <div class="d-flex" style="padding:0 6px"> <ion-img class="pr-3"
+                        src="../../assets/CRMimages/info_icon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Information</span></div>
+
+                    <div class="d-flex" style="padding:0 6px"><ion-img class="pr-2"
+                        src="../../assets/CRMimages/location_icon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Location</span></div>
+
+                    <div class="d-flex" style="padding:0 6px"> <ion-img class="pr-2"
+                        src="../../assets/CRMimages/brochureIcon.svg"></ion-img><span
+                        class="font-size14-familyPoppins">Documents</span></div>
+                  </div>
+                </ng-template>
+              </ion-popover>
+            </div>
+          </ion-col>
+
+        </ion-row> -->
+      </div>
+    </ion-item>
+    <span *ngIf="localStorage.getItem('Name') != 'demo'">
+      <span>
+        <ion-item-options side="end">
+          <ion-img src="../../assets/CRMimages/phone-call.svg" style="width:45px;padding: 10px;"
+            class="call-icon"></ion-img>
+        </ion-item-options>
+        <ion-item-options side="start">
+          <ion-img src="../../assets/CRMimages/whatsapp_icon.svg" style="width:52px;padding: 10px;"
+            class="call-icon"></ion-img>
+        </ion-item-options>
+      </span>
+    </span>
+  </ion-item-sliding>
+
+  <!-- IF LEADS ARE NOT THERE -->
+  <ion-row *ngIf="(leads_detail && leads_detail.length===0)" class="ion-justify-content-center ion-align-items-center">
+    <ion-col class="ion-text-center"><span>No Leads Found...</span></ion-col>
+  </ion-row>
+
+
+  <ion-infinite-scroll *ngIf="showInfiniteScroll" [disabled]="false" threshold="100px" #infiniteScroll
+    (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+
+
+<!-- FILTER MODAL -->
+<ion-modal #filterModal>
+  <ng-template>
+    <ion-header class="header_footerHeight">
+      <ion-row>
+        <ion-col size="2" class="content_center" (click)="filterModal.dismiss();dateRange=null">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="content_center">Filters</ion-col>
+        <ion-col size="2" class="content_center" (click)="reset_filter()">
+          <ion-icon name="refresh"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+
+    <div style="height: 100%;">
+      <ion-row class="split-layout">
+        <div class="left-column">
+          <ion-row *ngIf="!localStorage.getItem('ranavPropId')"
+            [ngClass]="isLeftFilterActive=='fixedPropSection'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('fixedPropSection')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">
+                {{localStorage.getItem('Role') == '1'?'Fixed Properties':'Property'}}
+              </span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row *ngIf="localStorage.getItem('Role') == '1'||localStorage.getItem('RoleType') === '1'"
+            [ngClass]="isLeftFilterActive=='ExecSection'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('ExecSection')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Assignees</span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row [ngClass]="isLeftFilterActive=='visitType'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('visitType')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Visit Type</span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row [ngClass]="isLeftFilterActive=='dateSection'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('dateSection')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Date</span>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="divider"></div>
+        <div class="right-column">
+          <div *ngIf="isLeftFilterActive=='fixedPropSection'">
+            <ion-searchbar [(ngModel)]="fixedPropSearchTerm" (ionInput)="setFilteredProperty()">
+            </ion-searchbar>
+            <ion-content style="height:75vh;" #propScrollContent>
+              <ion-row class="filterButtons" (click)="onFilterSelection('fixedProp','all')"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues.propid === ''}" *ngIf="isAdmin">
+                <span class="font-size12-familyPoppins">All</span>
+              </ion-row>
+              <ion-row class="filterButtons" *ngFor="let prop of propertlist1"
+                (click)="onFilterSelection('fixedProp',prop.property_idfk)" [id]="prop.property_idfk"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues.propid === prop.property_idfk}">
+                <span class="font-size12-familyPoppins">{{prop.property_info_name}}</span>
+              </ion-row>
+            </ion-content>
+          </div>
+
+          <div *ngIf="isLeftFilterActive == 'ExecSection'">
+            <ion-content style="height:80vh;">
+              <ion-searchbar [(ngModel)]="executiveSearchedName" (ionInput)="setFilteredExecutive()"></ion-searchbar>
+              <ion-row class="filterButtons" (click)="onFilterSelection('executive','all')">
+                <ion-col><span class="font-size12-familyPoppins">All</span></ion-col>
+                <ion-col class="ion-text-end">
+                  <ion-toggle [checked]="tempFilteredValues.active === '1'?true:false"
+                    (ionChange)="toggleActiveExecutive($event)">
+                  </ion-toggle>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngFor="let executive of executive1" (click)="onFilterSelection('executive',executive.id)"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues.executid?.includes(executive.id)}">
+                <span class="filterButtons">{{executive.name}}</span>
+              </ion-row>
+            </ion-content>
+          </div>
+
+          <div *ngIf="isLeftFilterActive == 'dateSection'">
+            <ion-row class="filterButtons" style="margin-top: 5px;" *ngIf="filteredParams.plan=='2'"
+              (click)="onFilterSelection('lastweekend','all')"
+              [ngClass]="{'backgroundLightColor': (tempFilteredValues.fromDate === getLastWeekendDates().lastSaturday1)}">
+              <span class="font-size12-familyPoppins">Last Weekend</span>
+            </ion-row>
+
+            <ion-row class="filterButtons" style="margin-top: 5px;" *ngIf="filteredParams.plan=='1'"
+              (click)="onFilterSelection('lastWeekdays','all')"
+              [ngClass]="{'backgroundLightColor': (tempFilteredValues.fromDate === getLastWeekDays().lastMonday)}">
+              <span class="font-size12-familyPoppins">Last Weekdays</span>
+            </ion-row>
+
+            <ion-row>
+              <ion-col class="font-size12-familyPoppins" style="padding-bottom: 0;">
+                Select Date Range
+              </ion-col>
+            </ion-row>
+            <ion-row style="width: 100%;">
+              <ion-col class=" filterIcon height35px">
+                <label for="mandate_reveived_date_range" style="width: 100%;">
+                  <div class="date_range"
+                    [ngClass]="this.tempFilteredValues.fromDate!='' && this.tempFilteredValues.toDate == ''?'border_color_red':''">
+                    <div><span>{{daterange('dateRange')}}</span></div>
+                    <div>
+                      <ion-img src="../assets/CRMimages/calendar-edit-outline.png"></ion-img>
+                    </div>
+                  </div>
+                </label>
+                <div *ngIf="this.tempFilteredValues.fromDate !='' && this.tempFilteredValues.toDate == ''"><span
+                    class="text_color_red font-size12-familyPoppins">Please Select To Date</span></div>
+              </ion-col>
+            </ion-row>
+            <p-calendar #calendar [hideOnDateTimeSelect]="true" [touchUI]="true" inputId="mandate_reveived_date_range"
+              [(ngModel)]="dateRange" [disabledDays]="disabledDays" [disabledDays]="disabledDays" selectionMode="range"
+              appendTo="body" [dateFormat]="'yy-mm-dd'" (onSelect)="onFilterSelection('dateRange', $event)">
+            </p-calendar>
+
+
+
+
+            <!-- <ion-item lines="none" class="input-with-image marginTop10"> 
+              <ion-input [(ngModel)]="this.filteredParams.fromDate" id="receivedFromDate" placeholder="From">
+              </ion-input>
+              <ion-popover trigger="receivedFromDate" #popover>
+                <ng-template>  
+                  <ion-datetime presentation="date" [(ngModel)]="startdate" [value]="filteredParams.fromDate"  (ionChange)="onFilterSelection('fromDate',$event);popover.dismiss()"  >
+                  </ion-datetime>
+                </ng-template>
+              </ion-popover>
+            </ion-item>
+            <ion-item lines="none" class="input-with-image marginTop10">  
+            <ion-input [(ngModel)]="this.filteredParams.toDate" id="receivedToDate" placeholder="To"></ion-input>
+            <ion-popover trigger="receivedToDate" #popover1>
+              <ng-template>
+                <ion-datetime presentation="date"
+                  (ionChange)="onFilterSelection('toDate',$event);popover1.dismiss()"  [(ngModel)]="enddate" ></ion-datetime>
+              </ng-template>
+            </ion-popover>
+            </ion-item> -->
+          </div>
+
+          <div *ngIf="isLeftFilterActive == 'visitType'">
+            <ion-row class="filterButtons" (click)="onFilterSelection('visitType','all')"
+              [ngClass]="{'backgroundLightColor': tempFilteredValues.visits === ''}">
+              <span>All</span>
+            </ion-row>
+            <ion-row class="filterButtons" (click)="onFilterSelection('visitType','2')"
+              [ngClass]="{'backgroundLightColor': tempFilteredValues.visits === '2'}">
+              <span>Assigned</span>
+            </ion-row>
+            <ion-row class="filterButtons" (click)="onFilterSelection('visitType','1')"
+              [ngClass]="{'backgroundLightColor': tempFilteredValues.visits === '1'}">
+              <span>Direct</span>
+            </ion-row>
+          </div>
+        </div>
+      </ion-row>
+    </div>
+
+    <ion-footer class="header_footerHeight">
+      <ion-row>
+        <ion-col class="content_center font-size14-familyPoppins">
+          <ion-button (click)="filterModal.dismiss();confirmSelection()" fill="clear" class="showresultButton"
+            [disabled]="!isenabled">Show Results</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<!-- <div class="ion-filter-icon" (click)="navigateToFilter()">
+  <ion-img src="../../assets/CRMimages/filter.svg"></ion-img>
+</div> -->
+
+<!-- <div  expand="block" class="content_center ion-filter-icon" style="margin-left: 38%;margin-right: 38%;" (click)="navigateToFilter()" >
+<ion-img src="../../assets/CRMimages/filter.png"></ion-img>
+</div> -->
+<span *ngIf="!isOnCallDetailsPage">
+
+  <ion-img class="ion-filter-icon" src="../../assets/CRMimages/filter.svg" (click)="navigateToFilter()"> </ion-img>
+</span>
+
+<app-common-footer></app-common-footer>
+
+<ion-modal #callConfirmationModal class="callConfirmationModal">
+  <ng-template>
+    <ion-header>
+      <ion-row class="activeSaveButton">
+        <ion-col size="1"></ion-col>
+        <ion-col size="9" class="ion-text-center d-flex ion-justify-content-center">
+          <h3>Initiate Outbound Call</h3>
+        </ion-col>
+        <ion-col size="2" (click)="callConfirmationModal.dismiss()"
+          class="ion-text-center d-flex ion-justify-content-center paddingZero"> <ion-icon
+            name="close"></ion-icon></ion-col>
+      </ion-row>
+    </ion-header>
+    <ion-content>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <p style="font-size:20px;color: rgba(65, 65, 65, 1);">Do you want to place a call to
+            {{lead.CustomerName}}
+            <span
+              *ngIf="!isRM || (isRM && ((lead.Leadphase == 'Fresh' && lead.followupreason == '8') || lead.Leadphase != 'Fresh' ));else num">
+              {{"("+lead.number+")"}}</span>
+            <ng-template #num>
+              <span>xxxxxxxxxx</span>
+            </ng-template>
+            ?
+          </p>
+        </ion-col>
+      </ion-row>
+    </ion-content>
+    <ion-footer>
+      <ion-row>
+        <ion-col class="ion-text-center" (click)="callConfirmationModal.dismiss()"> <ion-button fill="clear"
+            class="active_text_borederColor"> Cancel</ion-button> </ion-col>
+        <ion-col class="ion-text-center" (click)="outboundCall(true)"> <ion-button fill="clear"
+            class="activeSaveButton"> Call </ion-button> </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

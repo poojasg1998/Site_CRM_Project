@@ -1,0 +1,250 @@
+ion-input,
+ion-textarea,
+ion-button,
+ion-select {
+  --placeholder-color: #black;
+  color: #727272;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 500;
+  word-wrap: break-word;
+  --padding-start: 10px;
+  border: 1px solid #727272;
+  border-radius: 5px;
+}
+
+.invalid {
+  border: 1px solid red;
+}
+
+ion-input.ion-invalid {
+  border-color: red;
+}
+.sc-ion-input-md-h:not(.legacy-input) {
+  min-height: 46px;
+}
+
+.propertyLogo {
+  width: 420px;
+}
+.ranavpropertyLogo {
+  width: 72px;
+  height: 55px;
+}
+.ranavpropertyLogo1 {
+  padding-left: 31px;
+  width: 91px;
+  height: 71px;
+}
+
+.backgroundColor {
+  background-color: #0b7ab2;
+  color: #ffff;
+}
+
+.backgroundColorNone {
+  background-color: none;
+}
+
+.reg-main {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  box-shadow: 0 10px 37px 5px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  padding: 30px;
+  background: #fff;
+  border-radius: 6px;
+}
+
+ion-modal {
+  --height: auto;
+  --width: 95%;
+  --border-radius: 10px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal::part(backdrop) {
+  background: rgba(209, 213, 219);
+  opacity: 1;
+}
+
+ion-modal ion-toolbar {
+  --background: rgb(14 116 144);
+  --color: white;
+}
+
+::ng-deep ng-otp-input .ng-otp-input-wrapper .otp-input {
+  width: 50px;
+  font-size: 18px;
+  height: 50px;
+}
+
+.custom-disabled-input {
+  opacity: 1 !important;
+  background-color: #eee;
+}
+
+.font_color_orange {
+  color: #e84c0a;
+}
+
+.font_color_red {
+  color: red;
+}
+
+.paddingLeft5px {
+  padding: 0 0 0 5px;
+}
+.ion-filter-icon {
+  position: absolute;
+  bottom: 0;
+  z-index: 980;
+}
+
+.ion-filter-icon ion-img {
+  background: #ffff;
+  box-shadow: 0 -8px 10px rgb(0 0 0 / 0.2);
+  border-radius: 50px;
+}
+
+ion-footer {
+  height: 55px;
+}
+
+.footer-toolbar {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  --min-height: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 -8px 10px rgb(0 0 0 / 0.2);
+}
+
+.footer-icons {
+  position: relative;
+  background-color: #ffffff;
+}
+
+.backButton {
+  width: 20px;
+  height: 20px;
+  color: rgba(8, 8, 8, 0.4);
+}
+.loader {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background: #ffffffc9;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+ion-select::part(icon) {
+  position: absolute !important;
+  right: 10px !important;
+}
+.margin-top-5px {
+  margin-top: 5px;
+}
+
+::ng-deep .otp-input {
+  border-bottom: solid 1px #000000 !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-radius: 0 !important;
+}
+
+::ng-deep .sc-ion-loading-md-h {
+  --backdrop-opacity: 0.5 !important;
+  --background: none;
+  --spinner-color: black;
+}
+
+::ng-deep .loading-wrapper.sc-ion-loading-md {
+  box-shadow: none;
+}
+.ion-border {
+  border-bottom: 1px solid #727272;
+  padding: 5px !important;
+}
+::ng-deep .searchbar-input.sc-ion-searchbar-md {
+  padding: 10px 35px 10px 10px !important;
+  color: #727272;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 500;
+  border: 1px solid #727272;
+  border-radius: 5px;
+}
+::ng-deep .searchbar-search-icon.sc-ion-searchbar-md,
+.searchbar-cancel-button.sc-ion-searchbar-md {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+::ng-deep h2#swal2-title {
+  font-size: 20px;
+  font-family: "Poppins";
+}
+
+.menu_icon {
+  font-size: 30px;
+  color: #0b7ab2;
+}
+.existingExecutive .existingExecutive-header {
+  border-bottom: 1px solid #0b7ab2;
+
+  color: #0b7ab2;
+  ion-col {
+    font-size: 3vw !important;
+  }
+}
+.existingExecutive {
+  ion-col {
+    font-size: 2.5vw !important;
+  }
+  .main_header {
+    border-bottom: 1px solid #bfbfbf;
+    background: #e9edf3;
+    ion-icon {
+      border-radius: 4px;
+      font-size: 6vw;
+      border: 1px solid #bfbfbf;
+      color: #bfbfbf;
+    }
+    ion-col {
+      font-size: 4vw !important;
+    }
+  }
+
+  ion-button {
+    background-color: #0b7ab2;
+    color: #ffffff;
+    text-transform: none;
+  }
+}
+.priorityOption {
+  gap: 2px;
+  ion-col {
+    border: 1px solid #727272;
+    border-radius: 5px;
+    font-family: "Poppins";
+    font-size: 0.8rem;
+    display: flex;
+    color: #727272;
+    align-items: center;
+    justify-content: center;
+  }
+}

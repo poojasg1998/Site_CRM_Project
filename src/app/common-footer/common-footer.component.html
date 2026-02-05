@@ -1,0 +1,133 @@
+<!-- <ion-modal class="onCallModal" [backdropDismiss]="this.callStatus == 'Call Connected'?false: true"
+  [isOpen]="isOnCallgoing"> -->
+
+<!-- [backdropDismiss]="this.callStatus == 'Call Connected' || this.callStatus == 'Answered' || this.callStatus ==
+    'CONNECTING' ?false: true" -->
+
+<ion-modal class="onCallModal"
+  [backdropDismiss]="this.callStatus == 'Call Connected' || this.callStatus == 'Answered' || this.callStatus == 'CONNECTING' || this.callStatus == 'Answered by customer' ?false: true"
+  [isOpen]="isOnCallgoing">
+
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+
+    <!-- <ion-content> -->
+    <ion-toolbar class="p-2">
+      <div class="content_center" style="flex-direction:column">
+        <ion-img style="width: 19vh;height: 19vh;"
+          [src]="callStatus == 'Call Connected'|| this.callStatus == 'Answered' || this.callStatus == 'CONNECTING' || this.callStatus == 'Answered by customer'?'../../assets/CRMimages/onCall-icon.svg':'../../assets/CRMimages/callDisconnected-icon.svg'"></ion-img>
+        <ion-title style="font-size: 28px;"
+          [ngClass]="callStatus == 'Call Connected' || this.callStatus == 'Answered' || this.callStatus == 'CONNECTING' || this.callStatus == 'Answered by customer'?'text_color_green':'text_color_red'">
+          {{callStatus == 'Call Connected' || this.callStatus == 'Answered' ||
+          this.callStatus == 'CONNECTING' || this.callStatus == 'Answered by customer'?'On Call':'Disconnected'}}
+        </ion-title>
+      </div>
+    </ion-toolbar>
+    <ion-icon
+      *ngIf="isAfterOneminute || isAfterTwominute || (callStatus =='Call Disconnected' || callStatus == 'BUSY' || callStatus == 'Executive Busy')"
+      (click)="handleCloseClick()" name="close"
+      style="top: 10px; position: absolute; z-index: 99999; right: 10px;"></ion-icon>
+    <ion-row>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6" class="p-0">
+            <p class="mb-0 font-size20-familyPoppins" style="color: rgba(47, 47, 47, 1); font-weight: 500;">
+              {{onCallLeadData?.leadname}}
+            </p>
+            <p class="small font-size12-familyPoppins" style="color: #525252;"> {{onCallLeadData?.callto}}</p>
+          </ion-col>
+          <ion-col sizesize="6" class="text-end p-0">
+            <p class="mb-0 font-size20-familyPoppins font-colorBlue"
+              style="color: rgba(47, 47, 47, 1); font-weight: 400;">
+              {{timer}}
+            </p>
+            <p class="small font-size12-familyPoppins" style="color: #525252;">
+              {{ onCallLeadData?.direction+" Call"}}
+            </p>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <div class="content_center" (click)="onCallDetails()">
+              <span class="font-size14-familyPoppins font-colorBlue backgroundLightColor center-vertically">
+                Call Details <ion-icon name="arrow-forward"></ion-icon>
+              </span>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-row>
+    <!-- </ion-content> -->
+  </ng-template>
+</ion-modal>
+
+
+<app-on-call-lead-update *ngIf="isOnCallDetailsPage"></app-on-call-lead-update>
+<div (click)="navigateToCallDetails()"
+  *ngIf="!sharedService.isBottom && !router.url.includes('isnewGroupCreation=true') && !router.url.includes('isOnCallDetailsPage=true') && !router.url.includes('switch-account')"
+  [ngClass]="
+  (router.url.includes('/mandate-visit-stages') && !(router.url.includes('Deal%20Closing%20Requested') || 
+  router.url.includes('Deal%20Closed') || router.url.includes('Closing%20Request%20Rejected') ||
+  router.url.includes('Deal%20Closing%20Pending'))) || router.url.includes('/mandate-inactive-junk') ||
+   (router.url.includes('mandate-lead-stages') && (router.url.includes('type=General%20Followup') ||
+   router.url.includes('type=Inactive') ) )?'callstatusFixedbottom':''" class="callstatus">
+  <ion-row class=" d-flex align-items-center ms-2">
+    <ion-col class="d-flex mr-2"><ion-img src="../../assets/CRMimages/all-page-call-icon.svg"></ion-img>
+      <span>{{sharedService.allCallCounts['overall']}}</span></ion-col>
+
+    <ion-col class="d-flex"><ion-img src="../../assets/CRMimages/all-page-timer-clock-call.svg"></ion-img>
+      <span>{{transform(sharedService.allCallCounts['total_talk_time_in_seconds'])}}</span></ion-col>
+  </ion-row>
+</div>
+<ion-footer>
+  <ion-toolbar class="footer-toolbar">
+    <ion-row class="footer-icons">
+      <ion-col class="content_center">
+        <ion-img *ngIf="!isHomeActive()" (click)="footerNavigation('home')"
+          src="../../assets/CRMimages/Home.svg"></ion-img>
+        <ion-img *ngIf="isHomeActive()" (click)="footerNavigation('home')"
+          src="../../assets/CRMimages/homeActive.svg"></ion-img>
+      </ion-col>
+      <ion-col class="content_center">
+        <ion-img *ngIf="!isSearchActive()" src="../../assets/CRMimages/search.svg"
+          (click)="footerNavigation('search')"></ion-img>
+        <ion-img *ngIf="isSearchActive()" src="../../assets/CRMimages/searchActive.svg"
+          (click)="footerNavigation('search')"></ion-img>
+      </ion-col>
+      <!-- <ion-col *ngIf="isFilerActive()">
+
+      </ion-col> -->
+      <ion-col class="content_center" (click)="footerNavigation('activity')" *ngIf="!isCP">
+        <ion-img *ngIf="!isActivityActive()" src="../../assets/CRMimages/activityReport_icon.svg"></ion-img>
+        <ion-img *ngIf="isActivityActive()" src="../../assets/CRMimages/activeActivityReport_icon.svg"></ion-img>
+      </ion-col>
+
+      <!-- <ion-col class="content_center pt-2" (click)="footerNavigation('chats')"
+        style="display: flex;flex-direction:column" *ngIf="!isCP">
+        <div class="icon-badge-wrapper">
+          <ion-img *ngIf="!isChatActive()" src="../../assets/CRMimages/chat-icon.svg" class="chat-icon"></ion-img>
+
+          <ion-img *ngIf="isChatActive()" src="../../assets/CRMimages/active-chat-icon.svg" class="chat-icon"></ion-img>
+
+          <span class="notif-count bg_textColor" *ngIf="sharedService.unReadChatCount>0">
+            {{sharedService.unReadChatCount}}</span>
+          <span class="new-badge">New</span>
+        </div>
+        <span [ngClass]="isChatActive()?'text_color_blue':'text_color_gray'" class="chat-label">Chat</span>
+      </ion-col> -->
+      <ion-col class="content_center" (click)="footerNavigation('notifications')">
+        <div class="icon-badge-wrapper">
+          <ion-img *ngIf="!isNotificationActive()" src="../../assets/CRMimages/footer_notification-icon.svg"></ion-img>
+          <ion-img *ngIf="isNotificationActive()" src="../../assets/CRMimages/activeNotification-icon.svg"></ion-img>
+          <span class="notif-count bg_textColor" *ngIf="sharedService.unReadChatCount>0">
+            {{sharedService.unReadChatCount + sharedService.allCallCounts['missed']}}</span>
+        </div>
+      </ion-col>
+
+
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,333 @@
+.datefilter-div {
+  ion-row {
+    gap: 5px;
+  }
+  ion-col {
+    font-size: 12px;
+    border-radius: 4px;
+  }
+  ion-icon {
+    font-size: 16px;
+    color: #0b7ab2;
+  }
+}
+.pointer_eventsNone {
+  pointer-events: none;
+  cursor: none;
+  opacity: 0.6;
+}
+.search-icon-col {
+  height: 100%;
+  border-radius: 4px;
+}
+::ng-deep p-autocomplete .p-button-icon-only .p-icon-wrapper {
+  display: none;
+}
+::ng-deep .p-autocomplete-item {
+  font-size: 12px;
+  font-family: "Poppins";
+  padding: 4px;
+}
+::ng-deep .p-autocomplete,
+::ng-deep .p-inputtext {
+  width: 100% !important;
+  font-size: 14px;
+  font-family: "Poppins";
+}
+::ng-deep .p-autocomplete {
+  height: 100%;
+  border: 1px solid #0b7ab2;
+  border-radius: 4px;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+::ng-deep p-autocomplete .p-autocomplete-input:focus {
+  outline: none !important;
+  box-shadow: none;
+}
+.chevron-forward-outline {
+  height: 100%;
+  border-right: 1px solid #0b7ab2;
+  border-top: 1px solid #0b7ab2;
+  border-bottom: 1px solid #0b7ab2;
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.timerow {
+  height: 34px;
+  ion-col {
+    font-size: 9px;
+    font-family: "Poppins";
+  }
+  background: #e0f1fe;
+  color: #0b7ab2;
+  border-bottom: 1px solid #84c5e5;
+}
+.fixed-row {
+  width: 100%;
+  position: fixed;
+  bottom: 62px;
+  z-index: 998;
+  background: white;
+  padding: 5px;
+  border-bottom: 1px solid;
+}
+
+.scroll-row {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  gap: 5px;
+}
+
+.scroll-item {
+  font-size: 12px;
+  border-radius: 50px;
+  white-space: nowrap;
+  text-align: center;
+  display: flex;
+  align-items: center;
+
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 12px;
+  color: #000000;
+  text-transform: none;
+  background: white;
+  align-items: center;
+  border: 1px solid rgba(11, 122, 178, 0.5);
+  border-radius: 4px;
+  color: #009acb;
+}
+.addleadicon {
+  font-size: 45px;
+  color: #ffff;
+  font-size: 25px;
+  position: absolute;
+  right: 10px;
+  bottom: 70px;
+  background-color: #2196f3;
+  border-radius: 35px;
+  padding: 5px;
+  --ionicon-stroke-width: 60px;
+  z-index: 998;
+}
+ion-modal.reportSending {
+  --height: auto
+  --border-radius: 4px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  padding: 10px;
+  --backdrop-opacity:0.85
+}
+
+.reportSending ion-button{
+  border-radius: 3px;
+}
+
+::ng-deep .reportSending .dateTime_css p-dropdown.exec_css .p-inputwrapper span{
+  padding: 6px;
+  font-size: 12px;
+  font-family: 'Poppins';
+  color: #0B7AB2; 
+}
+::ng-deep .reportSending .dateTime_css p-dropdown .p-dropdown{
+  width: 100%;   
+  background-color: white !important;
+  border: 1px solid rgba(11, 122, 178, 0.5);
+}
+#reportSendingTime{
+  color: #0B7AB2 !important; 
+}
+.normal_btn {
+  border: 1px solid #d8d8d8;
+  color: #5b6a83;
+  box-shadow: 0px 2px 10px 0px rgba(124, 124, 124, 0.2);
+}
+.status-row:nth-child(odd) ion-col:first-child {
+  background-color: #ededed;
+}
+
+.status-row:nth-child(even) ion-col:first-child {
+  background-color: #eef6fa;
+}
+
+.status-row:nth-child(odd) ion-col:nth-child(2) {
+  background-color: #eef6fa;
+}
+
+.status-row:nth-child(even) ion-col:nth-child(2) {
+  background-color: #ededed;
+}
+
+.status-row:nth-child(odd) ion-col:nth-child(3) {
+
+  background-color: #ededed;
+}
+
+.status-row:nth-child(even) ion-col:nth-child(3) {
+    background-color: #eef6fa;
+  
+}
+
+.bg_Color_Orange{
+  background-color: #EC9251;
+  color: white;
+}
+.orange_border{
+  border: 1px solid #EC9251;
+}
+.blue_border{
+  border: 1px solid rgba(11, 122, 178, 0.5);
+}
+.zeroactivity-div{
+  border-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper span {
+  padding: 5px;
+  font-family: "Poppins";
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper span {
+  padding: 5px;
+  font-size: 12px;
+  font-family: "Poppins";
+  color: #0b7ab2;
+}
+::ng-deep p-dropdown.exec_css .p-inputwrapper {
+  width: 100% !important;
+  border: 0.5px #0b7ab2 solid;
+}
+::ng-deep p-dropdown.exec_css .p-inputwrapper .p-dropdown-trigger {
+  width: 30px !important;
+}
+::ng-deep
+  p-dropdown.exec_css
+  .p-inputwrapper
+  .p-dropdown-trigger
+  chevrondownicon {
+  width: 12px;
+  color: #0b7ab2;
+}
+::ng-deep .exec_css .p-element .p-dropdown-item {
+  padding: 5px !important;
+  font-size: 12px;
+}
+
+.to-date-calendar,
+.from-date-calendar {
+  ion-img {
+    width: 20px;
+  }
+  .calendar-div {
+    border: 1px solid rgb(73 73 77 / 30%);
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 12px;
+    font-family: "Poppins";
+  }
+}
+.isBeforeselectingDate {
+  color: #b8b9ba;
+  font-weight: 100;
+}
+
+.pointer_eventsNone {
+  filter: blur(0.8px);
+  pointer-events: none;
+  cursor: none;
+}
+
+::ng-deep p-calendar input {
+  top: 15px;
+  left: 10px;
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  display: none !important;
+}
+
+::ng-deep .p-datepicker {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+::ng-deep .p-datepicker table td > span.p-highlight {
+  color: #e6eaed !important;
+  background: rgb(11 122 178) !important;
+}
+p-calendar {
+  display: none !important;
+}
+ion-modal {
+  --backdrop-opacity: 1.4;
+  // --height: auto;
+}
+
+.date-range-wrapper {
+  padding: 20px 10px;
+}
+
+.title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.date-inputs {
+  display: flex;
+  gap: 12px;
+}
+
+.date-box {
+  flex: 1;
+  background: #f6f9fc;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.date-box label {
+  font-size: 12px;
+  color: #8a8a8a;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.date-box span {
+  font-size: 14px;
+  color: #000;
+}
+
+.confirm-btn {
+  --border-radius: 24px;
+  --background: #0b7ab2;
+  min-height: 5px !important;
+  width: 100%;
+  padding: 0 10px;
+}
+
+::ng-deep.confirm-btn::part(native) {
+  padding: 12px;
+}
+.error-text {
+  font-size: 12px;
+  font-family: "Poppins";
+  color: red;
+}
+
+ion-datetime {
+  width: 100%;
+  max-width: 100%;
+  --background: #ffffff;
+}
+
+ion-datetime::part(calendar) {
+  width: 100% !important;
+  height: 100% !important;
+}

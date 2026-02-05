@@ -1,0 +1,147 @@
+.followUpForm{
+    border-radius: 4px;
+}
+.dropdownStyle{
+    color: #727272;
+    font-size: 12px;
+    font-family: Poppins;
+    font-weight: 400;
+    word-wrap: break-word;
+    border: 0.75px #ECECEC solid;
+    border-radius: 4px;
+}
+
+.custom-textArea ion-textarea{
+    height:80px;
+    border-radius: 4px;
+    border: 0.75px #ECECEC solid;
+}
+::ng-deep .custom-textArea .native-wrapper {
+    padding: 8px;
+}
+.saveButton{
+    text-transform: none;
+    background: #ECECEC;
+    color: #727272; 
+    width:100%;
+    height:42px; 
+    border-radius: 4px; 
+    border: 1px rgba(236, 236, 236, 0.93) solid;
+}
+
+.activeSaveButton{
+    text-transform: none;
+    background: #0B7AB2;
+    color: #ECECEC !important; 
+    width:100%;
+    height:42px; 
+    border-radius: 4px; 
+    border: 1px rgba(236, 236, 236, 0.93) solid;
+}
+
+.selectedDropdown{
+    background-color: #0B7AB2;
+    color: white;
+    font-size: 12px;
+    font-family: Poppins;
+    font-weight: 500;
+    border-radius: 4px;
+    word-wrap: break-word;
+}
+
+ion-select::part(placeholder) {
+    padding-left: 5px !important 
+}
+ion-select::part(text){
+    padding-left: 5px;
+}
+.submitForm{
+    margin-top:20px;
+}
+.submitForm ion-col{
+    margin-right:16px;
+}
+.submitForm ion-button{
+    text-transform: none;
+    font-size: 12px;
+    color: rgba(8, 8, 8, 0.93);
+    font-family: Poppins;
+    font-weight: 400;
+    word-wrap: break-word;
+    width:100%;
+    height:42px;
+    border-radius: 4px;
+    border: 1px rgba(236, 236, 236, 0.93) solid;
+}
+
+
+.always-flip::placeholder {
+    color: red;
+    text-align: center !important;
+  }
+
+  :root {
+    --ion-text-align-center: center;
+  }
+  
+  #select-label {
+    text-align: var(--ion-text-align-center);
+      place-content: center;
+}
+ion-select {
+    #select-label {
+      text-align: center;
+    }
+}
+
+ion-select::part(icon){
+    position: absolute !important;
+    right: 10px !important;
+}
+
+
+.inActiveStatus{
+    color: #727272;
+    font-size: 12px;
+    font-family: Poppins;
+    font-weight: 400;
+    word-wrap: break-word;
+    border: 0.75px #ECECEC solid;
+    border-radius: 4px;
+    margin-right: 10px;
+    height: 34px;
+    text-transform: none;
+}
+.activeStatus{
+    color: white;
+    font-size: 12px;
+    font-family: Poppins;
+    font-weight: 500;
+    word-wrap: break-word;
+    background-color: #0B7AB2;
+    border-radius: 4px;
+    margin-right: 10px;
+    height: 34px !important;
+    text-transform: none;
+}
+
+.followUpResoncss{
+    margin:5px 5px 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.8px solid #D9D9D9;
+    border-radius: 2px;
+    height: 30px;
+}
+
+.followUpResoncss span{
+    padding: 5px 15px;
+    font-size: 12px;
+    font-family: 'Poppins';
+    font-weight: 400;
+}
+.border_colorRed{
+    border: 1px solid red;
+    border-radius: 3px;
+}

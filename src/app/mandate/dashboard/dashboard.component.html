@@ -1,0 +1,1181 @@
+<app-header *ngIf="!isOnCallDetailsPage"></app-header>
+<app-check-in-out-photo-capture
+  *ngIf="roleid!='1' && !isCP && !isOnCallDetailsPage && !isAccSwitched"></app-check-in-out-photo-capture>
+
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px;" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+<ion-content *ngIf="!isOnCallDetailsPage" #mainscrollContainer (ionScroll)="onScroll($event)" scrollEvents="true"
+  class="force-light">
+
+  <!-- PAGE REFRESH -->
+  <ion-refresher slot="fixed" (ionRefresh)="refreshPage($event)">
+    <ion-refresher-content pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="main-div">
+    <!-- PROPERTY ROW -->
+    <ion-row *ngIf="propertyLists?.length>1  && filteredParams1.isLeadsVisitsCalls != 'calls'" class="p-1">
+      <ion-col class="custom-row p-0" [appCenterActiveButton]="filteredParams1.propid"
+        style="display: flex; overflow-x: scroll;scrollbar-width:none">
+        <div *ngFor="let property of propertyLists" class="custom-col center-text fw-light mx-1 "
+          [ngClass]="filteredParams1.propid === property.property_idfk?'highlightedprop-text':''"
+          (click)="onFilterSelection('property',property);" [id]="'id-'+property.property_idfk">
+          {{property.property_info_name}}</div>
+      </ion-col>
+    </ion-row>
+
+    <!-- DATE FILTER SECTION -->
+    <div class="mb-0 datefilter-div">
+      <ion-row>
+        <ion-col style="border: 0.5px solid #e6e6e6; border-radius: 20px; padding: 2px !important;">
+          <ion-row>
+            <ion-col size="3" (click)="onFilterSelection('dateFilter','today')"
+              class="d-flex  align-items-center justify-content-center px-0"
+              [ngClass]="filteredParams1.isDateFilter == 'today' ? 'active_btn': ''">
+              <span class="font-size12-familyPoppins">Today</span>
+
+            </ion-col>
+            <ion-col (click)="onFilterSelection('dateFilter','yesterday')"
+              class="d-flex align-items-center justify-content-center px-0"
+              [ngClass]="filteredParams1?.isDateFilter == 'yesterday'?'active_btn':''">
+              <span class="font-size12-familyPoppins">Yesterday</span>
+            </ion-col>
+            <ion-col (click)="onFilterSelection('dateFilter','lastsevenDay')"
+              class="d-flex align-items-center justify-content-center px-0"
+              [ngClass]="filteredParams1?.isDateFilter == 'lastsevenDay'?'active_btn':''">
+              <span class="font-size12-familyPoppins">Last 7 days</span>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+        <ion-col [ngClass]="filteredParams1?.isDateFilter == 'custom'?'active':'normal_btn'"
+          (click)="onFilterSelection('dateFilter','custom')"
+          class="d-flex align-items-center justify-content-center custom-datefilterIcon normal_btn p-2px" size="1.5">
+          <span class="d-flex align-items-center justify-content-center">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </span>
+        </ion-col>
+        <ion-col (click)="refresh($event)"
+          class="refresh-icon normal_btn d-flex align-items-center justify-content-center p-2px" size="1.2">
+          <ion-icon name="sync-outline"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!-- <div class="mb-0 datefilter-div">
+      <ion-row>
+        <ion-col style="border: 0.5px solid #e6e6e6; border-radius: 20px; padding: 2px !important;">
+          <ion-row>
+            <ion-col size="3" (click)="onFilterSelection('dateFilter','today')"
+              class="d-flex  align-items-center justify-content-center"
+              [ngClass]="filteredParams1.isDateFilter == 'today' ? 'active_btn': ''">
+              <span>Today </span>
+            </ion-col>
+            <ion-col (click)="onFilterSelection('dateFilter','yesterday')"
+              class="d-flex align-items-center justify-content-center"
+              [ngClass]="filteredParams1?.isDateFilter == 'yesterday'?'active_btn':''">
+              <span>Yesterday</span>
+            </ion-col>
+            <ion-col (click)="onFilterSelection('dateFilter','lastsevenDay')"
+              class="d-flex align-items-center justify-content-center"
+              [ngClass]="filteredParams1?.isDateFilter == 'lastsevenDay'?'active_btn':''">
+              <span>Last 7 days</span>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+        <ion-col [ngClass]="filteredParams1?.isDateFilter == 'custom'?'active_btn':'normal_btn'"
+          (click)="onFilterSelection('dateFilter','custom')"
+          class="d-flex align-items-center justify-content-center custom-datefilterIcon normal_btn p-2px" size="1.5">
+          <span class="d-flex align-items-center justify-content-center">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </span>
+        </ion-col>
+        <ion-col (click)="refresh($event)"
+          class="refresh-icon normal_btn d-flex align-items-center justify-content-center p-0" size="1.2">
+          <ion-icon name="sync-outline"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </div> -->
+
+
+    <ion-row class="m-2 mb-0">
+      <!-- <ion-col class="filter-btn p-0 pe-1 ">
+        <div class="d-flex align-items-center justify-content-center">
+          <ion-icon name="options-outline"></ion-icon>
+          <span class="font-size12-familyPoppins">Filters</span>
+        </div>
+      </ion-col> -->
+      <ion-col class="p-0 pe-1" size="6" *ngIf="roleid == '1' && filteredParams1.isLeadsVisitsCalls != 'calls'">
+        <p-dropdown [options]="teamNames" class="exec_css" (onChange)="onFilterSelection('team', selectedTeam)"
+          [(ngModel)]="selectedTeam" optionLabel="name" placeholder="Team" />
+      </ion-col>
+      <!-- EXECUTIVE FILTER DROPDOWN -->
+      <ion-col class=" p-0 exec" size="6" *ngIf="roleid == '1' || localStorage.getItem('RoleType') == '1'">
+        <p-dropdown [options]="executiveNames" class="exec_css" (onChange)="onFilterSelection('exec', selectedExecu)"
+          [(ngModel)]="selectedExecu" optionLabel="name" placeholder="Executive" />
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="leads_visits_calls mx-2 mt-2">
+      <ion-col [ngClass]="filteredParams1.isLeadsVisitsCalls == 'leads' ?'active_btn':'normal_btn'"
+        class="content_center" (click)="onFilterSelection('leadsVisitsCalls','leads')">
+        <span>Leads</span>
+      </ion-col>
+      <ion-col [ngClass]="filteredParams1.isLeadsVisitsCalls == 'calls' ?'active_btn':'normal_btn'"
+        class="content_center" (click)="onFilterSelection('leadsVisitsCalls','calls')">
+        <span>Calls</span>
+      </ion-col>
+      <ion-col [ngClass]="filteredParams1.isLeadsVisitsCalls == 'visits' ?'active_btn':'normal_btn'"
+        class="content_center" (click)="onFilterSelection('leadsVisitsCalls','visits')">
+        <span>Visits</span>
+      </ion-col>
+    </ion-row>
+
+
+    <!-- FILTERED CHIPS -->
+    <ion-row class="filterButtons m-2 mb-0" *ngIf="this.filteredParams1.isDateFilter == 'custom'"
+      (click)="removeDateFilter()">
+      <ion-button fill="clear" class="m-0">
+        <span *ngIf="filteredParams1.isLeadsVisitsCalls == 'leads' || filteredParams1.isLeadsVisitsCalls == 'calls'">{{
+          this.filteredParams1.fromDate }}{{ " to " +
+          this.filteredParams1.toDate }}</span>
+        <span *ngIf="filteredParams1.isLeadsVisitsCalls == 'visits'">{{ this.filteredParams1.visitedfromdate }}{{ " to "
+          + this.filteredParams1.visitedtodate }}</span>
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+    </ion-row>
+    <!-- <ion-row class="filterButtons m-2  mb-0"
+      *ngIf="filteredParams1.executid && roleid == '1' && filteredParams1.propid && filteredParams1.propertyName && filteredParams1.isLeadsVisitsCalls != 'calls'">
+      <ion-button fill="clear" class="m-0">
+        <span>{{filteredParams1.propertyName}}</span>
+      </ion-button>
+    </ion-row> -->
+  </div>
+
+  <div class="p-1 cards">
+    <!-- LEADS SECTION -->
+    <div *ngIf="this.filteredParams1.isLeadsVisitsCalls == 'leads'">
+      <ion-row class="mb-2">
+        <ion-col class="assignedLeads-card">
+          <ion-img src="../assets/CRMimages/assignedLeadsicon.svg"></ion-img>
+          <div>
+            <span (click)="navigateToLeadListPage('pending');">
+              <p>Assigned</p>
+              <h1>{{leads_count.assigned}}</h1>
+            </span>
+            <!-- <p (click)="navigateToLeadListPage('pending');">Untouched-
+              <span> {{leads_count.untouched}} </span>
+            </p> -->
+
+            <div class="m-0 pt-1 assignedLeads-sub-data" (click)="navigateToLeadListPage('pending');">
+              <p>Untouched</p>
+              <h1>{{leads_count.untouched}}</h1>
+            </div>
+          </div>
+        </ion-col>
+        <ion-col class="touchedLeads-card">
+          <ion-img src="../assets/CRMimages/touchedicon.svg"></ion-img>
+          <div>
+            <span>
+              <p (click)="navigateToLeadListPage('touched');">Touched</p>
+              <h1>{{leads_count.touched}}</h1>
+            </span>
+            <ion-row>
+              <ion-col class="paddingZero" size="5" (click)="navigateToLeadListPage('inactive');">
+                <div class="touchedLeads-sub-data m-0 pt-1">
+                  <p>Inactive</p>
+                  <h1>{{leads_count.inactive}}</h1>
+                </div>
+              </ion-col>
+              <ion-col (click)="navigateToLeadListPage('junkleads');" class="p-0" size="7">
+                <div class="touchedLeads-sub-data m-0 pt-1">
+                  <p>Junk Leads</p>
+                  <h1>{{leads_count.junkLeads}}</h1>
+                </div>
+              </ion-col>
+            </ion-row>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="mb-2">
+        <ion-col class="active-card">
+          <ion-img src="../assets/CRMimages/activeLeadsicon.svg"></ion-img>
+          <div>
+            <span>
+              <span (click)="navigateToLeadListPage('active');">
+                <p class="content_center">Active</p>
+                <h1>{{leads_count.active}}</h1>
+              </span>
+            </span>
+          </div>
+          <ion-row>
+            <ion-col>
+              <div (click)="navigateToLeadListPage('generalfollowups');" class="active-sub-data m-0">
+                <p>G.Followups</p>
+                <h1>{{leads_count.generalFollowups}}</h1>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div (click)="navigateToLeadListPage('NC');" class="active-sub-data m-0 ">
+                <p>NC</p>
+                <h1>{{leads_count.nc }}</h1>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="active-sub-data m-0 " (click)="navigateToVisitsListPage('USV1');">
+                <p>USV Fix</p>
+                <h1>{{leads_count.usvfix}}</h1>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!--VISITS SECTION -->
+    <div *ngIf="this.filteredParams1.isLeadsVisitsCalls == 'visits'" class="mb-2">
+      <ion-row class="mb-2">
+        <ion-col class="allVisits-card">
+          <ion-img src="../assets/CRMimages/visit-details-icon.svg"></ion-img>
+          <div>
+            <span>
+              <span (click)="navigateToVisitsListPage('allvisits')">
+                <p>All Visits</p>
+                <h1>{{visits_count.allVisits}}</h1>
+              </span>
+            </span>
+          </div>
+          <ion-row>
+            <ion-col>
+              <div (click)="navigateToVisitsListPage('USV')" class="allVisits-sub-data m-0">
+                <p>USV</p>
+                <h1>{{visits_count.usv}}</h1>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div (click)="navigateToVisitsListPage('RSV')" class="allVisits-sub-data m-0 ">
+                <p>RSV</p>
+                <h1>{{visits_count.rsv}}</h1>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="allVisits-sub-data m-0 " (click)="navigateToVisitsListPage('Final Negotiation')">
+                <p>FN</p>
+                <h1>{{visits_count.fn}}</h1>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="mb-2">
+        <ion-col class="booking-request-card">
+          <ion-img src="../assets/CRMimages/booking-request-icon.svg"></ion-img>
+          <div>
+            <span (click)="navigateToVisitsListPage('Deal Closing Requested')">
+              <p>Booking Request</p>
+              <h1>{{visits_count.bookingRequest}}</h1>
+            </span>
+            <div class="booking-request-sub-data m-0 " (click)="navigateToVisitsListPage('Closing Request Rejected');">
+              <p>Rejected</p>
+              <h1>{{visits_count.rejected}}</h1>
+            </div>
+          </div>
+        </ion-col>
+        <ion-col class="closed-card">
+          <ion-img src="../assets/CRMimages/closed-icon.svg"></ion-img>
+          <div>
+            <span (click)="navigateToVisitsListPage('Deal Closed')">
+              <p>Closed</p>
+              <h1>{{visits_count.closed}}</h1>
+            </span>
+            <div class="closed-sub-data m-0 " (click)="navigateToVisitsListPage('junkvisits');">
+              <p>Junk Visits</p>
+              <h1>{{visits_count.junk}}</h1>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!-- CALL SECTION -->
+    <div *ngIf="this.filteredParams1.isLeadsVisitsCalls == 'calls'">
+      <ion-row class="mb-2">
+        <ion-col class="total-call-card">
+          <ion-img src="../assets/CRMimages/call-icons/total-call.svg"></ion-img>
+          <div (click)="navigateToCallListingPage('overall')">
+            <p>Total Calls</p>
+            <h1>{{allCallCounts['overall'] }}</h1>
+          </div>
+        </ion-col>
+        <ion-col class="connected-call-card">
+          <ion-img src="../assets/CRMimages/call-icons/connected-call.svg"></ion-img>
+          <div (click)="navigateToCallListingPage('connected')">
+            <p>Connected Calls</p>
+            <h1>{{allCallCounts['connected']}}</h1>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="mb-2">
+        <ion-col class="active-call-card">
+          <ion-img src="../assets/CRMimages/call-icons/active-call.svg"></ion-img>
+          <div (click)="navigateToCallListingPage('active')">
+            <p>Active Calls</p>
+            <h1>{{allCallCounts['active']}}</h1>
+          </div>
+        </ion-col>
+        <ion-col class="inacive-call-card">
+          <ion-img src="../assets/CRMimages/call-icons/inactive-call.svg"></ion-img>
+          <div (click)="navigateToCallListingPage('inactive')">
+            <p>Inactive Calls</p>
+            <h1>{{allCallCounts['inactive']}}</h1>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="mb-2">
+        <ion-col class="missed-call-card">
+          <ion-img src="../assets/CRMimages/call-icons/missed-call.svg"></ion-img>
+          <div (click)="navigateToCallListingPage('missed')">
+            <p>Missed Calls</p>
+            <h1>{{allCallCounts['missed']}}</h1>
+          </div>
+          <div class="m-0 font-size10-familyPoppins text-center re_connected_text">re-connected
+            {{"-"+allCallCounts['reconnected']}}</div>
+          <!-- <ion-row>
+            <ion-col>
+            </ion-col>
+          </ion-row> -->
+        </ion-col>
+        <ion-col class="visitfixed-call-card">
+          <ion-img src="../assets/CRMimages/call-icons/visitfixed-call.svg"></ion-img>
+          <div (click)="navigateToCallListingPage('visitsfixed')">
+            <span>
+              <p (click)="onFilterSelection('touched','Touched');">Visits Fixed</p>
+              <h1>{{allCallCounts['visitsfixed']}}</h1>
+            </span>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <div class="calls-data">
+        <ion-row class="allMissedlive-calls">
+          <ion-col (click)="onFilterSelection('callstage', 'overall')"
+            class="d-flex align-items-center justify-content-center"
+            [ngClass]="filteredParams1?.callstage === 'overall' ? 'active_btn' : 'normal_btn'">
+            <span>
+              All Calls
+            </span>
+          </ion-col>
+          <ion-col (click)="onFilterSelection('callstage','missed')"
+            class="d-flex align-items-center justify-content-center"
+            [ngClass]="filteredParams1.callstage == 'missed' ? 'active_btn': 'normal_btn'">
+            <span>Missed Calls</span>
+          </ion-col>
+          <ion-col (click)="onFilterSelection('callstage','live')"
+            class="d-flex align-items-center justify-content-center"
+            [ngClass]="filteredParams1.callstage == 'live' ? 'active_btn': 'normal_btn'">
+            <span>Live Calls</span>
+          </ion-col>
+        </ion-row>
+
+        <div [ngClass]="allCallsData.length==0?'emptydata':'notemptydata'" class="mt-1">
+          <ion-item-sliding *ngFor="let call of allCallsData" #sliding (ionSwipe)="onSwipe($event,call)">
+            <ion-item style="--border-style:none;" class="custom-ion-item p-0">
+              <ion-card class="mx-0 my-2" style="width: 100%;">
+                <div class="p-1">
+                  <ion-row>
+                    <ion-col class="text-value"><span>{{call.leadname}}</span></ion-col>
+                    <ion-col
+                      class="text-value text-right d-flex align-items-center justify-content-end pb-0"><span>{{call.name}}</span></ion-col>
+                  </ion-row>
+                  <ion-row class="border_bottom">
+                    <ion-col class="text-value number"><span>95474 85471</span></ion-col>
+                    <ion-col class="text-label text-right pt-0 pb-1"><span>RM Executive</span></ion-col>
+                  </ion-row>
+
+                  <span *ngIf="filteredParams1.callstage != 'missed'">
+                    <ion-row>
+                      <ion-col class="text-label"><span>Start Time</span></ion-col>
+                      <ion-col *ngIf="filteredParams1.callstage == 'overall'" class="text-label text-right"><span>End
+                          Time</span></ion-col>
+                      <ion-col class="text-label text-right" *ngIf="filteredParams1.callstage == 'live'"><span>Call
+                          Duration</span></ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="text-value"><span>{{call.starttime}}</span></ion-col>
+                      <ion-col *ngIf="filteredParams1.callstage == 'overall'"
+                        class="text-value text-right"><span>{{call.endtime}}</span></ion-col>
+                      <ion-col class="text-value text-right"
+                        *ngIf="filteredParams1.callstage == 'live'"><span>{{call.timer}}</span></ion-col>
+                    </ion-row>
+                  </span>
+                  <span *ngIf="filteredParams1.callstage == 'live'">
+                    <ion-row>
+                      <ion-col class="text-label"><span>Call Type</span></ion-col>
+                      <ion-col class="text-label text-right"><span>Call Status</span></ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="text-value"><span>{{call.direction?call.direction:'--'}}</span></ion-col>
+                      <ion-col class="text-value text-right on_call"><span>On Call</span></ion-col>
+                    </ion-row>
+                  </span>
+
+                  <!-- <ion-row>
+                      <ion-col class="text-label" *ngIf="filteredParams1.callstage == 'overall'"><span>Call
+                          Duration</span></ion-col>
+                      <ion-col class="text-label" *ngIf="filteredParams1.callstage == 'missed'">Missed On</ion-col>
+                      <ion-col *ngIf="filteredParams1.callstage == 'missed'" class="text-label text-right"><span>Call
+                          Status</span></ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="text-value"
+                        *ngIf="filteredParams1.callstage == 'overall'"><span>{{call.answeredtime}}</span></ion-col>
+                      <ion-col class="text-value" *ngIf="filteredParams1.callstage == 'missed'">{{call.starttime}}</ion-col>
+      
+                      <ion-col class="text-value text-right" *ngIf="filteredParams1.callstage == 'missed'">
+                        <span class="reconnectedCall-span" *ngIf="call.missedid == '2'">Reconnected</span>
+                        <span class="missedCall-span" *ngIf="call.missedid == '1'">Missed</span>
+                      </ion-col>
+                    </ion-row> -->
+
+                  <ion-row *ngIf="filteredParams1.callstage == 'missed'">
+                    <ion-col>
+                      <div class="text-label">Missed On</div>
+                      <div class="text-value">{{call.starttime}}</div>
+                    </ion-col>
+
+                    <ion-col class="d-flex align-items-center justify-content-end">
+                      <span class="reconnectedCall-span text-value" *ngIf="call.missedid == '2'">Reconnected</span>
+                      <span class="missedCall-span text-value" *ngIf="call.missedid == '1'">Missed</span>
+                    </ion-col>
+                  </ion-row>
+
+                  <ion-row *ngIf="filteredParams1.callstage == 'overall'">
+                    <ion-col>
+                      <div class="text-label">Call Duration</div>
+                      <div class="text-value">{{call.answeredtime}}</div>
+                    </ion-col>
+
+                    <!-- <ion-col class="right-status">
+                        <span class="reconnectedCall-span" *ngIf="call.missedid == '2'">Reconnected</span>
+                        <span class="missedCall-span" *ngIf="call.missedid == '1'">Missed</span>
+                      </ion-col> -->
+                  </ion-row>
+
+                </div>
+                <ion-row class="audio"
+                  *ngIf="filteredParams1.callstage == 'overall' && isMoreThan10Sec(call.answeredtime)">
+                  <ion-col>
+                    <audio controls style="width: 100% !important; height: 32px !important;">
+                      <source type="audio/wav" [src]="call.filename">
+                    </audio>
+                  </ion-col>
+                </ion-row>
+              </ion-card>
+            </ion-item>
+
+            <ion-item-options side="end">
+              <ion-img src="../../assets/CRMimages/phone-call.svg" style="width:45px;padding: 10px;"
+                class="call-icon"></ion-img>
+            </ion-item-options>
+          </ion-item-sliding>
+          <ion-row class="refreshLiveCall" *ngIf="filteredParams1.callstage == 'live' && !sharedService.isBottom"
+            (click)="showSpinner = true; getLiveCall()">
+            <ion-col class="d-flex align-items-center justify-content-center">
+              <span class="d-flex align-items-center justify-content-center pe-2"><ion-icon
+                  name="sync-outline"></ion-icon>Refresh</span>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="allCallsData?.length == 0">
+            <ion-col class="d-flex align-items-center justify-content-center ">
+              <span class="text-label fs-6">No Call Records Found…</span>
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </div>
+
+    <!-- OVERDUES SECTION -->
+    <div class="overdue_div mb-1"
+      *ngIf="this.filteredParams1.isLeadsVisitsCalls == 'leads' || this.filteredParams1.isLeadsVisitsCalls == 'visits' ">
+      <!-- OVERDUES LEADS SECTION -->
+      <ion-row *ngIf="this.filteredParams1.isLeadsVisitsCalls == 'leads'">
+        <ion-col class="overdues-card">
+          <ion-img src="../assets/CRMimages/overduesicon.svg"></ion-img>
+          <div>
+            <span>
+              <span (click)="navigateToOverduesListPage('Fresh');">
+                <p class="content_center">Overdues</p>
+                <h1>{{ (+overdues_count.gf) + (+overdues_count.nc) + (+overdues_count.usv) }}
+                </h1>
+              </span>
+            </span>
+          </div>
+          <ion-row>
+            <ion-col>
+              <div (click)="navigateToOverduesListPage('Fresh');" class="overdues-sub-data m-0">
+                <p>G.Followups</p>
+                <h1>{{overdues_count.gf}}</h1>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div (click)="navigateToOverduesListPage('NC');" class="overdues-sub-data m-0 ">
+                <p>NC</p>
+                <h1>{{overdues_count.nc}}</h1>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="overdues-sub-data m-0" (click)="navigateToOverduesListPage('USVFix');">
+                <p>USV Fix</p>
+                <h1>{{overdues_count.usv}}</h1>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+      <!-- OVERDUES VISITS SECTION -->
+      <ion-row *ngIf="this.filteredParams1.isLeadsVisitsCalls == 'visits'">
+        <ion-col class="overdues-card">
+          <ion-img src="../assets/CRMimages/overduesicon.svg"></ion-img>
+          <ion-row>
+            <ion-col>
+              <span (click)="navigateToOverduesListPage('Deal Closing Requested')">
+                <p>Deal Request</p>
+                <h1>{{overdues_count.overdueDCR}}</h1>
+              </span>
+            </ion-col>
+            <ion-col>
+              <span (click)="navigateToOverduesListPage('Deal Closing Pending')">
+                <p>Deal Pending</p>
+                <h1>{{overdues_count.overdueDCP}}</h1>
+              </span>
+            </ion-col>
+            <ion-col></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div (click)="navigateToOverduesListPage('USV')" class="overdues-sub-data m-0">
+                <p>USV</p>
+                <h1>{{overdues_count.usv}}</h1>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div (click)="navigateToOverduesListPage('RSV')" class="overdues-sub-data m-0 ">
+                <p>RSV</p>
+                <h1>{{overdues_count.rsv}}</h1>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="overdues-sub-data m-0" (click)="navigateToOverduesListPage('Final Negotiation')">
+                <p>FN</p>
+                <h1>{{overdues_count.fn}}</h1>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+
+  <!-- PLAN V/S SUMMERY TABLE -->
+  <ion-card class="plan_VS_summary">
+    <ion-row class="plan_VS_summary_header">
+      <ion-col class=" d-flex align-items-center justify-content-center">
+        <ion-row class="weekend_weekday_row w-100">
+          <ion-col [ngClass]="filteredParams1.plan == '2'?'active_btn':''" (click)="onWeekend_Weekday_plan('2')"
+            class="h-100 d-flex align-items-center justify-content-center">
+            <span>Weekend</span></ion-col>
+          <ion-col [ngClass]="filteredParams1.plan == '1'?'active_btn':''"
+            class="h-100  d-flex align-items-center justify-content-center" (click)="onWeekend_Weekday_plan('1')">
+            <span>Weekdays</span></ion-col>
+        </ion-row>
+
+      </ion-col>
+      <ion-col class="p-0 date-row" size="5.5">
+        <label for="plan_vs_summary_date_range">
+          <div id="plan_VS_summary">
+            <span>{{(filteredParams1.weekendfromdate | date:'dd/M/yy') +" To "+ (filteredParams1.weekendtodate|
+              date:'dd/M/yy') }}
+            </span>
+            <ion-icon name="calendar-outline" class="pl-1"></ion-icon>
+          </div>
+        </label>
+
+        <!-- <ion-popover trigger="plan_VS_summary" #datepopover>
+              <ng-template>
+    
+                <ion-range-calendar class="p-0" (ionChange)="onDateChange($event)" [options]="optionsRange" [type]="type"
+                  [format]="'yyyy-MM-dd'">
+                </ion-range-calendar>
+              </ng-template>
+            </ion-popover> -->
+
+        <p-calendar #calendar [hideOnDateTimeSelect]="true" [touchUI]="true" inputId="plan_vs_summary_date_range"
+          [(ngModel)]="plan_vs_summary_dateRange" [disabledDays]="disabledDays" [disabledDays]="disabledDays"
+          selectionMode="range" appendTo="body" [dateFormat]="'yy-mm-dd'" (onSelect)="onPlan_vs_summary_dateRange()">
+        </p-calendar>
+      </ion-col>
+    </ion-row>
+
+    <ion-card-content class="p-0">
+      <div class="overdue-table">
+        <ion-row class="overduetable-header">
+          <ion-col size="4" class="plan_VS_summary_stage d-flex align-items-center justify-content-center"
+            style="background: #FFC1A8;">STAGES</ion-col>
+          <ion-col
+            class="plan_VS_summary_usv d-flex align-items-center justify-content-center">USV-{{plan_vs_summary?.[0]?.total_planned??
+            0}}</ion-col>
+          <ion-col
+            class="plan_VS_summary_rsv d-flex align-items-center justify-content-center">RSV-{{plan_vs_summary?.[1]?.total_planned??
+            0}}</ion-col>
+        </ion-row>
+
+        <!-- <ion-row class="plan_VS_summary_row ">
+              <ion-col size="4" class="plan_VS_summary_todayPlaned d-flex align-items-center justify-content-center">Today
+                Planned</ion-col>
+              <ion-col
+                class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[0]?.total_planned}}</ion-col>
+              <ion-col
+                class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[1]?.total_planned}}</ion-col>
+            </ion-row> -->
+
+        <ion-row class="plan_VS_summary_row">
+          <ion-col size="4" class="plan_VS_summary_done d-flex align-items-center justify-content-center">Done</ion-col>
+          <ion-col
+            class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[0]?.done_counts??
+            0}}</ion-col>
+          <ion-col
+            class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[1]?.done_counts??
+            0}}</ion-col>
+        </ion-row>
+
+        <ion-row class="plan_VS_summary_row">
+          <ion-col size="4"
+            class="plan_VS_summary_resheduled d-flex align-items-center justify-content-center">Rescheduled</ion-col>
+          <ion-col
+            class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[0]?.rescheduled_counts??
+            0}}</ion-col>
+          <ion-col
+            class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[1]?.rescheduled_counts??
+            0}}</ion-col>
+        </ion-row>
+        <ion-row class="plan_VS_summary_row">
+          <ion-col size="4"
+            class="plan_VS_summary_overdue d-flex align-items-center justify-content-center">Overdue</ion-col>
+          <ion-col
+            class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[0]?.overdue_counts??
+            0}}</ion-col>
+          <ion-col
+            class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[1]?.overdue_counts??
+            0}}</ion-col>
+        </ion-row>
+        <ion-row class="plan_VS_summary_row">
+          <ion-col size="4"
+            class="plan_VS_summary_unPlanned d-flex align-items-center justify-content-center">Unplanned</ion-col>
+          <ion-col
+            class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[0]?.unplanned_counts??
+            0}}</ion-col>
+          <ion-col
+            class="plan_VS_summary_cell d-flex align-items-center justify-content-center">{{plan_vs_summary?.[1]?.unplanned_counts??
+            0}}</ion-col>
+        </ion-row>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <div *ngIf="filteredParams1.isLeadsVisitsCalls == 'leads'" class="main_body">
+    <ion-row class="leads_health_row" style="background: linear-gradient(180deg, #FFFFFF -21.82%, #D0D0D0 294.59%);">
+      <ion-col>
+        <span>Leads Health Overview</span>
+      </ion-col>
+    </ion-row>
+    <div class="segments-div p-1">
+      <div *ngFor="let row of weekDataCal" class="row-box" [ngStyle]="{'background-color': row.bgColor}">
+        <!-- Row Title -->
+        <div class="title">
+          <span [ngStyle]="{'color': row.labelColor}">{{ row.label }}</span>
+          <span class="value" [ngStyle]="{'color': row.labelColor}">{{ row.value }}</span>
+        </div>
+
+        <!-- SOLID BAR (first row) -->
+        <div *ngIf="row.type == 'solid'" class="solid-bar p-0" [ngClass]="row.color"></div>
+
+        <!-- SEGMENTED BAR (other rows) -->
+        <div *ngIf="row.type == 'segment'" class="segments p-0">
+          <div class="segment" *ngFor="let seg of [].constructor(segments); let i = index"
+            [ngClass]="i < row.activeSegments ? row.color + '-active' : ''">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEDULED VISITS TABLE -->
+  <span *ngIf="this.filteredParams1.isLeadsVisitsCalls == 'visits'">
+    <ion-card class="table_card">
+      <ion-row class="card_heading">
+        <ion-col>Scheduled Visits</ion-col>
+      </ion-row>
+      <ion-grid class="table-header p-0">
+        <ion-row>
+          <ion-col size="4">Lead Details</ion-col>
+          <ion-col size="5">Scheduled Time</ion-col>
+          <ion-col size="3">{{roleid == '1'? 'Executive':'Stage'}}</ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-content style="height:200px">
+        <ion-grid class="table-body p-0">
+          <ion-row *ngFor="let row of scheduledVisitedData">
+            <ion-col size="4">
+              <div class="name">{{ row.CustomerName }}</div>
+              <div class="phone">{{ row.number }}</div>
+            </ion-col>
+
+            <ion-col size="5" class="date">
+              <div class="name">{{ row.nextactiondate}}</div>
+              <div class="phone">{{row.nextactiontime }}</div>
+            </ion-col>
+
+            <ion-col size="3">
+              <div class="name">{{ row.Executivename }}</div>
+              <div class="phone">{{ row.Leadphase }}</div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <ion-row *ngIf="scheduledVisitedData.length == 0" style="height: 100%;">
+          <ion-col class="d-flex align-items-center justify-content-center">
+            <span class="font-size14-familyPoppins">No Data Found...</span>
+          </ion-col>
+        </ion-row>
+
+        <ion-infinite-scroll *ngIf="showInfiniteScroll && usvPlans.length != 0" threshold="100px" #infiniteScroll
+          (ionInfinite)="loadScheduledVisitsData($event)">
+          <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+          </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+      </ion-content>
+    </ion-card>
+  </span>
+
+  <!-- USV PLANS TABLE -->
+  <ion-card class="table_card"
+    *ngIf="filteredParams1.isLeadsVisitsCalls == 'visits' || filteredParams1.isLeadsVisitsCalls == 'leads'">
+    <ion-row class="card_heading">
+      <ion-col *ngIf="filteredParams1.isLeadsVisitsCalls == 'leads'" class="d-flex align-items-center">USV Plans
+      </ion-col>
+      <ion-col *ngIf="filteredParams1.isLeadsVisitsCalls == 'visits'" class="d-flex align-items-center">
+        <span class="pe-1">Weekdays</span>
+        <div class="dot weekday_span ps-1"></div>
+        <span class="px-1 ms-2">Weekend Days</span>
+        <div class="dot weekend_span ps-1"></div>
+      </ion-col>
+    </ion-row>
+
+
+    <!-- FULL CARD SCROLL -->
+    <div class="full-table-scroll">
+      <!-- HEADER -->
+      <ion-grid class="table-header p-0">
+        <ion-row class="table-row d-flex" style=" background-color: #d0eaff;">
+          <ion-col [size]="roleid == '1' ?'5':'6'">Lead Details</ion-col>
+          <ion-col [size]="roleid == '1'?'4':'3'">Planed</ion-col>
+          <ion-col size="3"
+            *ngIf="filteredParams1.isLeadsVisitsCalls == 'visits'|| (filteredParams1.isLeadsVisitsCalls == 'leads' && roleid=='1')">
+            {{(roleid == '1' || localStorage.getItem('RoleType') == '1') ? 'Executive':
+            filteredParams1.isLeadsVisitsCalls == 'visits'?'Stage':''}}
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-content style="height:200px;min-height: 40px;">
+        <!-- BODY -->
+        <ion-grid class="table-body p-0">
+          <ion-row *ngFor="let row of usvPlans" class="table-row d-flex">
+
+            <ion-col [size]="roleid == '1' ?'5':'6'">
+              <div class="name">{{ row.CustomerName }}</div>
+              <div class="phone">{{ row.number }}</div>
+            </ion-col>
+
+            <ion-col [size]="roleid == '1'?'4':'3'">
+              <div class="phone" [ngClass]="row.weekplans == '1' ? 'weekend' : 'weekday'">
+                {{ row.weekplans == '1'? 'Weekday' : 'Weekend' }}
+              </div>
+              <div class="name">{{ row.nextactiondate | date:'dd/MM/yyyy' }}</div>
+            </ion-col>
+
+            <ion-col size="3"
+              *ngIf="filteredParams1.isLeadsVisitsCalls == 'visits'|| (filteredParams1.isLeadsVisitsCalls == 'leads' && roleid=='1')">
+              <div class="name" *ngIf="roleid == '1' || localStorage.getItem('RoleType') == '1'">{{ row.Executivename }}
+              </div>
+              <div class="phone" *ngIf="filteredParams1.isLeadsVisitsCalls == 'visits'">{{ row.Leadstatus }}</div>
+            </ion-col>
+
+          </ion-row>
+        </ion-grid>
+
+        <ion-row *ngIf="usvPlans.length == 0" style="height: 100%;">
+          <ion-col class="d-flex align-items-center justify-content-center">
+            <span class="font-size14-familyPoppins">No Data Found...</span>
+          </ion-col>
+        </ion-row>
+        <ion-infinite-scroll *ngIf="showInfiniteScroll && usvPlans.length != 0" threshold="100px" #infiniteScroll
+          (ionInfinite)="loadTableData($event)">
+          <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+          </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+      </ion-content>
+    </div>
+  </ion-card>
+
+
+
+
+  <!-- <span *ngIf="filteredParams1.isLeadsVisitsCalls != 'calls'"> -->
+  <!-- EXECUTIVE QUICK TABLE VIEW -->
+  <!-- <div class="lead-status-table mb-2"
+      *ngIf="(isAdmin && !filteredParams1.executid) && filteredParams1.isLeadsVisitsCalls == 'leads'">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="8" class="text_color_blue font-size12-familyPoppins content-center">
+            <span>
+              Executive’s Quick View
+            </span>
+          </ion-col>
+          <ion-col size="4" class="text_color_blue font-size12-familyPoppins ion-text-end">
+            <span style="padding-right: 2px;"
+              [ngClass]="filteredParams1.activeExec === '1'?'text_color_blue':'font-colorGray'">Active</span>
+            <ion-toggle [checked]="filteredParams1.activeExec === '1'?true:false"
+              (ionChange)="toggleActiveExecutive($event)"></ion-toggle>
+          </ion-col>
+        </ion-row>
+        <div>
+          <ion-row class="tableHeading">
+            <ion-col size="4">NAME</ion-col>
+            <ion-col size="1.5" class="content_center">VISITS</ion-col>
+            <ion-col size="2" class="content_center">USV</ion-col>
+            <ion-col size="1" class="content_center">RSV</ion-col>
+            <ion-col size="1.5" class="content_center">FN</ion-col>
+            <ion-col size="2" class="content_center">CLOSED</ion-col>
+          </ion-row>
+
+          <div
+            [ngStyle]="{ 'max-height': isExpanded ? 'none' : '150px', 'overflow': isExpanded ? 'visible' : 'hidden' }"
+            class="exce_table">
+            <div class="loader-container" *ngIf="isActiveExecLoader">
+              <ion-spinner name="crescent" style="color: white;"></ion-spinner>
+              <p class="font-size12-familyPoppins">Loading...</p>
+            </div>
+            <div *ngIf="!isActiveExecLoader">
+              <ion-row *ngFor="let count of this.executiveLeadCounts" (click)="onFilterSelection('exec',count)">
+                <ion-col size="4" class="underline-red text-wrap">
+                  <span>{{ count.name }}</span>
+                </ion-col>
+                <ion-col size="1.5" class="content_center">
+                  <span>{{ count.counts[0].All_Visits }}</span>
+                </ion-col>
+                <ion-col size="1.5" class="content_center">
+                  <span>{{ count.counts[0].USV}}</span>
+                </ion-col>
+                <ion-col size="1.5" class="content_center">
+                  <span>{{ count.counts[0].RSV}}</span>
+                </ion-col>
+                <ion-col size="1.5" class="content_center">
+                  <span>{{ count.counts[0].Final_Negotiation}}</span>
+                </ion-col>
+                <ion-col size="2" class="content_center">
+                  <span>{{ count.counts[0].Closed}}</span>
+                </ion-col>
+              </ion-row>
+            </div>
+
+            <ion-row *ngIf="executiveLeadCounts?.length === 0" style="border-bottom:none;height:100%"
+              class="content_center">
+              <ion-col class="ion-text-center">
+                <span>No Data Found ...!</span>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+        <ion-row>
+          <ion-col class="content_center" *ngIf="executiveLeadCounts?.length > 4">
+            <button (click)="toggleExpand()" class="font-size12-familyPoppins text_color_blue">
+              {{ isExpanded ? 'View Less' : 'View More' }}
+            </button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div> -->
+
+
+
+
+
+  <!--SCHEDULED TODAY AND OVERDUES RECARDS AND COUNTS SECTION -->
+  <!-- *ngIf="(isAdmin && filteredParams1.executid) || !isAdmin" -->
+  <!-- <section *ngIf="filteredParams1.isLeadsVisitsCalls == 'leads'"> -->
+  <!-- <span>
+        <ion-row class="scheduleOverduesButtons mt-2">
+          <ion-col size="7" class="d-flex align-items-center justify-content-center"
+            [ngClass]="filteredParams1.scheduledTodayOrOverdues == 'scheduledtoday'?'active_btn':''"
+            (click)="onFilterSelection('scheduledTodayOrOverdues','scheduledtoday')">Scheduled Today {{ "- " +
+            totalScheduledtoday_overdueCount.scheduledToday}}</ion-col>
+          <ion-col size="5" class="d-flex align-items-center justify-content-center"
+            [ngClass]="filteredParams1.scheduledTodayOrOverdues == 'overdues'?'active_btn':''"
+            (click)="onFilterSelection('scheduledTodayOrOverdues','overdues')">Overdues {{ "- " +
+            totalScheduledtoday_overdueCount.overdue
+            }}</ion-col>
+        </ion-row>
+
+        <ion-row class="scheduledCountsRow mt-2" *ngIf="filteredParams1.scheduledTodayOrOverdues == 'scheduledtoday'">
+          <ion-col class="ion-text-center">
+            <div>{{scheduledtoday_count.usv}}</div>
+            <p>USV</p>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <div>{{scheduledtoday_count.rsv}}</div>
+            <p>RSV</p>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <div>{{scheduledtoday_count.fn}}</div>
+            <p>FN</p>
+          </ion-col>
+        </ion-row> -->
+
+  <!-- SCHEDULED TODAY AND OVERDUES TABLE -->
+  <!-- <div class="mt-2 lead-status-table" *ngIf="isAdmin && !filteredParams1.executid">
+          <ion-grid>
+            <ion-row (click)="isScheduledOverdueUpwardIcon = !isScheduledOverdueUpwardIcon">
+              <ion-col class="text_color_blue font-size12-familyPoppins content-center" size="11">Executive’s
+                {{filteredParams1.scheduledTodayOrOverdues == 'scheduledtoday' ?'Schedule':'Overdue'}} View</ion-col>
+              <ion-col size="1"><ion-icon
+                  [name]="isScheduledOverdueUpwardIcon ? 'chevron-up' : 'chevron-down'"></ion-icon></ion-col>
+            </ion-row>
+            <ion-row class="text-center"
+              *ngIf="filteredParams1.scheduledTodayOrOverdues == 'scheduledtoday'? scheduledExecLC && scheduledExecLC.length === 0: overdueExecLC && overdueExecLC.length === 0">
+              <ion-col class="font-size14-familyPoppins"> No Visits Scheduled Today</ion-col>
+            </ion-row>
+            <span
+              *ngIf="filteredParams1.scheduledTodayOrOverdues == 'scheduledtoday'? scheduledExecLC && scheduledExecLC.length > 0: overdueExecLC && overdueExecLC.length > 0">
+              <ion-row class="tableHeading"
+                *ngIf="filteredParams1.scheduledTodayOrOverdues == 'scheduledtoday' && !isScheduledOverdueUpwardIcon">
+                <ion-col size="4">NAME</ion-col>
+                <ion-col size="2" class="content_center">VISITS</ion-col>
+                <ion-col size="2" class="content_center">USV</ion-col>
+                <ion-col size="2" class="content_center">RSV</ion-col>
+                <ion-col size="2" class="content_center">FN</ion-col>
+              </ion-row>
+              <ion-row class="tableHeading"
+                *ngIf="filteredParams1.scheduledTodayOrOverdues == 'overdues' && !isScheduledOverdueUpwardIcon">
+                <ion-col size="3">NAME</ion-col>
+                <ion-col size="4" class="ion-text-center">OVERDUES</ion-col>
+                <ion-col size="5">LAST UPDATED ON</ion-col>
+              </ion-row>
+              <ion-content *ngIf="!isScheduledOverdueUpwardIcon">
+                <div>
+                  <ion-row
+                    *ngFor="let count of filteredParams1.scheduledTodayOrOverdues == 'scheduledtoday'? scheduledExecLC: overdueExecLC"
+                    (click)="onFilterSelection('exec',count)">
+                    <ng-container *ngIf="filteredParams1.scheduledTodayOrOverdues == 'scheduledtoday'">
+                      <ion-col size="4" class="underline-red font-size12-familyPoppins">{{ count.name }}</ion-col>
+                      <ion-col size="2" class="content_center font-size12-familyPoppins">{{ count.counts[0].All_Visits
+                        }}</ion-col>
+                      <ion-col size="2" class="content_center font-size12-familyPoppins">{{
+                        count.counts[0].USV}}</ion-col>
+                      <ion-col size="2" class="content_center font-size12-familyPoppins">{{
+                        count.counts[0].RSV}}</ion-col>
+                      <ion-col size="2" class="content_center font-size12-familyPoppins">{{
+                        count.counts[0].Final_Negotiation}}</ion-col>
+                    </ng-container>
+                    <ng-container *ngIf="filteredParams1.scheduledTodayOrOverdues == 'overdues'">
+                      <ion-col size="3" class="underline-red font-size12-familyPoppins">{{ count.name }}</ion-col>
+                      <ion-col size="4" class="ion-text-center font-size12-familyPoppins">{{ count.counts[0].Overdues
+                        }}</ion-col>
+                      <ion-col size="5" class="font-size12-familyPoppins">{{ count.counts[0].Last_Updated}}</ion-col>
+                    </ng-container>
+                  </ion-row>
+                </div>
+              </ion-content>
+            </span>
+          </ion-grid>
+        </div> -->
+
+
+  <!-- <span *ngIf="(isAdmin && filteredParams1.executid) || !isAdmin">
+          <ion-row
+            *ngIf="filteredParams1.scheduledTodayOrOverdues == 'overdues' && ((filteredParams1.executid && isAdmin) || !isAdmin)">
+            <ion-col class="ion-text-right d-flex align-items-center justify-content-end pt-3 pb-0"
+              (click)="navigateToOverdueListingPage()">
+              <ion-icon name="open-outline"></ion-icon>
+              <p class="font-size12-familyPoppins">View All</p>
+            </ion-col>
+          </ion-row>
+          <ion-item-sliding *ngFor="let lead of scheduledTodayOrOverduesData">
+            <ion-item class="lead-item" lines="none">
+              <ion-card class="m-0 mt-2">
+                <div class="p-1">
+                  <ion-row>
+                    <ion-col class="text-label"><span>Lead name</span></ion-col>
+                    <ion-col class="text-label text-right"><span>Mobile Number</span></ion-col>
+                  </ion-row>
+                  <ion-row class="border_bottom">
+                    <ion-col class="text-value number">
+                      <span>{{ lead.CustomerName }}
+                        {{
+                        lead.visitedcount === "1"
+                        ? "(" + lead.visitedcount + "st Visit)"
+                        : lead.visitedcount === "2"
+                        ? "(" + lead.visitedcount + "nd Visit)"
+                        : lead.visitedcount === "3"
+                        ? "(" + lead.visitedcount + "rd Visit)"
+                        : lead.visitedcount === "4"
+                        ? "(" + lead.visitedcount + "th Visit)"
+                        : ""
+                        }}</span>
+                    </ion-col>
+                    <ion-col class="text-value text-right pt-0 pb-1">
+                      <span *ngIf="localStorage.getItem('Name') != 'demo'">+91 {{
+                        lead.number }}</span>
+                      <span *ngIf="localStorage.getItem('Name') == 'demo'">xxxxxxxxxx</span>
+                    </ion-col>
+
+                  </ion-row>
+
+                  <ion-row>
+                    <ion-col class="text-label"><span>Stages & Scheduled Date</span></ion-col>
+                    <ion-col class="text-label text-right"
+                      *ngIf="filteredParams1.scheduledTodayOrOverdues == 'overdues'"><span>Overdue by</span></ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col class="text-value"><span>{{ lead.Leadphase }} &
+                        {{filteredParams1.scheduledTodayOrOverdues != 'overdues'? lead.nextactiontime:
+                        lead.nextactiondate
+                        +
+                        " " +
+                        lead.nextactiontime}}</span></ion-col>
+                    <ion-col class="text-value text-right"
+                      *ngIf="filteredParams1.scheduledTodayOrOverdues == 'overdues'"><span>{{
+                        getOverdueDaysCount(lead.nextactiondate) }} days</span></ion-col>
+                  </ion-row>
+                </div>
+              </ion-card>
+            </ion-item>
+          </ion-item-sliding>
+          <ion-row *ngIf="((filteredParams1.executid && isAdmin) || !isAdmin) && scheduledTodayOrOverduesData.length==0"
+            class=" d-flex align-items-center justify-content-center">
+            No Leads Found...
+          </ion-row>
+        </span> -->
+  <!-- </span>
+    </section>
+  </span> -->
+
+  <!-- <ion-infinite-scroll *ngIf="showInfiniteScroll"
+    [disabled]=" 
+  !((filteredParams1.isLeadsVisitsCalls == 'leads' && (!isAdmin ||
+  isAdmin
+  && filteredParams1.executid != '')) || (filteredParams1.isLeadsVisitsCalls == 'calls' && allCallsData.length != 0 )) " threshold="100px" #infiniteScroll
+    (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll> -->
+</ion-content>
+
+
+<!-- footer Section -->
+<app-common-footer></app-common-footer>
+
+<ion-modal #callConfirmationModal class="callConfirmationModal">
+  <ng-template>
+    <ion-header>
+      <ion-row class="activeSaveButton">
+        <ion-col size="1"></ion-col>
+        <ion-col size="9" class="ion-text-center d-flex ion-justify-content-center">
+          <h3>Initiate Outbound Call</h3>
+        </ion-col>
+        <ion-col size="2" (click)="callConfirmationModal.dismiss()"
+          class="ion-text-center d-flex ion-justify-content-center paddingZero"> <ion-icon class="paddingZero"
+            name="close"></ion-icon></ion-col>
+      </ion-row>
+    </ion-header>
+    <ion-content>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <p style="font-size:20px;color: rgba(65, 65, 65, 1);">Do you want to place a call to
+            {{lead.leadname}}
+            <span>
+              {{"("+lead.callto+")"}}
+            </span>
+            ?
+          </p>
+        </ion-col>
+      </ion-row>
+    </ion-content>
+    <ion-footer>
+      <ion-row>
+        <ion-col class="ion-text-center" (click)="callConfirmationModal.dismiss()"> <ion-button fill="clear"
+            class="active_text_borederColor"> Cancel</ion-button> </ion-col>
+        <ion-col class="ion-text-center" (click)="outboundCall(true)"> <ion-button fill="clear"
+            class="activeSaveButton"> Call </ion-button> </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+<ion-modal #dashboard_custDate_modal [breakpoints]="[0.3]" [initialBreakpoint]="0.3"
+  [backdropDismiss]="!(dateRange?.fromdate && dateRange?.todate)"
+  (ionModalDidDismiss)="onCustomDateModalDismiss($event)" class="dashboard_custDate_modal">
+  <ng-template>
+
+    <div class="modal-container">
+      <!-- CONTENT -->
+      <div class="date-range-wrapper">
+        <h3 class="title">Select date range{{dateRange?.fromdate!=null && dateRange?.todate!=null}}</h3>
+
+        <div class="date-inputs">
+          <div class="date-box" (click)="openFromDate()">
+            <label>From</label>
+            <span>{{ dateRange?.fromdate ? ('' + dateRange.fromdate).split('T')[0] : '' }}</span>
+          </div>
+
+          <div class="date-box" (click)="handleToDateClick()" [class.disabled]="!dateRange?.fromdate">
+            <label>To</label>
+            <span>{{ dateRange?.todate ? ('' + dateRange.todate).split('T')[0] : '' }}</span>
+          </div>
+        </div>
+
+        <p class="error-text" *ngIf="showFromDateError">
+          Please select From date first
+        </p>
+      </div>
+
+      <!-- STICKY FOOTER -->
+      <div>
+        <ion-button expand="block" class="confirm-btn" [disabled]="!(dateRange?.fromdate && dateRange?.todate)"
+          (click)="addQueryParams(); dashboard_custDate_modal.dismiss()">
+          Confirm
+        </ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+
+
+<ion-modal #dashboard_fromDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+  [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+  <ng-template>
+    <ion-datetime presentation="date" [(ngModel)]="dateRange.fromdate"
+      (ionChange)="onFilterSelection('dateFilter','customfromDate')"></ion-datetime>
+  </ng-template>
+</ion-modal>
+<ion-modal #dashboard_toDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+  [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+  <ng-template>
+    <ion-datetime presentation="date" [min]="dateRange.fromdate" [(ngModel)]="dateRange.todate"
+      (ionChange)="onFilterSelection('dateFilter','customtoDate')"></ion-datetime>
+  </ng-template>
+</ion-modal>

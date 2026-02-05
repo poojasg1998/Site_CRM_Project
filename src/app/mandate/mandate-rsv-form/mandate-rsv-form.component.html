@@ -1,0 +1,439 @@
+<!-- priority Level -->
+<!-- <div class="priority-level margin-top-16" *ngIf="!isLeadCloseSubForm && this.activestagestatus[0].stage !=='Final Negotiation' && this.activestagestatus[0].stage !=='USV'">
+    <ion-row>
+      <ion-col>Priority Level</ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col class="content_center" [ngClass]="isHot?'activeHot':'inactive'" (click)="onHotWarmCold('hot')">
+        <span>HOT</span> <ion-img [src]="isHot?'../../assets/CRMimages/activehoticon.svg':'../../assets/CRMimages/hoticon.svg'"></ion-img>
+        <input type="hidden" id="priorityhiddeninput" [value]="isHot?'1':isWarm?'2':isCold?'3':''">
+        </ion-col>
+      <ion-col class="content_center" [ngClass]="isWarm?'activeWarm':'inactive'" (click)="onHotWarmCold('warm')">
+        <span>WARM</span><ion-img [src]="isWarm?'../../assets/CRMimages/activewarmicon.svg':'../../assets/CRMimages/warmicon.svg'"></ion-img></ion-col>
+      <ion-col class="content_center" [ngClass]="isCold?'activeCold':'inactive'" (click)="onHotWarmCold('cold')">
+        <span>COLD</span> <ion-img [src]="isCold?'../../assets/CRMimages/activecoldicon.svg':'../../assets/CRMimages/coldicon.svg'"></ion-img></ion-col>
+    </ion-row>
+  </div> -->
+
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+
+<div *ngIf="buttonhiders && (hideafterfixed || hidebeforefixed || commonhide)" class="rsvform margin-top-16">
+  <ion-row *ngIf="hideafterfixed || hidebeforefixed || commonhide">
+    <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+      Fixing RSV
+    </p>
+  </ion-row>
+
+  <ion-row *ngIf="hidebeforefixed || hideafterfixed || commonhide">
+    <ion-col size="6" *ngIf="hidebeforefixed">
+      <div class="content_center" [ngClass]="isRsvReFixForm?'activeStatus':'inActiveStatus'" fill="clear"
+        (click)="onrsvreFix()">Refix RSV</div>
+    </ion-col>
+    <ion-col size="6" *ngIf="hideafterfixed">
+      <div class="content_center" [ngClass]="isRsvFixedForm?'activeStatus':'inActiveStatus'" fill="clear"
+        (click)="onrsvFixed()">Fix RSV</div>
+    </ion-col>
+    <ion-col size="6" *ngIf="hidebeforefixed">
+      <div class="content_center" [ngClass]="isRsvDone?'activeStatus':'inActiveStatus'" fill="clear"
+        (click)="onrsvDone()">RSV Done</div>
+    </ion-col>
+    <!-- <ion-col size="6"  *ngIf="commonhide" >
+        <div  class="content_center" [ngClass]="isFollowupForm?'activeStatus':'inActiveStatus'"  fill="clear" (click)="onfollowup()">Follow Up</div>
+       </ion-col>
+      <ion-col size="6"  *ngIf="commonhide" >
+        <div  class="content_center" [ngClass]="isJunkForm?'activeStatus':'inActiveStatus'" fill="clear"  (click)="onjunk()">Junk</div>
+       </ion-col>   -->
+  </ion-row>
+</div>
+<div *ngIf="isRsvDone || isRsvReFixForm || isRsvFixedForm">
+  <input type="hidden" id="sectionselector">
+  <input type="hidden" id="visitupdate">
+
+  <!-- RSV Fix -->
+  <div *ngIf="isRsvFixedForm" class="rsvform  margin-top-16">
+    <form (ngSubmit)="rsvfixing()" ngNativeValidate #submitForm="ngForm">
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          <span> Fix RSV Date </span>
+        </p>
+      </ion-row>
+      <ion-row class="center-content">
+        <div lines="none" class="input-with-image date-input">
+          <ion-input [(ngModel)]="rsvDate" name="date" id="rsvnextactiondate" placeholder="Choose Date" inputmode="none"
+            required></ion-input>
+          <ion-popover trigger="rsvnextactiondate" #popover>
+            <ng-template>
+              <ion-datetime [min]="minDate" [max]="maxDate" presentation="date" locale="en-US"
+                (ionChange)="onDateChange($event);closePopover()"></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </ion-row>
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          <span>Fix RSV Time</span>
+        </p>
+      </ion-row>
+      <ion-row class="center-content">
+        <div no-lines class="date-input inputTime-with-image">
+          <div style="width: 100%;">
+            <input style="width: 100%;" pInputText placeholder="Choose Time" id="rsvnextactiontime"
+              aria-label="12hr format" [ngxTimepicker]="default" [(ngModel)]="rsvTime" name="rsvTime" inputmode="none"
+              (ngModelChange)="validateTime()" required>
+          </div>
+        </div>
+      </ion-row>
+      <ngx-material-timepicker #default></ngx-material-timepicker>
+
+      <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.</div>
+
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</p>
+      </ion-row>
+      <ion-row class="custom-textArea">
+        <ion-textarea placeholder="Write remarks" id="rsvtextarearemarks" name="remark" required
+          [(ngModel)]="textarearemarks" (ngModelChange)="checkAlphanumericSpaces()"></ion-textarea>
+      </ion-row>
+
+      <ion-row class="submitForm">
+        <ion-col class="paddingZero">
+          <ion-button fill="clear" type="reset">Cancel</ion-button>
+        </ion-col>
+        <ion-col class="paddingZero">
+          <ion-button fill="clear" class="saveButton"
+            [ngClass]="submitForm.invalid || hasOnlySpaces?'saveButton':'activeSaveButton'" type="submit"
+            [disabled]="submitForm.invalid || hasOnlySpaces">Save</ion-button>
+        </ion-col>
+      </ion-row>
+    </form>
+  </div>
+
+  <!-- RSV Refix -->
+  <div *ngIf="isRsvReFixForm" class="rsvform  margin-top-16">
+    <form (ngSubmit)="rsvrefixing()" ngNativeValidate #submitForm="ngForm">
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          <span> RSV Refixed Date </span>
+        </p>
+      </ion-row>
+      <ion-row class="center-content">
+        <div lines="none" class="input-with-image date-input">
+          <ion-input [(ngModel)]="rsvDate" name="date" id="refixdate" placeholder="Choose Date" inputmode="none"
+            required></ion-input>
+          <ion-popover trigger="refixdate" #popover>
+            <ng-template>
+              <ion-datetime [min]="minDate" [max]="maxDate" presentation="date" locale="en-US"
+                (ionChange)="onDateChange($event);closePopover()"></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </ion-row>
+
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          <span>RSV Refixed Time</span>
+        </p>
+      </ion-row>
+      <!-- <ion-row class="center-content">
+        <div no-lines class="date-input inputTime-with-image">
+          <ion-input  [(ngModel)]="rsvTime" name="time" class="borderNone" id="refixtime" no-lines placeholder="Choose Time" required></ion-input>               
+          <ion-popover trigger="refixtime">
+            <ng-template>
+              <ion-datetime  presentation="time" locale="en-US"  display-format="h:mm A" (ionChange)="onTimeChange($event)"></ion-datetime>
+          </ng-template>
+          </ion-popover>
+        </div>
+      </ion-row> -->
+
+      <ion-row class="center-content">
+        <div no-lines class="date-input inputTime-with-image">
+          <div style="width: 100%;"><input style="width: 100%;" pInputText placeholder="Choose Time" id="refixtime"
+              aria-label="12hr format" [ngxTimepicker]="default" [(ngModel)]="rsvTime" name="rsvTime" inputmode="none"
+              (ngModelChange)="validateTime()" required readonly></div>
+        </div>
+      </ion-row>
+      <ngx-material-timepicker #default></ngx-material-timepicker>
+      <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.</div>
+
+      <ion-row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</p>
+      </ion-row>
+      <ion-row class="custom-textArea">
+        <ion-textarea placeholder="Write remarks" id="refixtextarearemarks" name="remark" required
+          [(ngModel)]="textarearemarks" (ngModelChange)="checkAlphanumericSpaces()"></ion-textarea>
+      </ion-row>
+      <ion-row class="submitForm">
+        <ion-col class="paddingZero">
+          <ion-button fill="clear" type="reset">Cancel</ion-button>
+        </ion-col>
+        <ion-col class="paddingZero">
+          <ion-button fill="clear" class="saveButton"
+            [ngClass]="submitForm.invalid || hasOnlySpaces?'saveButton':'activeSaveButton'" type="submit"
+            [disabled]="submitForm.invalid || hasOnlySpaces ">Save</ion-button>
+        </ion-col>
+      </ion-row>
+    </form>
+  </div>
+
+  <!-- RSV Done with status not updated -->
+  <span *ngIf="isRsvDone">
+    <!-- [hidden]="!(activestagestatus[0].stage == 'RSV' && activestagestatus[0].stagestatus == '3')" -->
+    <div [hidden]="!(activestagestatus[0].stage == 'RSV' && activestagestatus[0].stagestatus == '3')">
+      <ion-row row class="margin-top-16">
+        <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+          Meeting Details
+        </p>
+      </ion-row>
+      <span *ngIf="cancelledpropertylists?.length">
+        <span class="cancelledProperty">
+          <ion-row class="margin-top-16">
+            <ion-col class="content_center font-size14-familyPoppins font-colorBlack font-weight500">
+              <p>Cancelled Property</p>
+            </ion-col>
+            <ion-col class="content_center font-size14-familyPoppins font-colorBlack font-weight500">Remarks</ion-col>
+          </ion-row>
+          <ion-row *ngFor="let rsvcancelled of cancelledpropertylists">
+            <ion-col
+              class="content_center font-size12-familyPoppins font-colorBlack font-weight500">{{rsvcancelled.name}}</ion-col>
+            <ion-col
+              class="content_center font-size12-familyPoppins font-colorBlack font-weight500">{{rsvcancelled.remarks}}</ion-col>
+          </ion-row>
+        </span>
+      </span>
+
+      <span *ngIf="visitedpropertylists?.length">
+        <span class="cancelledProperty">
+          <ion-row class="margin-top-16">
+            <ion-col class="content_center font-size14-familyPoppins font-colorBlack font-weight500">
+              <p class="content_center visitProperty">Property Name</p>
+            </ion-col>
+            <ion-col class="content_center font-size14-familyPoppins font-colorBlack font-weight500">Last
+              Remarks</ion-col>
+          </ion-row>
+          <ion-row *ngFor="let rsvvisited of visitedpropertylists">
+            <ion-col
+              class="content_center font-size12-familyPoppins font-colorBlack font-weight500">{{rsvvisited.name}}</ion-col>
+            <ion-col
+              class="content_center font-size12-familyPoppins font-colorBlack font-weight500">{{rsvvisited.remarks}}</ion-col>
+          </ion-row>
+        </span>
+      </span>
+
+      <div class="rsvform  margin-top-16" *ngFor="let suggested of selectedpropertylists; let i = index">
+        <div class="projectname">
+          <ion-row class="custom-row">
+            <ion-col class="ion-text-center">{{suggested.name}}</ion-col>
+          </ion-row>
+          <ion-row class="content_center" style="   padding: 5px;">
+            <ion-col style="margin-right: 2px;" [ngClass]="isInterested?'activeInteested':'inActiveInterested'"
+              class="content_center" (click)="visitclick()"><span>Interested</span></ion-col>
+            <ion-col [ngClass]="isNotInterested?'activeInteested':'inActiveInterested'" class="content_center"
+              (click)="cancelclick()"><span>Not Interested</span></ion-col>
+          </ion-row>
+        </div>
+        <span>
+          <form (ngSubmit)="updatepropertyvisit(suggested.propid,suggested.name)" ngNativeValidate #submitForm="ngForm">
+            <ion-row class="margin-top-16">
+              <p class="font-size12-familyPoppins font-colorBlack font-weight500">Site Visit Remarks</p>
+            </ion-row>
+            <ion-row class="custom-textArea">
+              <ion-textarea placeholder="Write remarks" name="remark" id="propertyremarks" [(ngModel)]="textarearemarks"
+                (ngModelChange)="checkAlphanumericSpaces()" required></ion-textarea>
+            </ion-row>
+            <ion-row class="submitForm" *ngIf="isNotInterested">
+              <ion-col class="paddingZero">
+                <ion-button fill="clear" type="reset">Cancel</ion-button>
+              </ion-col>
+              <ion-col class="paddingZero">
+                <ion-button fill="clear" type="submit"
+                  [ngClass]="submitForm.invalid || hasOnlySpaces?'saveButton':'activeSaveButton'"
+                  [disabled]="submitForm.invalid || hasOnlySpaces">Save</ion-button>
+              </ion-col>
+            </ion-row>
+          </form>
+        </span>
+      </div>
+
+      <div *ngIf="isInterested">
+        <span *ngFor="let suggested of selectedpropertylists; let i = index">
+          <div class="rsvform margin-top-16">
+            <ion-row>
+              <p class="font-size12-familyPoppins font-colorBlack font-weight500"> Select the next Action</p>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <div class="content_center" [ngClass]="isFollowUpSubForm?'activeStatus':'inActiveStatus'" fill="clear"
+                  (click)="followupdownbtn()">Follow Up</div>
+              </ion-col>
+              <ion-col size="6">
+                <div class="content_center" [ngClass]="isRsvFixSubForm?'activeStatus':'inActiveStatus'" fill="clear"
+                  (click)="onrsvFixedsubbtn()">Fix RSV</div>
+              </ion-col>
+              <ion-col size="6">
+                <div class="content_center" [ngClass]="isFnSubForm?'activeStatus':'inActiveStatus'" fill="clear"
+                  (click)="onnegofixed()">Fix FN</div>
+              </ion-col>
+              <ion-col size="6">
+                <div class="content_center" [ngClass]="isLeadCloseSubForm?'activeStatus':'inActiveStatus'" fill="clear"
+                  (click)="onleadclosed()">Lead Closed</div>
+              </ion-col>
+            </ion-row>
+          </div>
+
+          <app-follow-up-form *ngIf="isFollowUpSubForm" [selectedExecId]="selectedExecId"
+            [selectedSuggestedProp]="selectedSuggestedProp"
+            [onCallLeadDetails]="onCallLeadDetails"></app-follow-up-form>
+
+          <div *ngIf="isRsvFixSubForm" class="rsvform  margin-top-16">
+            <form (ngSubmit)="rsvdonewithfixing()" ngNativeValidate #submitForm="ngForm">
+              <ion-row class="margin-top-16">
+                <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+                  <span>Next Action Date </span>
+                </p>
+              </ion-row>
+              <ion-row class="center-content">
+                <div lines="none" class="input-with-image date-input">
+                  <ion-input [(ngModel)]="rsvDate" name="date" id="subrsvnextactiondate" placeholder="Choose Date"
+                    inputmode="none" required></ion-input>
+                  <ion-popover trigger="subrsvnextactiondate" #popover>
+                    <ng-template>
+                      <ion-datetime [min]="minDate" [max]="maxDate" presentation="date" locale="en-US"
+                        (ionChange)="onDateChange($event);closePopover()"></ion-datetime>
+                    </ng-template>
+                  </ion-popover>
+                </div>
+              </ion-row>
+
+              <ion-row class="margin-top-16">
+                <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+                  <span>Next Action Time</span>
+                </p>
+              </ion-row>
+              <!-- <ion-row class="center-content">
+            <div no-lines class="date-input inputTime-with-image">
+              <ion-input  [(ngModel)]="rsvTime" name="time" class="borderNone" id="subrsvnextactiontime" no-lines placeholder="Choose Time" required></ion-input>               
+              <ion-popover trigger="subrsvnextactiontime">
+                <ng-template>
+                  <ion-datetime  presentation="time" locale="en-US" (ionChange)="onTimeChange($event)"></ion-datetime>
+              </ng-template>
+              </ion-popover>
+            </div>
+          </ion-row> -->
+
+              <ion-row class="center-content">
+                <div no-lines class="date-input inputTime-with-image">
+                  <div style="width: 100%;">
+                    <input style="width: 100%;" pInputText placeholder="Choose Time" aria-label="12hr format"
+                      id="subrsvnextactiontime" [ngxTimepicker]="default" [(ngModel)]="rsvTime" name="rsvTime"
+                      (ngModelChange)="validateTime()" inputmode="none" required>
+                  </div>
+                </div>
+              </ion-row>
+              <ngx-material-timepicker #default></ngx-material-timepicker>
+              <div *ngIf="timeError" style="color: red; font-size: 12px;">Please select a time between 8 AM and 8 PM.
+              </div>
+
+              <ion-row class="margin-top-16">
+                <p class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</p>
+              </ion-row>
+              <ion-row class="custom-textArea margin-top-16">
+                <ion-textarea placeholder="Write remarks" id="subrsvtextarearemarks" name="remark" required
+                  [(ngModel)]="textarearemarks1" (ngModelChange)="checkAlphanumericSpaces()"></ion-textarea>
+              </ion-row>
+
+              <ion-row class="submitForm">
+                <ion-col class="paddingZero">
+                  <ion-button fill="clear" type="reset">Cancel</ion-button>
+                </ion-col>
+                <ion-col class="paddingZero">
+                  <ion-button fill="clear" class="saveButton"
+                    [ngClass]="submitForm.invalid || hasOnlySpaces?'saveButton':'activeSaveButton'" type="submit"
+                    [disabled]="submitForm.invalid || hasOnlySpaces">Save</ion-button>
+                </ion-col>
+              </ion-row>
+            </form>
+          </div>
+          <app-mandate-negoform *ngIf="isFnSubForm" [selectedExecId]="selectedExecId"
+            [selectedSuggestedProp]="selectedSuggestedProp"
+            [onCallLeadDetails]="onCallLeadDetails"></app-mandate-negoform>
+          <!-- <app-closedform *ngIf="isLeadCloseSubForm" [selectedExecId]="selectedExecId"
+            [selectedSuggestedProp]="selectedSuggestedProp" [onCallLeadDetails]="onCallLeadDetails"></app-closedform> -->
+
+          <app-mandate-close-form *ngIf="isLeadCloseSubForm" [selectedExecId]="selectedExecId"
+            [selectedSuggestedProp]="selectedSuggestedProp"
+            [onCallLeadDetails]="onCallLeadDetails"></app-mandate-close-form>
+        </span>
+      </div>
+    </div>
+
+    <!-- <div *ngIf="!(activestagestatus[0].stage == 'RSV' && activestagestatus[0].stagestatus == '3')"
+      class="content_center">
+      <p class="font-size16-familyPoppins">Waiting for the Site-Visit Updation...</p>
+    </div> -->
+
+    <!-- <div class="content_center margin-top-16"
+      *ngIf="(!(activestagestatus[0].stage === 'RSV' && activestagestatus[0].stagestatus === '3') && ((activestagestatus[0].assignedvisits != null && isCS))) || (!(activestagestatus[0].stage === 'USV' && activestagestatus[0].stagestatus === '3') && !isCS)">
+      <p class="font-size16-familyPoppins">Waiting for the Site-Visit Updation...</p>
+    </div> -->
+
+    <div *ngIf="!(activestagestatus[0].stage === 'RSV' && activestagestatus[0].stagestatus === '3') &&
+  ((roleid != '1' && ((isCS && activestagestatus[0].assignedvisits != null) || (!isCS))) || (roleid == '1' && (((assigedrm?.[0]?.roleid
+  == '50014' ||
+  assigedrm?.[0]?.roleid == '50013') && activestagestatus[0].assignedvisits != null) ||(assigedrm?.[0]?.roleid
+  != '50014' &&
+  assigedrm?.[0]?.roleid != '50013'))))">
+      <p class="font-size16-familyPoppins">Waiting for the Site-Visit Updation...</p>
+    </div>
+
+
+    <div
+      *ngIf="activestagestatus[0].assignedvisits == null && ((isCS && roleid != '1') || (roleid == '1' && (assigedrm?.[0]?.roleid == '50014' || assigedrm?.[0]?.roleid == '50013')))"
+      class="d-flex flex-column mt-4 mb-2">
+      <p class="font-size14-familyPoppins">Please Assign the Visit to Executive</p>
+      <form (ngSubmit)="assignFixedLead()" ngNativeValidate #visitassignForm="ngForm">
+        <ion-row style=" width: 78%;">
+          <ion-col id="execDropdown">
+            <p-dropdown class="execDropdown" [options]="mandateExecList" [(ngModel)]="selectedExec" optionLabel="name"
+              name="selectedExec" placeholder="Select a Executive" appendTo="body" required />
+          </ion-col>
+        </ion-row>
+
+        <ion-button type="submit" fill="clear" class="bg_textColor" style="border-radius: 4px;"
+          [disabled]="visitassignForm.invalid">
+          Submit</ion-button>
+      </form>
+    </div>
+  </span>
+</div>
+<app-junkform *ngIf="isJunkForm" [selectedExecId]="selectedExecId" [selectedSuggestedProp]="selectedSuggestedProp"
+  [onCallLeadDetails]="onCallLeadDetails"></app-junkform>
+<app-follow-up-form *ngIf="isFollowupForm" [selectedExecId]="selectedExecId"
+  [selectedSuggestedProp]="selectedSuggestedProp" [onCallLeadDetails]="onCallLeadDetails"></app-follow-up-form>
+
+
+<!-- Important Hidden Fields -->
+<div class="col-sm-6 form-group headingdesign" style="display: none;">
+  <label class="heads">Site Visited Date</label>
+  <div class="ui calendar visitedcalendardate">
+    <div class="ui input left icon datepickerdiv">
+      <i class="calendar icon"></i>
+      <input type="text" autocomplete="off" id="RSVvisiteddate" placeholder="Date">
+    </div>
+  </div>
+</div>
+<div class="col-sm-6 form-group headingdesign" style="display: none;">
+  <label class="heads">Site Visited Time</label>
+  <div class="ui calendar calendartime">
+    <div class="ui input left icon timepickerdiv">
+      <i class="time icon"></i>
+      <input class="form-control" autocomplete="off" id="RSVvisitedtime" type="text" placeholder="Time">
+    </div>
+  </div>
+</div>
+
+<!-- Important Hidden Fields -->

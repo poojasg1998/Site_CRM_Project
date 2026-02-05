@@ -1,0 +1,5 @@
+{
+  "typescript.preferences.autoImportFileExcludePatterns": ["@ionic/angular/common", "@ionic/angular/standalone"],
+  "editor.formatOnSave": true,
+"editor.formatOnPaste": true
+}

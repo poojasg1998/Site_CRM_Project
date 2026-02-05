@@ -1,0 +1,230 @@
+* {
+  font-family: "Poppins";
+}
+.logo::part(image) {
+  border-radius: 3px !important;
+  width: 30px;
+  height: 30px;
+}
+div.bg_textColor,
+div.text_borderColor {
+  padding: 4px 1px;
+  border-radius: 4px;
+  width: 100%;
+  box-shadow: 0px 8px 24px 0px #959da533 !important;
+}
+::ng-deep p-dropdown.exec_css .p-inputwrapper span {
+  padding: 5px;
+  font-family: "Poppins";
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper span {
+  padding: 5px;
+  font-size: 12px;
+  font-family: "Poppins";
+  color: #0b7ab2;
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper {
+  width: 100% !important;
+  border: 0.5px #0b7ab2 solid;
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper .p-dropdown-trigger {
+  width: 30px !important;
+}
+
+::ng-deep
+  p-dropdown.exec_css
+  .p-inputwrapper
+  .p-dropdown-trigger
+  chevrondownicon {
+  width: 12px;
+  color: #0b7ab2;
+}
+
+::ng-deep .exec_css .p-element .p-dropdown-item {
+  padding: 5px !important;
+}
+
+.stats-card {
+  font-family: "Poppins";
+  border-radius: 16px;
+  text-align: center;
+  margin: 8px 0;
+
+  ion-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 5px;
+    padding-bottom: 0;
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 10px;
+    color: #555;
+    margin: 0;
+  }
+
+  &.assigned {
+    background: #f3e8ff; // light purple
+  }
+
+  &.visits {
+    background: #ffe8e8; // light red
+  }
+
+  &.self {
+    background: #e8fce8; // light green
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+  ion-content-card {
+    padding: 4px;
+  }
+}
+
+.call-status-card {
+  height: auto;
+  border-radius: 6px !important;
+  ion-card {
+    border-radius: 4px !important;
+    box-shadow: 0px 1px 10px 4px #959da533;
+  }
+  ion-icon {
+    position: absolute;
+    right: 0 !important;
+    background: #cff5c7;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 5px;
+    padding: 6px;
+    border-bottom-right-radius: 5px;
+  }
+  ion-img {
+    position: absolute;
+    right: 4px !important;
+  }
+  div {
+    font-size: 10px;
+    margin: 2px 5px 2px 4px;
+  }
+  p:first-child {
+    font-size: 12px;
+    font-weight: 400;
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    padding-bottom: 6px;
+    color: #424242;
+    font-family: "Poppins";
+  }
+  p span {
+    font-weight: 600;
+  }
+  p {
+    color: #0b7ab2;
+  }
+}
+.filteredChips ion-button {
+  color: #0b7ab2;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 400;
+  word-wrap: break-word;
+  border: 0.5px #0b7ab2 solid;
+  border-radius: 4px;
+  text-transform: capitalize;
+  height: 26px;
+  min-height: 26px;
+  margin: 2px 6px;
+}
+
+.audio {
+  background: rgb(183 216 233) !important;
+}
+audio::-webkit-media-controls-panel {
+  background: rgba(183, 216, 233, 1);
+}
+
+audio::-webkit-media-controls-play-button {
+  background-color: #fff;
+  border-radius: 50%;
+}
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+  color: rgba(114, 114, 114, 1);
+}
+.border_bottom {
+  border-bottom: 0.4px solid #9a9a9a;
+}
+.number {
+  color: #0b7ab2;
+}
+.answeredCall-span {
+  background: #0c6d00;
+  border-radius: 50px;
+  color: white;
+  padding: 0 6px;
+}
+.missedCall-span {
+  background: red;
+  border-radius: 50px;
+  color: white;
+  padding: 0 6px;
+}
+.text-value {
+  color: #202224;
+  font-weight: 500;
+  font-size: 12px;
+  padding-top: 0;
+  line-height: 1.1;
+}
+
+.text-label {
+  color: #727272;
+  font-weight: 300;
+  font-size: 12px;
+  padding-bottom: 0;
+  text-transform: capitalize;
+}
+
+ion-card {
+  box-shadow: 0px 8px 24px 0px #959da533;
+  border: 1px solid #efefef;
+  padding-top: 5px;
+}
+ion-card-subtitle {
+  font-size: 12px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 4px !important;
+  border: 1px solid #efefef;
+}
+
+.btn-inactive {
+  background: #d2d2d2;
+  color: #383838;
+  font-family: "Poppins";
+}
+
+.allMissed-calls {
+  ion-col:first-child {
+    border-top-left-radius: 6px;
+  }
+  ion-col:nth-child(2) {
+    border-top-right-radius: 6px;
+  }
+}

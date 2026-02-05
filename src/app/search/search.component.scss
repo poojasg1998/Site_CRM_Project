@@ -1,0 +1,239 @@
+.backButton {
+  width: 20px;
+  height: 20px;
+  color: rgba(8, 8, 8, 0.4);
+}
+
+.like-button {
+  color: #34b53a;
+  font-size: 13px;
+  padding-left: 5px;
+  background-color: rgba(52, 181, 58, 0.05);
+  padding: 3px;
+  border-radius: 2px;
+}
+
+.not-interested-icon {
+  color: #ef3826;
+  font-size: 13px;
+  padding-left: 5px;
+  background-color: rgba(239, 56, 38, 0.05);
+  padding: 3px;
+  border-radius: 2px;
+}
+
+.visit-not-updated {
+  padding-left: 2px;
+}
+
+.custom-column-heading {
+  color: black;
+  font-size: 10px;
+  font-family: Poppins;
+  font-weight: 400;
+  word-wrap: break-word;
+  opacity: 0.5;
+  margin: 0;
+}
+
+.custom-column-data {
+  color: black;
+  font-size: 11px;
+  font-family: Poppins;
+  font-weight: 500;
+  word-wrap: break-word;
+  opacity: 0.75;
+}
+
+.custom-column-data p {
+  margin: 0;
+}
+
+.last-update-date {
+  color: #0b7ab2;
+  font-size: 11px;
+  font-family: Poppins;
+}
+
+.latest-remark ion-item {
+  --ion-color-base: none !important;
+}
+
+.latest-remark {
+  border-top: 0.75px #ececec solid;
+}
+
+.latest-remark ion-label {
+  color: rgb(0, 0, 0, 0.7) !important;
+}
+
+.latestRemark ion-label {
+  color: black;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+.latestRemark p {
+  padding: 5px;
+  color: black;
+  font-family: Poppins;
+  font-size: 9px;
+}
+
+.whatsapp-icon {
+  color: white;
+  border-radius: 30px;
+  font-size: 18px;
+}
+
+::ng-deep .mainSearch .searchbar-input-container {
+  border: 1px solid #0b7ab2;
+  border-radius: 4px;
+}
+
+ion-searchbar {
+  --box-shadow: none;
+  --placeholder-color: #98a2b3;
+  --icon-color: #98a2b3;
+}
+
+::ng-deep .searchbar-search-icon.sc-ion-searchbar-md {
+  width: 20px;
+  height: 20px;
+}
+
+ion-searchbar .searchbar-search-icon {
+  color: red; /* Change color */
+  font-size: 24px; /* Change size */
+}
+
+.recent-search {
+  font-family: poppins;
+  font-size: 12px;
+  font-weight: 400px;
+}
+.clear-all {
+  font-family: poppins;
+  font-size: 10px;
+  font-weight: 500px;
+}
+.todayAndAllVisitsData {
+  margin: 5px;
+  width: 100%;
+}
+::ng-deep ion-searchbar .searchbar-input.searchbar-input.sc-ion-searchbar-md {
+  font-size: 12px;
+  height: 40px;
+}
+
+ion-footer {
+  height: 55px;
+}
+
+.footer-toolbar {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  --min-height: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 -8px 10px rgb(0 0 0 / 0.2);
+}
+
+.footer-icons {
+  position: relative;
+  background-color: #ffffff;
+}
+ion-item::part(native) {
+  padding: 0;
+}
+ion-item {
+  --inner-padding-end: 0px;
+}
+.menu_icon {
+  font-size: 30px;
+  color: #0b7ab2;
+}
+
+.latestRemark ion-label,
+.latestRemark1 ion-label {
+  color: #000000b5;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+.latestRemark span {
+  padding-left: 5px;
+}
+
+.custom-ion-item {
+  --inner-item-padding-top: 0;
+  --inner-item-padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-left: 10px;
+}
+::ng-deep ion-icon.ion-accordion-toggle-icon.md.hydrated {
+  width: 15px;
+  margin: 5px;
+}
+.crmType {
+  width: 85%;
+  position: absolute;
+  padding: 5px;
+  right: 0;
+  top: 0;
+  border-bottom-left-radius: 15px;
+  border-left: 1px solid rgba(11, 122, 178, 0.1);
+  border-top: 1px solid rgba(11, 122, 178, 0.1);
+  color: #0b7ab2 !important;
+}
+
+.pointer_eventsNone {
+  filter: blur(0.8px);
+  pointer-events: none;
+  cursor: none;
+}
+
+ion-modal.callConfirmationModal {
+  padding: 10px;
+  --height: 38%;
+  --border-radius: 5px;
+  --backdrop-opacity: 0.8;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+.callConfirmationModal ion-header {
+  font-family: "Poppins";
+  box-shadow: none;
+  ion-row {
+    padding: 4px;
+  }
+  h3,
+  ion-icon {
+    font-size: 18px;
+    color: #ffffff !important;
+  }
+  ion-icon {
+    font-size: 30px;
+  }
+}
+
+.callConfirmationModal ion-button {
+  width: 100%;
+  border-radius: 4px;
+  font-family: "Poppins";
+  font-size: 18px;
+  text-transform: none;
+}
+.callConfirmationModal ion-footer {
+  box-shadow: none;
+}

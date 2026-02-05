@@ -1,0 +1,131 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+
+<span *ngIf="!isOnCallDetailsPage">
+  <div class="callStatus pt-2">
+    <ion-row>
+      <ion-col (click)="onCallstatus('dialed')" class="flex   align-items-center justify-content-center"
+        [ngClass]="callStatus == 'dialed'?'bg_textColor':''">
+        <span> Dialed - {{_sharedservice.allCallCounts['overall'] }}</span>
+      </ion-col>
+      <ion-col (click)="onCallstatus('received')" class="flex  align-items-center justify-content-center"
+        [ngClass]="callStatus == 'received'?'bg_textColor':''">
+        <label for="dashboard-customDate"> Received - 0 </label>
+      </ion-col>
+      <ion-col (click)="onCallstatus('missed')" class="flex  align-items-center justify-content-center"
+        [ngClass]="callStatus == 'missed'?'bg_textColor':''">
+        <span> Missed - {{_sharedservice.allCallCounts['missed'] }}</span>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <span *ngIf="callStatus != 'received'">
+    <div *ngFor="let group of groupedByDate;let i=index" class="m-2">
+      <div>
+        <!-- <ion-row class="d-flex align-items-center justify-content-center">
+            <h3 class="font-colorBlue">{{ group.date }}</h3>
+          </ion-row> -->
+        <ion-item-sliding *ngFor="let call of group.data ;let i = index" class="ion-itemSliding" #callslide
+          (ionSwipe)="callslide.close(); onSwipe($event,call)" class="mt-2">
+          <ion-item class="call-item" lines="none">
+            <ion-card style="width: 100%;" class="m-1">
+              <ion-row style="width: 100%;">
+                <ion-col size="8" class="d-flex flex-column "><span class="ellipsis">{{call.leadname}}</span>
+                  <span>{{call.callto}}</span></ion-col>
+                <ion-col class="d-flex align-items-center justify-content-center">
+
+                  <div class="missed-call-icon d-flex align-items-center justify-content-center"
+                    *ngIf="call.missedid == '1' && callStatus == 'missed'">
+                    <ion-img src="../../assets/CRMimages/missed-call-icon.svg"></ion-img>
+                    <span>{{call.starttime | date:'hh:mm a'}}</span>
+                  </div>
+                  <div class="re-connect-div d-flex align-items-center justify-content-center"
+                    *ngIf="call.missedid == '2' && callStatus == 'missed'">
+                    <span class="font-size10-familyPoppins">Re-connected</span>
+                  </div>
+
+                  <div class="dialed-call-div d-flex align-items-center justify-content-center"
+                    *ngIf="callStatus == 'dialed'">
+                    <ion-icon name="call" class="pe-1"></ion-icon>
+                    <span class="font-size10-familyPoppins">{{call.starttime | date:'hh:mm a'}}</span>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-card>
+          </ion-item>
+          <ion-item-options side="end">
+            <div class="d-flex align-items-center ">
+              <ion-icon name="call" class="call-icon"></ion-icon>
+            </div>
+          </ion-item-options>
+        </ion-item-sliding>
+      </div>
+    </div>
+  </span>
+  <ion-row *ngIf="(groupedByDate?.length == 0 ) && (callStatus != 'received')">
+    <ion-col class="content_center">
+      <span>No Data Found...</span>
+    </ion-col>
+  </ion-row>
+  <ion-row *ngIf="callStatus == 'received'">
+    <ion-col class="d-flex align-items-center justify-content-center ">
+      <span>Feature update in progress...</span>
+    </ion-col>
+  </ion-row>
+</span>
+
+<ion-infinite-scroll [disabled]="!(callStatus == 'missed' || callStatus == 'dialed')" *ngIf="showInfiniteScroll"
+  threshold="100px" #infiniteScroll (ionInfinite)="loadData($event)">
+  <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+  </ion-infinite-scroll-content>
+</ion-infinite-scroll>
+
+<ion-modal #callConfirmationModal class="callConfirmationModal">
+  <ng-template>
+    <ion-header class="active_btn">
+      <ion-row>
+        <ion-col size="1"></ion-col>
+        <ion-col size="9" class="ion-text-center d-flex ion-justify-content-center ">
+          <span class="fs-6">Initiate Outbound Call</span>
+        </ion-col>
+        <ion-col size="2" (click)="callConfirmationModal.dismiss(); "
+          class="ion-text-center d-flex ion-justify-content-center align-items-center">
+          <ion-icon name="close" class="fs-4 text-white"></ion-icon></ion-col>
+      </ion-row>
+    </ion-header>
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <p style="font-size:20px;color: rgba(65, 65, 65, 1);">Do you want to place a call to
+          {{lead.CustomerName}}
+          <span
+            *ngIf="!isRM || (isRM && ((lead.Leadphase == 'Fresh' && lead.followupreason == '8') || lead.Leadphase != 'Fresh' ));else num">
+            {{"("+lead.callto+")"}}</span>
+          <ng-template #num>
+            <span>xxxxxxxxxx</span>
+          </ng-template>
+          ?
+        </p>
+      </ion-col>
+    </ion-row>
+    <div class="cancellCall-btn m-3">
+      <ion-row class="notification-heading">
+        <ion-col class="d-flex align-items-center justify-content-center normal_btn"
+          (click)="callConfirmationModal.dismiss()">
+          <span>Cancel</span>
+        </ion-col>
+        <ion-col class="d-flex align-items-center justify-content-center active_btn" (click)="outboundCall(true)">
+          <span>Call</span>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- <label *ngIf="!isOnCallDetailsPage && !_sharedservice.isBottom" for="calllog_date_range" class="calender_icon">
+  <ion-icon name="calendar"></ion-icon></label>
+
+<p-calendar #calendar [ngStyle]="{ display: 'none' }" [hideOnDateTimeSelect]="true" [touchUI]="true"
+  inputId="calllog_date_range" [(ngModel)]="dateRange" selectionMode="range" appendTo="body" [dateFormat]="'yy-mm-dd'"
+  (onSelect)="selectDateFilter()" [maxDate]="today"></p-calendar> -->

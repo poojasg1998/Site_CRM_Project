@@ -1,0 +1,50 @@
+<ion-header *ngIf="!isOnCallDetailsPage">
+    <ion-row>
+        <ion-col class="pb-0">
+            <ion-img src="../../assets/CRMimages/siteCRMlogo.png"></ion-img>
+        </ion-col>
+        <ion-col class="pb-0"></ion-col>
+        <ion-col size="2" class="pb-0"><ion-icon name="menu" class="menu_icon"
+                (click)="openEndMenu()"></ion-icon></ion-col>
+    </ion-row>
+    <ion-row class="notification-heading">
+        <!-- CHAT -->
+        <ion-col (click)="onFilter('chat')" [ngClass]="filteredParams.chatCallAssign == 'chat' ? 'active' : 'normal'">
+            <div class="notif-type d-flex align-items-center justify-content-center">
+                <span>Chat</span>
+                <span class="notif-Chatcount" *ngIf="sharedService.unReadChatCount>0">
+                    {{sharedService.unReadChatCount}}</span>
+            </div>
+        </ion-col>
+
+        <!-- CALL LOG -->
+        <ion-col class="filter-col" (click)="onFilter('call')"
+            [ngClass]="filteredParams.chatCallAssign == 'call' ? 'active' : ''">
+            <div class="notif-Call d-flex align-items-center justify-content-center">
+                <span>Call Log</span>
+                <span class="notif-Callcount"
+                    *ngIf="sharedService.allCallCounts['missed']>0">{{sharedService.allCallCounts['missed']}}</span>
+            </div>
+        </ion-col>
+
+        <!-- ASSIGNED -->
+        <ion-col class="filter-col" (click)="onFilter('assigned')"
+            [ngClass]="filteredParams.chatCallAssign == 'assigned' ? 'active' : ''">
+            <div class="notif-Assigned d-flex align-items-center justify-content-center">
+                <span>Assigned</span>
+                <!-- <span class="notif-Assignedcount"></span> -->
+            </div>
+        </ion-col>
+    </ion-row>
+</ion-header>
+<ion-content *ngIf="!isOnCallDetailsPage" #mainscrollContainer (ionScroll)="onScroll($event)" scrollEvents="true">
+    <app-chat1 (scrollToTop)="scrollTop()" *ngIf="filteredParams.chatCallAssign == 'chat'"></app-chat1>
+    <app-call-logs *ngIf="filteredParams.chatCallAssign == 'call'" [content]="mainscrollContainer"></app-call-logs>
+
+    <ion-row *ngIf="filteredParams.chatCallAssign == 'assigned'" class="commingSoon">
+        <ion-col class="d-flex align-items-center justify-content-center ">
+            <span>Feature update in progress...</span>
+        </ion-col>
+    </ion-row>
+</ion-content>
+<app-common-footer></app-common-footer>

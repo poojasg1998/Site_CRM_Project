@@ -1,0 +1,122 @@
+.footer-toolbar {
+  // padding-top: 10px;
+  // --min-height: 0;
+  // height: 100%;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  border-top: 1px solid #e9e9e9;
+  // box-shadow: 0 -8px 10px rgb(0 0 0 / 0.2);
+}
+
+.footer-icons {
+  position: relative;
+}
+// ion-footer {
+//   height: 65px;
+// }
+
+.icon-badge-wrapper {
+  position: relative;
+  // width: 30px;
+  // height: 30px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-icon {
+  width: 100%;
+  height: auto;
+}
+
+.notif-count {
+  position: absolute;
+  top: -6px;
+  left: 45px;
+  font-size: 9px;
+  padding: 2px 4px;
+  border-radius: 10px;
+  font-family: "Poppins", sans-serif;
+  white-space: nowrap;
+  z-index: 2;
+  line-height: 1.2;
+  background: #003855 !important;
+}
+.new-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -24px;
+  background-color: green;
+  color: white;
+  font-size: 9px;
+  padding: 0px 3px;
+  border-radius: 4px;
+  font-family: "Poppins", sans-serif;
+  white-space: nowrap;
+  z-index: 2;
+  line-height: 1.2;
+}
+
+.chat-label {
+  padding: initial;
+  position: relative;
+  top: -15px;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+.text_color_gray {
+  color: #9c9c9c;
+}
+
+ion-modal.onCallModal {
+  --height: auto;
+  --border-radius: 16px;
+  padding: 10px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal.onCallModal::part(backdrop) {
+  background: #000;
+  opacity: 0.8;
+}
+
+ion-modal.onCallModal ion-toolbar {
+  --background: #f6f6f6;
+  --color: white;
+  height: 30vh;
+}
+
+.backgroundLightColor {
+  background-color: rgb(11, 122, 178, 0.1);
+  padding: 5px;
+  border-radius: 50px;
+}
+.callstatus {
+  ion-row {
+    color: #00467e;
+    font-weight: 500;
+    background: #e1f2ff;
+    border: 0.6px solid #acdaff;
+    border-radius: 4px;
+  }
+  ion-img {
+    width: 20px;
+    padding-right: 4px;
+  }
+  span {
+    font-size: 12px;
+  }
+  position: fixed;
+  z-index: 99;
+  bottom: 68px;
+}
+.callstatusFixedbottom {
+  bottom: 100px !important;
+}
+
+.visitspagecallstatusFixedbottom {
+  bottom: 120px !important;
+}

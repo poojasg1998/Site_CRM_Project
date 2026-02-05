@@ -1,0 +1,576 @@
+.logo::part(image) {
+  border-radius: 3px !important;
+  width: 30px;
+  height: 30px;
+}
+
+::ng-deep
+  .details_units_row
+  p-dropdown.exec_css
+  .p-inputwrapper
+  .p-dropdown-trigger {
+  width: 22px !important;
+}
+::ng-deep .details_units_row p-dropdown.exec_css .p-inputwrapper span {
+  padding: 0.4vw 1vw;
+  font-size: 3.6vw;
+  font-family: "Poppins";
+  color: #474747;
+}
+::ng-deep .details_units_row p-dropdown.exec_css .p-inputwrapper {
+  border-radius: 30px;
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper span {
+  padding: 5px;
+  font-size: 12px;
+  font-family: "Poppins";
+  color: #474747;
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper {
+  width: 100% !important;
+  border: 0.6px solid #dfdfdf;
+}
+
+::ng-deep p-dropdown.exec_css .p-inputwrapper .p-dropdown-trigger {
+  width: 30px !important;
+}
+
+::ng-deep
+  p-dropdown.exec_css
+  .p-inputwrapper
+  .p-dropdown-trigger
+  chevrondownicon {
+  width: 12px;
+  color: #474747;
+}
+
+::ng-deep .exec_css .p-element .p-dropdown-item {
+  padding: 5px !important;
+  font-size: 12px;
+}
+
+.assignedLeads-card {
+  height: auto;
+  padding: 0;
+  margin: 0 2px 0 2px;
+  border-radius: 1px !important;
+  margin-bottom: 10px;
+}
+.assignedLeads-card ion-card {
+  border-radius: 9px !important;
+  margin: 0 5px !important;
+  box-shadow: 0px 1px 10px 4px #959da533;
+}
+
+.assignedLeads-card ion-img {
+  position: absolute;
+  right: 0 !important;
+}
+
+.assignedLeads-card div {
+  font-size: 10px;
+  margin: 10px 5px 2px 4px;
+}
+
+.assignedLeads-card p:first-child {
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.assignedLeads-card h1 + p span {
+  font-weight: 600;
+}
+
+.assignedLeads-card h1 + p {
+  font-size: 10px !important;
+  font-weight: 400;
+}
+
+.assignedLeads-card h1 {
+  font-size: 20px;
+  font-weight: 600;
+  padding-bottom: 6px;
+  color: #424242;
+  font-family: "Poppins";
+}
+
+.assignedLeads-card p:first-child {
+  color: #3d3d3d;
+  font-weight: 400;
+  font-family: "Poppins";
+}
+.assignedLeads-card {
+  margin-bottom: 10px;
+  border-radius: 6px !important;
+}
+ion-content {
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+.report_download_col div {
+  border: 0.5px solid #00476a;
+  color: #00476a;
+  border-radius: 30px;
+  height: 100%;
+  font-family: "Poppins";
+  font-size: 12px;
+}
+.report_download_col ion-img {
+  padding-left: 2px;
+}
+.report_download_col {
+  padding: 6px 2px;
+}
+
+.isTableView {
+  border: 1px solid white;
+  border-radius: 25px;
+  background: #0b7ab2;
+  color: white;
+  border: 1px solid #0b7ab2;
+}
+
+.tableBlockView {
+  border: 0.5px solid #d7d7d7;
+  border-radius: 25px;
+  color: #0b7ab2;
+  width: 100%;
+  box-shadow: 0px 2px 24px 0px #959da533;
+}
+.detail_units {
+  font-size: 4vw;
+  font-family: "Poppins";
+}
+.details_units_row p-dropdown {
+  width: 100%;
+}
+.details_units_row ion-col {
+  padding-right: 0;
+}
+.serach {
+  padding-left: 0;
+}
+.tableBlockView ion-col {
+  padding: 2px;
+}
+.tableView-details-card {
+  margin: 0;
+  border: 0.4px solid #e5e5e5;
+  box-shadow: 0px 1px 10px 4px rgba(149, 157, 165, 0.2);
+  margin-bottom: 10px;
+}
+.tableView-details-row ion-col {
+  line-height: 0.1;
+  span {
+    font-family: "Poppins";
+    font-weight: 400;
+    font-size: 14px;
+    color: #424242;
+  }
+}
+.tableView-details-row {
+  margin-bottom: 10px;
+}
+.tableView-details-header ion-col {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 10px;
+}
+.tableView-status-row {
+  background: linear-gradient(90deg, #d8fbd3 0%, #ffffff 116.64%);
+}
+.img-end {
+  width: 25px;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+}
+.blockView-details-card {
+  margin: 0;
+  box-shadow: 0px 1px 10px 4px rgba(149, 157, 165, 0.2);
+}
+
+.floor-summary-row {
+  align-items: center;
+
+  .summary-title {
+    font-size: 12px;
+    font-weight: 500;
+    font-family: "Poppins";
+    color: #000;
+  }
+
+  .summary-sold {
+    font-size: 12px;
+    font-weight: 500;
+    font-family: "Poppins";
+    color: #c0392b; // red shade
+    text-align: right;
+  }
+
+  .summary-available {
+    font-size: 12px;
+    font-weight: 500;
+    font-family: "Poppins";
+    color: #27ae60;
+    text-align: right;
+  }
+}
+.blockViewProp-details {
+  background: #f9f8f8;
+  border: 0.6px solid #dbdbdb;
+  border-radius: 4px;
+  margin: 5px;
+  padding: 10px 5px;
+}
+.blockViewProp-details ion-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.blockViewProp-details ion-row {
+  gap: 18px;
+}
+.available-prop {
+  background: #d1ffc9;
+  border: 0.5px solid #006900;
+  border-radius: 4px;
+  padding: 2px;
+  span {
+    font-family: "Poppins";
+    font-weight: 600;
+    font-style: Medium;
+    font-size: 12px;
+    text-align: center;
+    text-transform: capitalize;
+    color: #006900;
+  }
+  .status-badge {
+    color: #006900;
+    background: #d1ffc9;
+  }
+}
+.sold-prop {
+  background: #fff1ef;
+  border: 0.5px solid #b14a41;
+  border-radius: 4px;
+  padding: 2px;
+  span {
+    font-family: "Poppins";
+    font-weight: 600;
+    font-style: Medium;
+    font-size: 12px;
+    text-align: center;
+    text-transform: capitalize;
+    color: #b14a41;
+  }
+  .status-badge {
+    color: #b14a41;
+    background: #fff1ef;
+  }
+}
+
+.tower-row {
+  ion-col div {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    height: 100%;
+    border-width: 0.6px 0.6px 0px 0.6px;
+    border-style: solid;
+    border-color: #00496e;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 400;
+    font-family: "Poppins";
+  }
+}
+.selectedTower {
+  color: #00496e;
+  background: #a2e0ff;
+}
+
+.status-badge {
+  border: 1px solid;
+  border-radius: 30px;
+  padding: 3px;
+  height: 10p;
+  font-size: 14px !important;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-weight: 600;
+}
+.sqrt {
+  font-weight: 200 !important;
+}
+
+.sold_bg_text_color {
+  background: linear-gradient(90deg, #ffd1cd 0%, #ffffff 116.64%);
+  color: #b14a41;
+}
+
+.cancelled_bg_text_color {
+  background: linear-gradient(90deg, #ffb9b9 0%, #ffffff 116.64%);
+  color: #bd0009;
+}
+
+.registration_bg_text_color {
+  background: linear-gradient(90deg, #fff0d8 0%, #ffffff 116.64%);
+  color: #f39c12;
+}
+
+.lld_bf_text_color {
+  background: linear-gradient(90deg, #cfefff 0%, #ffffff 116.64%);
+  color: #0081e9;
+}
+
+.available_bg_text_color {
+  background: linear-gradient(90deg, #d8fbd3 0%, #ffffff 116.64%);
+  color: #0c7300;
+}
+
+.editUnitModal .block {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ion-modal.editUnitModal {
+  --height: auto;
+}
+
+.editing-data-header {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 12px;
+  color: #4c4c4c;
+  ion-col {
+    padding-bottom: 0;
+  }
+}
+
+.editing-data-row {
+  p-dropdown {
+    width: 100%;
+  }
+  ion-col {
+    padding-top: 0;
+  }
+  ion-textarea,
+  input {
+    border: 0.5px solid #e5e7eb;
+    border-radius: 4px;
+    width: 100%;
+    padding: 5px;
+  }
+  input {
+    height: 27px;
+  }
+  div {
+    border: 0.6px solid #dfdfdf;
+    border-radius: 4px;
+    padding-left: 4px;
+    display: flex;
+    justify-content: space-between;
+    border: 0.6px solid #dfdfdf;
+    padding: 2px 4px;
+    border-radius: 2px;
+  }
+  .sqft {
+    color: #838383;
+    font-weight: 200;
+    font-family: "Poppins";
+    font-size: 12px;
+  }
+  span {
+    font-family: "Poppins";
+    font-weight: 400;
+    font-size: 14px;
+    color: #000000;
+  }
+}
+
+::ng-deep .editing-data-row p-dropdown.exec_css .p-inputwrapper span {
+  padding: 0.4vw 1vw;
+  font-size: 14px !important;
+  font-weight: 400;
+  font-family: "Poppins";
+  color: #000000;
+}
+.editOrSaving-bookigData,
+.editOrSaving-saleAgreementData,
+.editOrSaving-loanDisbursement {
+  div.booking,
+  .agreement-div,
+  .loan-disbursed-div {
+    border: 1px solid #dfdfdf;
+    border-radius: 4px;
+    background: #fdfdfd;
+    margin: 10px;
+  }
+}
+
+.cancelSold-btn .cancel-btn div {
+  width: 100%;
+  border: 1px solid #0b7ab2;
+  color: #0b7ab2;
+  border-radius: 4px;
+  padding: 6px 2px;
+}
+.saveContinue-btn ion-button {
+  border-radius: 4px;
+}
+
+.unit-update-status {
+  background: #00476a;
+  color: white;
+}
+
+.completedStage-bg-text-color {
+  background: #d1ffc9;
+  span {
+    color: #006900 !important;
+  }
+}
+
+.pendingStage-bg-text-color {
+  background: #efefef;
+  span {
+    color: #606060;
+  }
+}
+
+.updatingStage-bg-text-color {
+  background: #c2e3fe;
+  span {
+    color: #0059a1;
+  }
+}
+
+.unit-status-button {
+  span {
+    background: white;
+    color: #0059a1;
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+    padding-left: 7px;
+  }
+}
+
+::ng-deep .edit-unit-details-data p-dropdown.exec_css .p-inputwrapper span {
+  padding: 0.4vw 1vw;
+  font-size: 16px !important;
+  font-family: "Poppins";
+  color: #474747;
+}
+.custom-file-input {
+  opacity: 0;
+  position: absolute;
+}
+.bookedLead-uploadedfile {
+  border: 1px solid #0b7ab2;
+  border-radius: 2px;
+  div {
+    color: #050505;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    /* Shrinks with parent */
+    display: block;
+  }
+  ion-col {
+    border-right: 1px solid #0b7ab2;
+  }
+  ion-icon {
+    font-size: 22px;
+    color: #0b7ab2;
+  }
+  margin: 0 4px;
+}
+.uploading-file {
+  span {
+    color: #727886;
+  }
+  border: 0.8px solid #b4b4b4;
+  border-radius: 2px;
+  margin: 4px;
+}
+
+.approve-reject-booking-btn,
+.agreement-btn,
+.loan-disbursed {
+  font-family: "Poppins";
+  div {
+    color: #727272;
+    border: 0.6px solid #a8a8a8;
+    border-radius: 4px;
+  }
+  span {
+    color: #4c4c4c;
+  }
+  ion-row ion-col:first-child {
+    padding-bottom: 0;
+  }
+  ion-col {
+    padding-top: 0;
+  }
+}
+
+.approved-btn {
+  background: #006900;
+  color: white;
+}
+.rejected-btn {
+  background: #fa4838;
+  color: white;
+}
+.cancel-booking-div {
+  border: 1px solid #dfdfdf;
+  background: #fafdff;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  .cancel-text {
+    color: #3f3f3f;
+    font-family: "Poppins";
+    font-weight: 400;
+    font-size: 16px;
+  }
+  .waring-text {
+    font-family: "Poppins";
+    font-weight: 300;
+    font-size: 12px;
+    color: #003652;
+    line-height: 18px;
+  }
+}
+
+.checkboxcss {
+  --border-radius: 4px;
+  --border-width: 1px;
+  --size: 18px;
+  --checkbox-background: rgba(225, 242, 255, 1);
+  --border-color: rgba(11, 122, 178, 1);
+  --checkbox-background-checked: rgba(11, 122, 178, 1);
+}
+ion-input[readonly] {
+  --background: #f9f9f9;
+  --color: #555;
+  --padding-start: 8px;
+  border-radius: 6px;
+  opacity: 0.9;
+  pointer-events: none;
+}

@@ -1,0 +1,759 @@
+.todayPendingCSS ion-col p {
+  font-size: 14px;
+  color: #727272;
+  border: 1px solid rgb(114, 114, 114);
+  padding: 5px;
+  border-radius: 34px;
+}
+.todayPendingCSS {
+  padding: 5px 5px 0 5px;
+}
+ion-title {
+  border-bottom: 1px solid rgb(32, 34, 36, 0.7);
+  padding-bottom: 10px;
+}
+.assigncountleads ion-col {
+  border: 1px solid #232323;
+  border-radius: 23px;
+  margin: 5px 0 5px 5px;
+  font-size: 10px;
+}
+
+.loader {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 999;
+  background: #ffffffc9;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+ion-content::part(scroll) {
+  padding: 0;
+}
+// footer CSS
+.footer-toolbar {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  --min-height: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 -8px 10px rgb(0 0 0 / 0.2);
+}
+.footer-icons {
+  position: relative;
+  background-color: #ffffff;
+}
+.assign-icon {
+  position: absolute;
+  bottom: 12px;
+  z-index: 980;
+}
+.assign-icon ion-img {
+  background: #ffff;
+  box-shadow: 0px -2px 1px rgba(0, 0, 0, 0.2);
+  border-radius: 50px;
+}
+.backgroundLightColor {
+  background-color: rgba(11, 122, 178, 0.1);
+}
+.backgroundColor {
+  background-color: #0b7ab2;
+  color: #ffff;
+}
+.activeRetailMandate {
+  border: 1px solid #2196f3;
+  border-radius: 30px;
+  padding: 6px 10px 6px 10px;
+  color: #00537d;
+  font-size: 12px;
+  font-family: "Poppins";
+  font-weight: 400;
+  background: #a4d7ff;
+}
+
+.assignRetailMandate {
+  padding: 6px 10px 6px 10px;
+  border-radius: 30px;
+  border: 1px solid #eeeeee;
+  color: #202224;
+  font-size: 12px;
+  font-family: "Poppins";
+  font-weight: 400;
+}
+//city dropdown CSS
+
+::ng-deep .mandateproperty p-dropdown .p-inputwrapper .p-dropdown-label,
+::ng-deep .mandateproperty .p-inputwrapper div chevrondownicon {
+  font-family: "Poppins";
+  font-size: 12px;
+}
+::ng-deep
+  .mandateproperty
+  p-dropdown
+  .p-inputwrapper
+  p-overlay
+  p-dropdownitem
+  li {
+  padding: 5px;
+  font-size: 12px;
+}
+::ng-deep .mandateproperty p-dropdown .p-inputwrapper {
+  width: 100%;
+  border: 1px solid #d8d8d8;
+  font-size: 14px;
+  border-radius: 2px;
+}
+
+.startAssign {
+  background: #727272;
+  border-radius: 44px;
+  color: #ffff;
+  margin-top: 35px;
+}
+.startAssign ion-button {
+  color: #ffff;
+  text-transform: none;
+}
+.startAssign .bg_textColor {
+  border-radius: 44px;
+}
+
+//Card CSS
+.lead-info {
+  box-shadow: 1px 2px 10px 0 rgb(99, 99, 99, 0.2);
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+}
+.lead-info .ion-justify-content-center {
+  background-color: #ffd7c7;
+  font-size: 14px;
+  font-family: "Poppins";
+  font-weight: 500;
+  color: #e84c0a;
+  padding: 10px;
+}
+.lead-info ion-checkbox {
+  --border-color: rgb(114, 114, 114, 0.8) !important;
+  --border-color-checked: #0b7ab2;
+  --checkbox-background-checked: #0b7ab2;
+  --border-width: 1px;
+  --border-radius: 4px;
+  margin: 0;
+}
+.info-row-heading {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 10px;
+  color: rgb(0, 0, 0, 0.6);
+}
+.info-row-heading ion-col {
+  padding-bottom: 0;
+}
+.info-row-value {
+  font-family: "Poppins";
+  font-weight: 500;
+  font-size: 10px;
+  color: rgb(0, 0, 0, 0.8);
+}
+.info-row-value ion-col {
+  padding-top: 0;
+}
+
+.textStyle {
+  margin: 15px;
+  font-family: "Poppins";
+  font-size: 14px;
+}
+.disabletext_bg_color {
+  border: 1px solid #d8d8d8;
+  border-radius: 2px;
+}
+.disabletext_bg_color span {
+  font-family: "Poppins";
+  font-size: 14px;
+  color: #232323;
+}
+.assignLeadbutton {
+  background: #0b7ab2;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-family: "Poppins";
+  font-weight: 400;
+}
+
+// Modal CSS
+#assignLeads-modal ion-select::part(icon) {
+  position: absolute !important;
+  right: 10px !important;
+}
+ion-modal#assignLeads-modal {
+  padding: 10px;
+  --height: auto;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+::ng-deep ion-modal#assignLeads-modal .ion-page {
+  display: block !important;
+}
+ion-modal#assignLeads-modal ion-icon {
+  font-size: 20px;
+}
+ion-modal#assignLeads-modal .wrapper {
+  margin-bottom: 10px;
+}
+.assignTaskHeading {
+  height: 42px;
+  align-items: center;
+  font-size: 16px;
+  font-family: "Poppins";
+  font-weight: 500px;
+  color: #0b7ab2;
+  border-bottom: 1px solid rgb(72, 72, 72, 0.78);
+}
+.assignTaskHeading ion-col {
+  padding-left: 20px;
+}
+.assignTaskHeading ion-icon {
+  color: black;
+  font-size: 20px;
+}
+.data-row > div:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.data-row div {
+  padding: 5px;
+  ion-row {
+    width: 100%;
+    ion-col {
+      padding: 0;
+      font-weight: 400px;
+      font-family: "Poppins";
+      font-size: 8px;
+    }
+  }
+}
+.single-lead {
+  height: 50px;
+}
+
+.multiple-leads {
+  height: 175px;
+}
+.assignLeaddselect {
+  border: 1px solid #d8d8d8;
+  font-size: 12px;
+  font-weight: 400;
+  min-height: 28px;
+  padding-left: 5px;
+  font-family: "Poppins";
+}
+.assignButton ion-button {
+  font-family: "Poppins";
+  font-weight: 600;
+  font-size: 14px;
+  width: 80%;
+  border-radius: 2px;
+  text-transform: none;
+}
+
+.randomleadAssign span {
+  font-size: 12px;
+  font-family: "Poppins";
+}
+//toggle button css
+ion-toggle {
+  --handle-width: 15px;
+}
+ion-toggle::part(handle) {
+  height: 14px !important;
+  width: 14px !important;
+  border: 1px solid #009acb !important;
+}
+ion-toggle::part(track) {
+  width: 30px !important;
+  height: 10px !important;
+}
+ion-toggle.toggle-checked::part(handle) {
+  border: 1px solid #fff !important;
+}
+
+.block {
+  width: 100%;
+  height: auto;
+  padding: 15px;
+}
+
+.bottomModal {
+  --height: auto;
+}
+.addleadicon {
+  font-size: 45px;
+  color: #2196f3;
+  font-size: 45px;
+  position: absolute;
+  right: 2px;
+  bottom: 112px;
+  background-color: #ffff;
+  border-radius: 35px;
+}
+
+// .addleadicon{
+//   font-size: 45px;
+//   color: #ffff;
+//   font-size: 25px;
+//   position: absolute;
+//   right: 8px;
+//   bottom: 115px;
+//   background-color: #2196F3;
+//   border-radius: 35px;
+//   padding: 5px;
+//   --ionicon-stroke-width: 60px;
+// }
+
+div.input_cmn_div {
+  padding: 0px 3px 20px 6px;
+  float: left;
+}
+.wrapper .option {
+  height: 100%;
+  width: 100%;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 4px;
+}
+.wrapper label {
+  background: #fff;
+  padding: 3px;
+  border: 2px solid lightgrey;
+}
+.wrapper div span {
+  font-size: 14px;
+  font-family: "Poppins";
+}
+.wrapper .option .dot::before {
+  position: absolute;
+  content: "";
+  top: 4px;
+  left: 4px;
+  width: 12px;
+  height: 12px;
+  background: #0069d9;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(1.5);
+  transition: all 0.3s ease;
+}
+
+#option-1:checked:checked ~ .option-1,
+#option-2:checked:checked ~ .option-2,
+#option-3:checked:checked ~ .option-3,
+#option-4:checked:checked ~ .option-4,
+#option-5:checked:checked ~ .option-5,
+#option-6:checked:checked ~ .option-6,
+#option-7:checked:checked ~ .option-7,
+#option-8:checked:checked ~ .option-8,
+#option-9:checked:checked ~ .option-9,
+#option-10:checked:checked ~ .option-10,
+#option-11:checked:checked ~ .option-11,
+#option-12:checked:checked ~ .option-12,
+#option-13:checked:checked ~ .option-13,
+#option-14:checked:checked ~ .option-14,
+#option-15:checked:checked ~ .option-15,
+#option-16:checked:checked ~ .option-16,
+#option-17:checked:checked ~ .option-17,
+#option-18:checked:checked ~ .option-18,
+#option-19:checked:checked ~ .option-19,
+#option-20:checked:checked ~ .option-20,
+#option-21:checked:checked ~ .option-21,
+#option-22:checked:checked ~ .option-22,
+#option-23:checked:checked ~ .option-23,
+#option-24:checked:checked ~ .option-24,
+#option-25:checked:checked ~ .option-25,
+#option-26:checked:checked ~ .option-26 {
+  border-color: #0b7ab2;
+  background: #0b7ab2;
+}
+
+.wrapper .option span {
+  font-size: 12px;
+  color: #808080;
+}
+
+#option-1:checked:checked ~ .option-1 span,
+#option-2:checked:checked ~ .option-2 span,
+#option-3:checked:checked ~ .option-3 span,
+#option-4:checked:checked ~ .option-4 span,
+#option-5:checked:checked ~ .option-5 span,
+#option-6:checked:checked ~ .option-6 span,
+#option-7:checked:checked ~ .option-7 span,
+#option-8:checked:checked ~ .option-8 span,
+#option-9:checked:checked ~ .option-9 span,
+#option-10:checked:checked ~ .option-10 span,
+#option-11:checked:checked ~ .option-11 span,
+#option-12:checked:checked ~ .option-12 span,
+#option-13:checked:checked ~ .option-13 span,
+#option-14:checked:checked ~ .option-14 span,
+#option-15:checked:checked ~ .option-15 span,
+#option-16:checked:checked ~ .option-16 span,
+#option-17:checked:checked ~ .option-17 span,
+#option-18:checked:checked ~ .option-18 span,
+#option-19:checked:checked ~ .option-19 span,
+#option-20:checked:checked ~ .option-20 span,
+#option-21:checked:checked ~ .option-21 span,
+#option-22:checked:checked ~ .option-22 span,
+#option-23:checked:checked ~ .option-23 span,
+#option-24:checked:checked ~ .option-24 span,
+#option-25:checked:checked ~ .option-25 span,
+#option-26:checked:checked ~ .option-26 span {
+  color: #fff;
+}
+input[type="radio"] {
+  display: none;
+}
+.leadAdd ion-input {
+  min-height: 35px;
+  --padding-start: 5px;
+}
+.sourcename {
+  padding: 0;
+}
+
+::ng-deep .sourcename .p-dropdown {
+  width: 100%;
+  border: 2px solid lightgrey;
+  padding: 3px 0;
+}
+
+::ng-deep .sourcename .p-element {
+  font-size: 12px;
+  font-family: "Poppins";
+}
+
+.locality {
+  padding: 0;
+}
+
+::ng-deep .locality .p-dropdown {
+  width: 100%;
+  border: 2px solid lightgrey;
+  padding: 3px 0;
+}
+
+::ng-deep .locality .p-element {
+  font-size: 12px;
+  font-family: "Poppins";
+}
+
+.saveLead {
+  margin-top: 10px;
+}
+.saveLead div {
+  padding: 5px 30px;
+}
+
+::ng-deep p-dropdown .p-inputwrapper span {
+  padding: 5px;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+::ng-deep p-multiselect .p-inputwrapper .p-multiselect-label-container {
+  padding: 0;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+::ng-deep p-multiselect .p-inputwrapper span {
+  padding: 0;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+::ng-deep
+  p-multiselect
+  .p-inputwrapper
+  .p-multiselect-label-container
+  .p-multiselect-label {
+  padding: 5px;
+}
+
+::ng-deep p-dropdown.teamSelectDropdown .p-inputwrapper {
+  width: 100% !important;
+}
+::ng-deep p-multiselect .p-inputwrapper {
+  width: 100% !important;
+}
+
+::ng-deep p-dropdown.teamSelectDropdown .p-inputwrapper .p-dropdown-trigger {
+  width: 30px !important;
+}
+::ng-deep p-multiselect .p-inputwrapper .p-multiselect-trigger {
+  width: 30px !important;
+}
+
+::ng-deep
+  p-dropdown.teamSelectDropdown
+  .p-inputwrapper
+  .p-dropdown-trigger
+  chevrondownicon {
+  width: 12px;
+}
+::ng-deep p-multiselect .p-inputwrapper .p-multiselect-trigger chevrondownicon {
+  width: 12px;
+}
+
+::ng-deep .p-element .p-dropdown-item {
+  padding: 5px !important;
+  font-size: 12px;
+}
+::ng-deep .p-element .p-multiselect-item {
+  padding: 5px !important;
+}
+
+::ng-deep .p-multiselect-items-wrapper .p-multiselect-empty-message {
+  padding: 4px;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+
+::ng-deep .p-multiselect-header {
+  padding: 5px;
+}
+
+::ng-deep .p-overlay {
+  box-shadow: 0px 3px 6px 2px #d8d8d8;
+}
+
+#teamSelectDropdown,
+#executiveDropdown {
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  padding: 0;
+}
+
+.paddingBottomLeft {
+  padding-left: 0;
+  padding-bottom: 0;
+}
+
+.assigningLead {
+  // position: fixed;
+  // bottom: 0;
+  // background: white;
+  // width: 100%;
+  border-radius: 10px;
+  border-top: 1px solid #c2c5cf;
+  box-shadow: 0 -8px 10px rgba(0, 0, 0, 0.2);
+  z-index: 99999;
+}
+.marginbottom20 {
+  margin-bottom: 30%;
+}
+
+::ng-deep .custom-popover-height {
+  /* Adjust the maximum height of the popover content */
+  //  .popover-content {
+  //  width: 145px;
+  // }
+
+  /* Optionally, adjust the height of individual select options */
+  .select-interface-option {
+    line-height: 20px;
+    --min-height: 0 !important;
+    // display: flex;
+    /* align-items: baseline; */
+    // justify-content: center;
+    // align-content: stretch;
+    // flex-wrap: nowrap;
+    // flex-direction: row-reverse;
+  }
+  .popover-viewport {
+    max-height: 200px !important;
+  }
+  // .popover-viewport {
+  //   display: flex !important;
+  //   align-items: center !important ;
+  //   align-content: center !important ;
+  //   justify-content: center !important ;
+  // }
+}
+
+.custom-popover-height::part(content) {
+  width: 55%;
+}
+::ng-deep .textBlur {
+  -webkit-filter: blur(1px) !important;
+  filter: blur(1px) !important;
+  color: #000000;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5), 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.menu_icon {
+  font-size: 30px;
+  color: #0b7ab2;
+}
+
+ion-img.ion-filter-icon {
+  float: right;
+  height: 40px;
+  position: absolute;
+  right: 0;
+  bottom: 68px;
+}
+
+.split-layout {
+  display: flex;
+  align-items: stretch;
+  height: 100%; /* Ensure the content takes up the entire height */
+}
+.left-column {
+  flex: 2.5; /* Left column takes 1/4th of the space */
+  max-width: 41%; /* Set maximum width for left column */
+}
+
+.right-column {
+  flex: 3; /* Right column takes 3/4th of the space */
+}
+.divider {
+  width: 1px; /* Width of the divider line */
+  background-color: #ccc;
+}
+.showresultButton {
+  background: #0b7ab2;
+  color: white;
+  width: 70%;
+  border-radius: 10px;
+  text-transform: none;
+  font-size: 16px;
+  font-family: "Poppins";
+}
+
+.filterButtons {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 12px;
+  color: #000000;
+  text-transform: none;
+  height: 35px;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+}
+.filteredChips ion-button {
+  color: #0b7ab2;
+  font-size: 12px;
+  font-family: Poppins;
+  font-weight: 400;
+  word-wrap: break-word;
+  border: 0.5px #0b7ab2 solid;
+  border-radius: 4px;
+  text-transform: capitalize;
+  height: 26px;
+  min-height: 26px;
+}
+
+.fresh {
+  width: 75%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-top-left-radius: 15px;
+  border-left: 1px solid rgba(11, 122, 178, 0.1);
+  border-top: 1px solid rgba(11, 122, 178, 0.1);
+  color: #0b7ab2 !important;
+}
+
+.lead-card {
+  position: relative;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.floating-delete {
+  position: absolute;
+  float: right;
+  bottom: 0px;
+  right: 0px;
+  width: 36px;
+  height: 36px;
+  background: rgba(250, 97, 97, 0.4);
+  display: flex;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  border-top-left-radius: 80%;
+  border-top-right-radius: 10%;
+  border-bottom-left-radius: 4%;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.floating-delete ion-icon {
+  font-size: 20px;
+  color: rgb(255, 105, 104);
+  position: absolute;
+  left: 11px;
+  bottom: 6px;
+}
+
+.addleadicon1 {
+  font-size: 45px;
+  color: #ffff;
+  font-size: 25px;
+  position: absolute;
+  right: 8px;
+  bottom: 160px;
+  background-color: #2196f3;
+  border-radius: 35px;
+  padding: 7px;
+  --ionicon-stroke-width: 60px;
+}
+
+::ng-deep p-calender .p-calendar-w-btn .p-button-icon-only {
+  width: 25px !important;
+}
+
+::ng-deep p-calendar input {
+  top: 15px;
+  left: 10px;
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  display: none !important;
+}
+.date_range {
+  display: flex;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 8px 4px;
+  border-radius: 5px;
+  border: 1px solid #ececec;
+}
+.date_range span {
+  color: #8a8a8a;
+  font-size: 3.4vw;
+  font-family: "Poppins";
+}
+
+::ng-deep .p-datepicker table td > span.p-highlight {
+  color: #e6eaed !important;
+  background: rgb(11 122 178) !important;
+}
+.date_range.border_color_red {
+  border: 1px solid red !important;
+  span {
+    color: red !important;
+  }
+}

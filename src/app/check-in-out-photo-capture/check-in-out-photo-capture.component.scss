@@ -1,0 +1,142 @@
+ion-modal#check-inAlertModal,
+.custom-checkin-modal .modal-wrapper {
+  --height: auto;
+  --width: 100%;
+  --offset-y: 0px;
+  align-items: flex-start;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+ion-modal#check-inAlertModal h1 {
+  margin: 20px 20px 10px 20px;
+}
+
+ion-modal#check-inAlertModal ion-icon {
+  margin-right: 6px;
+  width: 48px;
+  height: 48px;
+  padding: 4px 0;
+  color: #aaaaaa;
+}
+
+ion-modal#check-inAlertModal .wrapper {
+  margin-bottom: 10px;
+}
+
+.mainHeading span {
+  font-family: "Poppins";
+  font-size: 20px;
+}
+.check_in {
+  background: rgba(93, 182, 58, 1);
+  color: white;
+  border-radius: 2px;
+  padding: 2px 10px;
+}
+
+.icon-box {
+  background-color: rgba(255, 255, 255, 1);
+  color: #0b7ab2;
+  font-size: 25px;
+  border-radius: 2px;
+  height: 100%;
+}
+
+.text-box span {
+  color: rgba(255, 255, 255, 1);
+  font-family: "Poppins";
+  font-size: 22px;
+}
+.retake_button ion-row {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 25px;
+  border: 1px solid white;
+  width: 109px;
+  margin: 5px;
+}
+.retake_button ion-col {
+  padding: 2px;
+}
+.retake_button {
+  position: relative;
+  top: 0;
+  height: 60%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+.retake_button span {
+  font-size: 18px;
+  font-family: "Poppins";
+  padding-right: 5px;
+}
+.iconColor_fontSize {
+  color: rgba(11, 122, 178, 1);
+  font-size: 1.25rem;
+}
+
+.date span,
+time span {
+  color: rgba(65, 65, 65, 1);
+  font-size: 5vw;
+}
+.address {
+  font-size: 4vw;
+  color: rgba(65, 65, 65, 1);
+}
+.location-icon {
+  display: flex;
+}
+.location-icon span {
+  padding-top: 5px;
+}
+.check_inNowBtn ion-button {
+  color: rgba(255, 255, 255, 1);
+  font-family: "Poppins";
+  font-size: 6vw;
+}
+.faceframe span {
+  color: rgba(137, 137, 137, 1);
+  font-family: "Poppins";
+  font-size: 1.125rem;
+  text-align: center;
+}
+.faceframe ion-col {
+  padding: 10px 0;
+}
+
+.check-outBtn span {
+  background: rgba(217, 101, 112, 1);
+  border-radius: 2px;
+  padding: 5px 20px;
+  color: white;
+  font-family: 12px;
+  font-family: "Poppins";
+}
+.logo::part(image) {
+  border-radius: 3px !important;
+  width: 30px;
+  height: 30px;
+}
+.check-outBtn {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.loader {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 999;
+  opacity: 0.8;
+  background-color: black !important ;
+  background-position: center center;
+  background-repeat: no-repeat;
+}

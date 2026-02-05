@@ -1,0 +1,462 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<app-header *ngIf="!isOnCallDetailsPage "></app-header>
+<!-- <app-check-in-out-photo-capture></app-check-in-out-photo-capture> -->
+<ion-row style="padding: 5px 5px 0; background-color: #f9f9f9" *ngIf="!isOnCallDetailsPage">
+  <ion-col class="date-filter-container">
+    <ion-row class="date-filter-row">
+      <ion-col class="content_center date-filter-item" [ngClass]="
+          filteredParams.isDateFilter == 'today'? 'bg_textColor'
+            : ''
+        " (click)="selectDateFilter('today')">
+        <span class="font-size12-familyPoppins">Today</span>
+      </ion-col>
+      <ion-col class="content_center date-filter-item" [ngClass]="
+       filteredParams.isDateFilter == 'yesterday'
+            ? 'bg_textColor'
+            : ''
+        " (click)="selectDateFilter('yesterday')">
+        <span class="font-size12-familyPoppins">Yesterday</span>
+      </ion-col>
+      <ion-col class="content_center date-filter-item" [ngClass]="
+         filteredParams.isDateFilter == 'lastsevenDay'
+            ? 'bg_textColor'
+            : ''
+        " (click)="selectDateFilter('lastsevenDay')">
+        <span class="font-size12-familyPoppins">Last 7 days</span>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+
+  <ion-col size="1" [ngClass]="
+         filteredParams.isDateFilter == 'custom'
+            ? 'bg_textColor'
+            : ''" class="content_center icon-button-container" (click)="selectDateFilter('custom')">
+    <span class="d-flex align-items-center ion-justify-content-center">
+      <label> <ion-img class="datefiltericon" src="../assets/CRMimages/date-filter-icon.png"></ion-img></label>
+    </span>
+  </ion-col>
+  <ion-col size="1" class="content_center icon-button-container" (click)="refreshPage()">
+    <span>
+      <ion-icon class="icon-ion font-colorBlue" name="refresh-outline"></ion-icon>
+    </span>
+  </ion-col>
+</ion-row>
+
+<ion-popover [backdropDismiss]="dateRange.fromdate && !dateRange.todate ? false:true" trigger="attendanceCustomDate"
+  side="bottom" alignment="center" class="newAndselect_popover">
+  <ng-template>
+    <ion-row class="m-2 mb-0">
+      <label for="fromDate" class="from-date-calendar d-flex align-items-center p-0 w-100">
+        <div class="w-100">
+          <div class="font-size14-familyPoppins">From Date</div>
+          <div class="d-flex align-items-center calendar-div">
+            <label class="d-flex">
+              <ion-img src="../assets/CRMimages/date-filter-icon.png"></ion-img>
+            </label>
+            <span class="ps-2" [ngClass]="dateRange?.fromdate?'':'isBeforeselectingDate'">
+              {{dateRange?.fromdate?.toLocaleDateString('en-CA')?dateRange?.fromdate?.toLocaleDateString('en-CA'):
+              'Select From Date'}}
+            </span>
+            <p-calendar inputId="fromDate" [(ngModel)]="dateRange.fromdate" appendTo="body" dateFormat="yy-mm-dd"
+              class="m-3" (onSelect)="selectDateFilter('customfromDate') ">
+            </p-calendar>
+          </div>
+        </div>
+      </label>
+    </ion-row>
+    <ion-row class="m-2" [ngClass]="dateRange.fromdate?'':'pointerEvent'">
+      <label for="toDate" class="to-date-calendar d-flex align-items-center p-0 w-100">
+        <div class="w-100">
+          <div class="font-size14-familyPoppins">To Date</div>
+          <div class="d-flex align-items-center calendar-div">
+            <label class="d-flex">
+              <ion-img src="../assets/CRMimages/date-filter-icon.png"></ion-img>
+            </label>
+            <span class="ps-2" [ngClass]="dateRange?.todate?'':'isBeforeselectingDate'">
+              {{dateRange?.todate?.toLocaleDateString('en-CA')?dateRange?.todate?.toLocaleDateString('en-CA'):
+              'Select To Date'}}</span>
+            <p-calendar inputId="toDate" [(ngModel)]="dateRange.todate" appendTo="body" dateFormat="yy-mm-dd"
+              [minDate]="dateRange.fromdate" (onSelect)="selectDateFilter('custom')" class="m-3">
+            </p-calendar>
+          </div>
+        </div>
+      </label>
+    </ion-row>
+  </ng-template>
+</ion-popover>
+
+
+<ion-row style="padding: 0 5px; background-color: #f9f9f9"
+  *ngIf="isAdmin && filteredParams.isExecCheckInOutDetails != 'true' && !isOnCallDetailsPage">
+  <ion-col class="exec" size="6">
+    <p-dropdown [options]="executives" class="exec_css" (onChange)="onExecutiveFilter($event)"
+      [(ngModel)]="selectedExecu" optionLabel="Name" placeholder="Select a Executive" />
+  </ion-col>
+</ion-row>
+
+<p-calendar #calendar [ngStyle]="{ display: 'none' }" [hideOnDateTimeSelect]="true" [touchUI]="true"
+  inputId="attendance_date_range" [(ngModel)]="dateRange" selectionMode="range" appendTo="body"
+  [dateFormat]="'yy-mm-dd'" (onSelect)="selectDateFilter('custom')"></p-calendar>
+
+
+<ion-row *ngIf="filteredParams.isDateFilter == 'custom'" style="padding: 0 10px 10px; background-color: #f9f9f9">
+  <ion-col class="paddingZero">
+    <ion-button class="filterButtons" fill="clear" style="margin: 0" (click)="removeDateFilter()">
+      <span class="font-size12-familyPoppins">
+        {{ filteredParams.fromdate + " to " + filteredParams.todate }}</span>
+      <ion-icon slot="end" name="close" style="font-size: 20px; color: #0b7ab2"></ion-icon>
+    </ion-button>
+  </ion-col>
+</ion-row>
+
+<ion-content class="ion-padding full-bg" #scrollContent scrollEvents="true" *ngIf="!isOnCallDetailsPage"
+  (ionScroll)="onScroll($event)">
+  <div *ngFor="
+      let checkStatus of checkInOutDetails;
+      let i = index;
+      let isFirst = first
+    ">
+    <div (click)="onExecCheckInOutDetails(checkStatus)">
+      <ion-row class="date-time-row" *ngIf="
+          isNewDay(i) &&
+          this.filteredParams.fromdate != this.filteredParams.todate &&
+          filteredParams.isExecCheckInOutDetails != 'true'
+        ">
+        <ion-col class="content_center">
+          <span class="font-size16-familyPoppins">
+            {{ checkStatus.date }}
+          </span>
+        </ion-col>
+      </ion-row>
+      <ion-row class="date-time-row" *ngIf="
+          isNewDay(i) &&
+          this.filteredParams.fromdate != this.filteredParams.todate &&
+          filteredParams.isExecCheckInOutDetails == 'true' &&
+          checkStatus.status == 'Absent'
+        ">
+        <ion-col>
+          <span class="font-size16-familyPoppins font-colorBlue">
+            {{ dateModify(checkStatus.date) }}
+          </span>
+        </ion-col>
+        <ion-col class="d-flex ion-justify-content-end">
+          <span class="font-size16-familyPoppins">00:00:00 Hrs</span>
+        </ion-col>
+      </ion-row>
+
+      <div class="work-summary-card" *ngIf="
+          (filteredParams.isExecCheckInOutDetails != 'true' &&
+            (checkStatus.status == 'Absent' ||
+              checkStatus.status == 'Present')) ||
+          (filteredParams.isExecCheckInOutDetails == 'true' &&
+            checkStatus.status == 'Absent' &&
+            hasKeyInAllObjects())
+        ">
+        <div class="summary-header" *ngIf="filteredParams.isExecCheckInOutDetails != 'true'">
+          <ion-row>
+            <ion-col class="row-space-between">
+              <div>
+                <span class="summary-title">{{ checkStatus.name }}</span>
+                <span class="status-dot" [ngClass]="
+                    checkStatus.online_status == 'online' ? 'online' : 'offline'
+                  "></span>
+                <span class="summary-title">{{
+                  logout_timersMap[
+                  checkStatus.id +
+                  "_" +
+                  (checkStatus.logout_time | date : "yyyy-MM-dd")
+                  ]
+                  }}</span>
+              </div>
+              <div>
+                <span *ngIf="checkStatus.status != 'Absent'" class="summary-title">
+                  <span *ngIf="
+                      checkStatus.all_checks?.length > 0 &&
+                        checkStatus.all_checks[
+                          checkStatus.all_checks.length - 1
+                        ].check_status === '1' &&
+                        checkStatus.auto_checkOut != '1';
+                      else elseBlock
+                    ">
+                    {{
+                    timersMap[
+                    checkStatus.id +
+                    "_" +
+                    (checkStatus.all_checks[0].created_at
+                    | date : "yyyy-MM-dd")
+                    ] || "00:00:00 Hrs"
+                    }}
+                  </span>
+                  <ng-template #elseBlock>
+
+                    {{ checkStatus.total_hours }}
+                  </ng-template>
+                </span>
+                <span *ngIf="checkStatus.status == 'Absent'" class="absent font-size14-familyPoppins">Absent</span>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="row-space-between">
+              <div><span class="summary-subtitle">RM Executive</span></div>
+              <div><span class="summary-subtitle">Work Hours</span></div>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="summary-header" *ngIf="
+            filteredParams.isExecCheckInOutDetails == 'true' &&
+            checkStatus.status == 'Absent' &&
+            hasKeyInAllObjects()
+          ">
+          <ion-row>
+            <ion-col class="row-space-between">
+              <div>
+                <span *ngIf="checkStatus.status == 'Absent'" class="absent font-size16-familyPoppins">Absent</span>
+              </div>
+              <div style="display: flex; flex-direction: column; line-height: 1.2">
+                <span class="font-size14-familyPoppins text_color_red">00:00:00 Hrs</span>
+                <span class="summary-subtitle">Work Hours</span>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div class="summary-body" *ngIf="
+            (filteredParams.isExecCheckInOutDetails == 'true' &&
+              checkStatus.status == 'Absent' &&
+              hasKeyInAllObjects()) ||
+            (filteredParams.isExecCheckInOutDetails == 'false' &&
+              (checkStatus.status == 'Absent' ||
+                checkStatus.status == 'Present'))
+          ">
+          <ion-row>
+            <ion-col class="row-space-between">
+              <div>
+                <span class="summary-title">{{
+                  checkStatus.check_in ? checkStatus.check_in : "--"
+                  }}</span>
+              </div>
+              <div>
+                <span class="summary-title">{{
+                  checkStatus.check_out ? checkStatus.check_out : "--"
+                  }}</span>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="row-space-between" style="padding-top: 0">
+              <div class="icon-text">
+                <span class="summary-subtitle">Check-In</span>
+                <ion-img class="icon-img" src="../../assets/CRMimages/check_in_icon1.svg"></ion-img>
+              </div>
+              <div class="icon-text">
+                <span class="summary-subtitle" *ngIf="checkStatus.auto_checkOut == '1'">Check-Out</span>
+                <span class="summary-subtitle" *ngIf="checkStatus.auto_checkOut == '0'">Check-Out</span>
+                <ion-img class="icon-img" src="../../assets/CRMimages/check_out-icon.svg"></ion-img>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredParams.isExecCheckInOutDetails == 'true'">
+      <div *ngFor="let allChecks of checkStatus.all_checks; let i = index">
+        <ion-row class="date-time-row" *ngIf="isNewDate(i)">
+          <ion-col><span class="font-size16-familyPoppins font-colorBlue">{{ allChecks.created_at | date : "yyyy-MM-dd"
+              }}
+            </span></ion-col>
+          <ion-col class="d-flex ion-justify-content-end">
+            <span class="font-size16-familyPoppins">
+              <!-- {{checkStatus.all_checks[0].check_status != '1'? checkStatus.total_hours: timer}} -->
+              {{ checkStatus.total_hours }}
+            </span>
+          </ion-col>
+        </ion-row>
+
+        <div class="checkin-card">
+          <ion-row>
+            <ion-col class="checkin-time-col">
+              <ion-icon name="time-outline" class="time-icon font-colorBlue"></ion-icon>
+              <span class="checkin-time-text">{{
+                allChecks.created_at | date : "hh:mm a"
+                }}</span>
+            </ion-col>
+            <ion-col class="checkin-status-col" *ngIf="allChecks['check_status'] == '1'"
+              (click)="onViewCheckInModal(allChecks)">
+              <span class="checkin-status-text text_color_green">Check-In</span>
+              <div class="photo-icon-wrapper" style="background: #ffffff">
+                <ion-img class="phoion-imgto-icon" [src]="
+                    allChecks.selfie_img
+                      ? 'https://lead247-laravel-api.right2shout.in/selfie-img/' +
+                        allChecks.selfie_img
+                      : '../../assets/CRMimages/no-img.svg'
+                  "></ion-img>
+              </div>
+            </ion-col>
+            <ion-col class="d-flex ion-justify-content-end" style="align-items: center"
+              *ngIf="allChecks['check_status'] == '0'">
+              <span class="font-size14-familyPoppins text_color_red" *ngIf="allChecks.auto_checkOut == '1'">Auto
+                Check-Out</span>
+              <span class="font-size14-familyPoppins text_color_red" *ngIf="allChecks.auto_checkOut == '0'">
+                Check-Out</span>
+              <div style="
+                  padding: 2px;
+                  margin-left: 5px;
+                  background: rgba(255, 240, 242, 1);
+                ">
+                <ion-img style="width: 20px" src="../assets/CRMimages/check_out-icon.svg"></ion-img>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="allChecks.device_type == '1'">
+            <ion-col size="1">
+              <ion-icon name="location-outline" class="location-icon font-colorBlue"></ion-icon>
+            </ion-col>
+            <ion-col class="paddingZero">
+              <span class="location-text">
+                {{ allChecks.address }}
+              </span>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="allChecks.device_type == '0'">
+            <ion-col size="1">
+              <ion-icon style="font-size: 17px" name="desktop-outline" class="location-icon font-colorBlue"></ion-icon>
+            </ion-col>
+            <ion-col class="paddingZero">
+              <span class="location-text"> Desktop </span>
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!hasKeyInAllObjects() && filteredParams.isExecCheckInOutDetails == 'true'">
+    <ion-row class="date-time-row" *ngIf="filteredParams.selectedDay">
+      <ion-col class="content_center">
+        <span class="font-size16-familyPoppins">
+          {{ filteredParams.selectedDay }}
+        </span>
+      </ion-col>
+    </ion-row>
+    <div class="nodata">
+      <ion-row>
+        <ion-col>
+          <span class="font-size14-familyPoppins">No Logs Found...</span>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+</ion-content>
+
+<ion-modal #checkInPreviewModal class="checkInPreviewModal">
+  <ng-template>
+    <ion-header class="checkin-header">
+      <ion-row>
+        <ion-col class="checkin-title">
+          <span class="title-text">Check-In</span>
+          <ion-img class="checkin-icon" src="../../assets/CRMimages/check_in_icon1.svg"></ion-img>
+        </ion-col>
+        <ion-col size="2" class="content_center close-icon" (click)="checkInPreviewModal.dismiss()">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+      </ion-row>
+      <div class="checkin-image-container" style="background: #ffffff">
+        <ion-img class="checkin-image" [src]="
+            checkInPreviewDetails.selfie_img
+              ? 'https://lead247-laravel-api.right2shout.in/selfie-img/' +
+                checkInPreviewDetails.selfie_img
+              : '../../assets/CRMimages/no-img.svg'
+          "></ion-img>
+      </div>
+    </ion-header>
+
+    <div class="checkin-content">
+      <ion-row>
+        <ion-col class="center-vertically date">
+          <ion-icon name="time-outline" class="iconColor_fontSize"></ion-icon>
+          <span class="font-size16-familyPoppins">
+            {{ checkInPreviewDetails.created_at | date : "hh:mm a" }}
+          </span>
+        </ion-col>
+        <ion-col class="center-vertically time justify-end">
+          <ion-icon name="calendar-outline" class="iconColor_fontSize"></ion-icon>
+          <span class="font-size16-familyPoppins">
+            {{ checkInPreviewDetails.created_at | date : "yyyy-MM-dd" }}
+          </span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="checkInPreviewDetails.address">
+        <ion-col size="1" class="location-icon">
+          <ion-icon name="location-outline" class="iconColor_fontSize"></ion-icon>
+        </ion-col>
+        <ion-col class="address">
+          <span class="font-size14-familyPoppins">
+            {{ checkInPreviewDetails.address }}
+          </span>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ng-template>
+</ion-modal>
+
+
+
+<ion-modal #dashboard_custDate_modal [breakpoints]="[0.3]" [initialBreakpoint]="0.3"
+  [backdropDismiss]="!(dateRange?.fromdate && dateRange?.todate)"
+  (ionModalDidDismiss)="onCustomDateModalDismiss($event)">
+  <ng-template>
+
+    <div class="modal-container">
+      <!-- CONTENT -->
+      <div class="date-range-wrapper">
+        <h3 class="title">Select date range</h3>
+
+        <div class="date-inputs">
+          <div class="date-box" (click)="openFromDate()">
+            <label>From</label>
+            <span>{{ dateRange?.fromdate ? ('' + dateRange.fromdate).split('T')[0] : '' }}</span>
+          </div>
+
+          <div class="date-box" (click)="handleToDateClick()" [class.disabled]="!dateRange?.fromdate">
+            <label>To</label>
+            <span>{{ dateRange?.todate ? ('' + dateRange.todate).split('T')[0] : '' }}</span>
+          </div>
+        </div>
+
+        <p class="error-text" *ngIf="showFromDateError">
+          Please select From date first
+        </p>
+      </div>
+
+      <!-- STICKY FOOTER -->
+      <div>
+        <ion-button expand="block" class="confirm-btn" [disabled]="!(dateRange?.fromdate && dateRange?.todate)"
+          (click)="addQueryParams(); dashboard_custDate_modal.dismiss()">
+          Confirm
+        </ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+<ion-modal #dashboard_fromDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+  [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+  <ng-template>
+    <ion-datetime presentation="date" [(ngModel)]="dateRange.fromdate"
+      (ionChange)="selectDateFilter('customfromDate')"></ion-datetime>
+  </ng-template>
+</ion-modal>
+<ion-modal #dashboard_toDate_modal [breakpoints]="[0, 0.50]" [initialBreakpoint]="0.50" mode="ios"
+  [keepContentsMounted]="false" (ionBreakpointDidChange)="onmodaldismiss()">
+  <ng-template>
+    <ion-datetime presentation="date" [min]="dateRange.fromdate" [(ngModel)]="dateRange.todate"
+      (ionChange)="selectDateFilter('customtoDate')"></ion-datetime>
+  </ng-template>
+</ion-modal>
+<app-common-footer *ngIf="!isEmployee"></app-common-footer>

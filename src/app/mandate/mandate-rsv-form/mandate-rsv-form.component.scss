@@ -1,0 +1,263 @@
+.rsvform{
+    background: #ffff; 
+    padding: 10px; 
+    border: 1px solid #D9D9D9;
+    border-radius: 4px;
+}
+.inActiveStatus{
+    width: 100%;
+    color: #727272;
+    font-size: 12px;
+    font-family: Poppins;
+    font-weight: 400;
+    word-wrap: break-word;
+    border: 0.75px #ECECEC solid;
+    border-radius: 4px;
+    height: 34px;
+    text-transform: none;
+}
+.activeStatus{
+    width: 100%;
+    color: white;
+    font-size: 12px;
+    font-family: Poppins;
+    font-weight: 500;
+    word-wrap: break-word;
+    background-color: #0B7AB2;
+    border-radius: 4px;
+    height: 34px !important;
+    text-transform: none;
+}
+
+.custom-textArea ion-textarea{
+    height:80px;
+    border-radius: 4px;
+    border: 0.75px #ECECEC solid;
+}
+::ng-deep .custom-textArea .native-wrapper {
+    padding: 8px;
+}
+.saveButton{
+    text-transform: none;
+    background: #ECECEC;
+    color: #727272; 
+    width:100%;
+    height:42px; 
+    border-radius: 4px; 
+    border: 1px rgba(236, 236, 236, 0.93) solid;
+}
+
+.activeSaveButton{
+    text-transform: none;
+    background: #0B7AB2;
+    color: #ECECEC !important; 
+    width:100%;
+    height:42px; 
+    border-radius: 4px; 
+    border: 1px rgba(236, 236, 236, 0.93) solid;
+}
+.submitForm{
+    margin-top:20px;
+}
+.submitForm ion-col{
+    margin-right:16px;
+}
+.submitForm ion-button{
+    text-transform: none;
+    font-size: 12px;
+    color: rgba(8, 8, 8, 0.93);
+    font-family: Poppins;
+    font-weight: 400;
+    word-wrap: break-word;
+    width:100%;
+    height:42px;
+    border-radius: 4px;
+    border: 1px rgba(236, 236, 236, 0.93) solid;
+}
+.projectname{
+    color: #727272;
+    font-size: 12px;
+    font-family: Poppins;
+    font-weight: 400;
+    border-radius: 4px;
+    word-wrap: break-word;
+    align-items: center;
+}
+.activeInteested{
+    color: #ffff;
+    font-size: 14px;
+    font-family: Poppins;
+    font-weight: 500;
+    padding: 5px;
+    border-radius: 4px;
+    border: 0.75px #ECECEC solid;
+    background-color: #0B7AB2;
+}
+.inActiveInterested{
+    border-radius: 4px;
+    color: #6B6D81;
+    font-size: 14px;
+    font-family: Poppins;
+    font-weight: 500;
+    padding: 5px;
+    border: 0.75px #ECECEC solid;
+}
+// .activeStatus{
+//     color: white;
+//     font-size: 12px;
+//     font-family: Poppins;
+//     font-weight: 500;
+//     word-wrap: break-word;
+//     background-color: #0B7AB2;
+//     border-radius: 4px;
+//     margin-right: 10px;
+//     height: 34px !important;
+//     text-transform: none;
+// }
+// .inActiveStatus{
+//     color: #727272;
+//     font-size: 12px;
+//     font-family: Poppins;
+//     font-weight: 400;
+//     word-wrap: break-word;
+//     border: 0.75px #ECECEC solid;
+//     border-radius: 4px;
+//     margin-right: 10px;
+//     height: 34px;
+//     text-transform: none;
+// }
+.cancelledProperty:first-child .margin-top-16 {
+    background: #BBE1FF;
+    border-top:1px solid #D9D9D9;
+    border-left:1px solid #D9D9D9;
+    border-right:1px solid #D9D9D9;
+}
+.cancelledProperty > ion-row{
+    border-bottom:1px solid #D9D9D9;
+    border-left:1px solid #D9D9D9;
+    border-right:1px solid #D9D9D9;
+}
+
+.cancelledProperty ion-row > ion-col:first-child {
+    border-right: 0.5px solid #979797;
+}
+
+.cancelledProperty:first-child .margin-top-16 ion-col{
+    padding: 10px;
+}
+
+.cancelledProperty > ion-row {
+    background: #FFFFFF;
+}
+
+.cancelledProperty ion-row > ion-col  p{
+    color: #002E52;
+}
+.input-with-image ion-input::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 10px; 
+    transform: translateY(-50%);
+    width: 20px; 
+    height: 20px;
+    background: url('../../../assets/CRMimages/calendar-edit-outline.png') no-repeat center;
+    background-size: contain; 
+  }
+  
+  .inputTime-with-image ion-input::after,
+  .inputTime-with-image div::after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 10px; 
+    transform: translateY(-50%);
+    width: 20px; 
+    height: 20px;
+    background: url('../../../assets/CRMimages/clock-time-five-outline.png') no-repeat center;
+    background-size: contain; 
+  }
+  
+  .date-input {
+    position: relative;
+    width: 100%;
+    border: 1px #ECECEC solid;
+    border-radius: 8px;
+  }  
+  
+  .date-input ion-input, .date-input input{
+    --placeholder-color: #black;
+    color: #727272;
+    font-size: 12px;
+    font-family: Poppins;
+    font-weight: 500;
+    word-wrap: break-word;
+    min-height: 36px;
+    --padding-start: 10px;
+    padding-left: 5px;
+  }
+  
+
+  .projectname:first-child .custom-row{
+    color: #008BFA;
+    font-size: 16px;
+    font-family: Poppins;
+    font-weight: 400;
+    border-radius: 4px;
+    word-wrap: break-word;
+    align-items: center;
+}
+
+.activeHot{
+    border: 0.8px solid #F2591F !important;
+    color: #F2591F !important;
+    background: #FFECE4;
+}
+.activeWarm{
+    border: 0.8px solid #F2841F !important;
+    color: #F2841F;
+    background: #FFEEDF;
+}
+.activeCold{
+    border: 0.8px solid #17C7FF !important;
+    color: #17C7FF;
+    background: #E8F9FF;
+}
+
+.inactive{
+    color:#6B6D81;
+    font-weight: 500;
+}
+
+.priority-level > ion-row:first-child {
+    font-weight: 500;
+    font-size: 16px;
+    font-family: 'Poppins';
+  }
+  .priority-level > ion-row:nth-child(2) ion-col{
+      display: flex;
+      font-weight: 500;
+      font-size: 14px;
+      font-family: 'Poppins';
+      border:1px solid #D9D9D9;
+      border-radius: 2px;
+      margin: 2px;
+      padding: 4px
+  }
+  .priority-level > ion-row:nth-child(2) ion-col ion-img{
+      height: 16px;
+      width: 16px;
+      padding: 2px;   
+  }
+  .priority-level{
+      border: 1px solid #D9D9D9;
+      padding: 5px;
+      background: #FFFFFF;
+      border-radius: 4px;
+  }
+
+  .border_colorRed{
+    border: 1px solid red;
+    border-radius: 3px;
+  }
+  

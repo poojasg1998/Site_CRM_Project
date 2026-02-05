@@ -1,0 +1,910 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<ion-header *ngIf="!isChecked">
+  <ion-row>
+    <ion-col class="content_center" size="2" (click)="onBackButton()">
+      <ion-icon name="arrow-back">back</ion-icon>
+    </ion-col>
+    <ion-col size="8" class="content_center">
+      <span class="font-size16-familyPoppins">Fresh Leads</span>
+    </ion-col>
+    <ion-col size="2" (click)="openEndMenu()" class="content_center">
+      <ion-icon name="menu" class="menu_icon"></ion-icon>
+    </ion-col>
+  </ion-row>
+</ion-header>
+
+<ion-row class="todayPendingCSS" *ngIf="!isChecked">
+  <ion-col class="ion-text-center font-familyPoppins font-weight400" (click)="onFresh_Pending('today')">
+    <p [ngClass]="isFresh?'bg_textColor':''">Today- {{freshleads_count}}</p>
+  </ion-col>
+  <ion-col class="ion-text-center font-familyPoppins font-weight400" (click)="onFresh_Pending('pending')">
+    <p [ngClass]="!isFresh?'bg_textColor':''">Pending- {{pendingleads_count}}</p>
+  </ion-col>
+</ion-row>
+
+<!-- Filtered Chips -->
+<ion-row class="filteredChips" *ngIf="!isCheckbox">
+  <div style="display: flex; overflow-x: scroll; padding: 0 5px;">
+    <ion-button fill="clear" class="filterButtons" style="padding: 0;"
+      *ngIf="this.filteredParams.fromDate && this.filteredParams.toDate"
+      (click)="filteredParams.fromDate=''; filteredParams.toDate = '';dateRange=''; addQuerryParams()">
+      <span>{{filteredParams.fromDate}} To {{" "+filteredParams.toDate}}</span>
+      <ion-icon slot="end" name="close"></ion-icon>
+    </ion-button>
+
+    <ion-button fill="clear" class="filterButtons" style="padding: 0;" *ngIf="this.filteredParams.source"
+      (click)="filteredParams.source=''; addQuerryParams()">
+      <span>{{filteredParams.source}}</span>
+      <ion-icon slot="end" name="close"></ion-icon>
+    </ion-button>
+
+    <ion-button fill="clear" class="filterButtons" style="padding: 0;"
+      *ngIf="this.filteredParams.propname && localStorage.getItem('PropertyId') != '28773'"
+      (click)="filteredParams.propname=''; addQuerryParams()">
+      <span>{{filteredParams.propname}}</span>
+      <ion-icon slot="end" name="close"></ion-icon>
+    </ion-button>
+  </div>
+</ion-row>
+
+<ion-row style="margin-top: 5px;border-bottom: 1px solid rgba(32, 34, 36, 0.7);" *ngIf="isChecked">
+  <ion-col size="2" class="content_center" (click)="showSpinner=true; ngOnInit()">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+  </ion-col>
+  <ion-col size="2" class="ion-text-left">{{ temporaryLeadIds.length}}</ion-col>
+  <ion-col size="8" *ngIf="isChecked" class="ion-text-left" (click)="openAssignLeadsModal()">
+    <span class="font-size16-familyPoppins">Leads Selected</span>
+  </ion-col>
+</ion-row>
+
+<ion-content class="ion-padding" #content (ionScroll)="onScroll($event)" scrollEvents="true">
+  <div [ngClass]="isChecked? 'marginbottom30':''">
+    <!-- LEADS INFORMATION CARD -->
+    <div>
+      <div style="margin: 10px;" class="lead-info lead-card" *ngFor="let lead of leads_detail;let i=index">
+        <ion-row class="ion-align-items-center lead-info-row">
+          <ion-col [size]="isManual || i<temporaryLeadIds.length?1:''">
+            <!-- <ion-checkbox *ngIf="isManual || i < temporaryLeadIds.length" #freshleadsCheckboxes
+            [id]="lead.customer_IDPK"
+            (ionChange)="checkedLeads($event)" 
+            [checked]="assignedLeadIds && assignedLeadIds.includes(lead.customer_IDPK)"         
+            class="form-check-input"></ion-checkbox>   -->
+
+            <ion-checkbox *ngIf="isManual || i < temporaryLeadIds.length" #freshleadsCheckboxes
+              (ionChange)="checkedLeads($event)" name="programming" [disabled]="!isManual && i<temporaryLeadIds.length"
+              [checked]="temporaryLeadIds && temporaryLeadIds.includes(lead.customer_IDPK)"
+              class="form-check-input"></ion-checkbox>
+          </ion-col>
+          <ion-col [size]="isManual || i < temporaryLeadIds.length?11:12" class="paddingZero"
+            [routerLink]="['../assigned-leads-detail']" [queryParams]="{ leadId: lead.customer_IDPK }">
+            <ion-row class="info-row-heading">
+              <ion-col>
+                Lead Name
+              </ion-col>
+              <ion-col>Property</ion-col>
+              <ion-col>Mobile Number</ion-col>
+            </ion-row>
+            <ion-row class="info-row-value">
+              <ion-col>
+                {{lead.name}}
+              </ion-col>
+              <ion-col>{{lead.propertyname?lead.propertyname:'--'}}</ion-col>
+              <ion-col *ngIf="localStorage.getItem('Name') != 'demo'">
+                <div style="width: 100%;display: flex;">
+                  +91 {{lead.number}}
+                  <ion-img *ngIf="lead?.qualified_leads == '2'" style="width: 14px;padding-left: 2px;"
+                    src="../../assets/CRMimages/qualified.svg"></ion-img>
+                  <ion-img *ngIf="lead?.qualified_leads == '3'" style="width: 14px;padding-left: 2px;"
+                    src="../../assets/CRMimages/not_qualified.svg"></ion-img>
+                </div>
+              </ion-col>
+              <ion-col *ngIf="localStorage.getItem('Name') == 'demo'">+91 xxxxxxxxxx</ion-col>
+            </ion-row>
+            <ion-row class="info-row-heading">
+              <ion-col size="4">Visit Source</ion-col>
+              <ion-col size="6">Received On</ion-col>
+            </ion-row>
+            <ion-row class="info-row-value">
+              <ion-col size="4">{{lead.source}} </ion-col>
+              <ion-col size="6">{{lead.date}}{{" "+lead.time}}</ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+        <div class="floating-delete" (click)="onDelete(lead.customer_IDPK)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <!-- If leads detail empty -->
+    <div *ngIf="(leads_detail && leads_detail.length===0)" class="textStyle">
+      <ion-row>
+        <ion-col class="ion-text-center"><span>No Leads Found...</span></ion-col>
+      </ion-row>
+    </div>
+
+    <!-- LOAD MORE -->
+    <!-- <div *ngIf="isFresh?(leads_detail && (leads_detail.length !== 0 && leads_detail.length < freshleads_count && leads_detail.length !== freshleads_count)):
+        (leads_detail && (leads_detail.length !== 0 && leads_detail.length < pendingleads_count &&  leads_detail.length !== pendingleads_count))"
+        (click)="onLoadMore()" class="textStyle">
+        <ion-row>
+          <ion-col class="ion-text-center" style="margin-bottom: 10px;">
+            <span>Load More</span>
+          </ion-col>
+        </ion-row>
+      </div> -->
+  </div>
+  <ion-infinite-scroll *ngIf="showInfiniteScroll" [disabled]="false" threshold="100px" #infiniteScroll
+    (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+<!--  -->
+
+<!-- ASSIGNED LEAD MODAL-->
+<ion-modal id="assignLeads-modal" #assignLeadsModal trigger="open-custom-dialog" [backdropDismiss]="false">
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+    <ion-row class="assignTaskHeading">
+      <ion-col size="10">Assign the task</ion-col>
+      <ion-col size="2" class="content_center"
+        (click)="assignLeadsModal.dismiss();selectedTeam=null; showSpinner=false">
+        <ion-icon name="close"></ion-icon></ion-col>
+    </ion-row>
+    <ion-row *ngIf="checkedLeadsDetail.length === 1" style="background-color: #FFF3F7"
+      class="ion-justify-content-center">
+      <ion-img style="width: 135px;height: 135px;" src="../../assets/CRMimages/assignLead.png"></ion-img>
+    </ion-row>
+
+    <div style="margin: 0px 15px 10px 15px;">
+      <ion-row>
+        <ion-col style="padding: 0;">
+          {{checkedLeadsDetail.length === 1?'Leads Detail': ('Total Leads'+checkedLeadsDetail.length)}} </ion-col>
+      </ion-row>
+      <div class="content_center loader" *ngIf="showSpinner">
+        <ion-spinner name="circular" style="color: white;"></ion-spinner>
+      </div>
+      <ion-content class="data-row"
+        [ngClass]="{'single-lead': checkedLeadsDetail.length === 1, 'multiple-leads': checkedLeadsDetail.length > 1}">
+        <div *ngFor="let assignedLead of checkedLeadsDetail">
+          <ion-row style="width: 100%;">
+            <ion-col>Lead Name</ion-col>
+            <ion-col>Project</ion-col>
+            <ion-col>Mobile Number</ion-col>
+            <ion-col>Visit Source</ion-col>
+          </ion-row>
+          <ion-row style="width: 100%;">
+            <ion-col>{{assignedLead.name}}</ion-col>
+            <ion-col>{{assignedLead.propertyname}} </ion-col>
+            <ion-col>{{assignedLead.number}}</ion-col>
+            <ion-col>{{assignedLead.source}}</ion-col>
+          </ion-row>
+        </div>
+      </ion-content>
+
+      <form>
+        <ion-row>
+          <ion-col class="paddingBottomLeft">
+            <span class="font-size14-familyPoppins">Select Team</span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col id="teamSelectDropdown">
+            <p-dropdown class="teamSelectDropdown" [options]="team" optionLabel="name"
+              (onChange)="onAssignTeamSelect($event)" [(ngModel)]="selectedTeam" placeholder="Select a Team"
+              name="teamSelect" appendTo="body" />
+          </ion-col>
+        </ion-row>
+
+        <span *ngIf="selectedTeam">
+          <span *ngIf="isRetail">
+            <ion-row>
+              <ion-col class="paddingBottomLeft">
+                <span class="font-size14-familyPoppins">Select Executive Team</span>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col id="teamSelectDropdown">
+                <p-dropdown class="teamSelectDropdown" [(ngModel)]="selectedExecTeam" [options]="execTeam"
+                  optionLabel="name" appendTo="body" (onChange)="onExecTeamSelect($event)" placeholder="Select a Team"
+                  name="selectedExecTeam" />
+              </ion-col>
+            </ion-row>
+          </span>
+
+          <span *ngIf="!isRetail">
+            <ion-row>
+              <ion-col class="paddingBottomLeft">
+                <span class="font-size14-familyPoppins">
+                  Select Mandate Project
+                </span>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col id="teamSelectDropdown">
+                <p-dropdown class="teamSelectDropdown" [options]="projectNames" [(ngModel)]="selectedProperty"
+                  optionLabel="property_info_name" name="selectedProperty" appendTo="body"
+                  (onChange)="onPropertySelect($event)" placeholder="Select a Team" />
+              </ion-col>
+            </ion-row>
+          </span>
+        </span>
+
+        <ion-row>
+          <ion-col class="paddingBottomLeft">
+            <span class="font-size14-familyPoppins">
+              Select Executives
+            </span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col id="executiveDropdown" *ngIf="isRetail">
+            <p-multiSelect id="mandateExec_dropdown" [options]="executives" [filter]="true" optionLabel="ExecName"
+              [(ngModel)]="selectedExecutiveName" name="selectedExecutiveName" defaultLabel="Select Executives"
+              (onChange)="onexecutive($event)" appendTo="body" [showHeader]="false"></p-multiSelect>
+          </ion-col>
+
+          <ion-col id="executiveDropdown" *ngIf="!isRetail">
+            <p-multiSelect id="mandateExec_dropdown" [options]="executives" [filter]="true" optionLabel="name"
+              [(ngModel)]="selectedExecutiveName" name="selectedExecutiveName" defaultLabel="Select Executives"
+              (onChange)="onexecutive($event)" appendTo="body" [showHeader]="false"></p-multiSelect>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="randomleadAssign" *ngIf="temporaryLeadIds.length!==1">
+          <ion-col size="10">
+            <span>
+              Random Leads Assigns
+            </span>
+          </ion-col>
+          <ion-col size="2">
+            <ion-toggle [disabled]="temporaryLeadIds.length===1"
+              (ionChange)="toggle_random_assign($event)"></ion-toggle>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <ion-button (click)="assignLead()" fill="clear" style="width: 100%;"
+              class="font-size14-familyPoppins bg_textColor"> Assign </ion-button>
+          </ion-col>
+          <!-- <ion-col>
+            <ion-button  (click)="reset();" fill="clear" style="width: 100%;" class="font-size14-familyPoppins bg_textColor"> Reset </ion-button>
+          </ion-col> -->
+        </ion-row>
+      </form>
+
+      <!-- <ion-row class="assignButton">
+          <ion-col>
+            <ion-button fill="clear" (click)="reset()" class="bg_textColor" > 
+              Reset
+            </ion-button>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-button fill="clear" class="bg_textColor"
+            (click)="assignLead()"><span class="font-size14-familyPoppins">Assign</span></ion-button>
+          </ion-col>
+        </ion-row> -->
+    </div>
+  </ng-template>
+</ion-modal>
+
+
+<!-- ADD LEAD MODAL -->
+<ion-modal #addLeadModal>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-row>
+          <ion-col size="2" class="content_center" (click)="addLeadModal.dismiss()">
+            <ion-icon name="arrow-back" class="backButton"></ion-icon>
+          </ion-col>
+          <ion-col size="9" class="content_center">
+            <span style="font-family: 'Poppins';">Add Lead</span>
+          </ion-col>
+          <ion-col size="1"></ion-col>
+        </ion-row>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content style="--background:#F5F7F9" class="leadAdd" #mainscrollContainer>
+      <div style="margin:10px">
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;"> Client Name </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="padding-top: 0;">
+            <ion-input class="form-control font-size12-familyPoppins" placeholder="Enter the Name" id="custname"
+              [(ngModel)]="model.name" required>
+            </ion-input>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;"> Contact Number </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="padding-top: 0;">
+            <ion-input class="form-control font-size12-familyPoppins" placeholder="Enter the Name" id="custnum"
+              [(ngModel)]="model.number"></ion-input>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;">Client Email</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="padding-top: 0;">
+            <ion-input class="form-control font-size12-familyPoppins" placeholder="Enter the Name" id="custmail"
+              [(ngModel)]="model.mail"></ion-input>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;">Prefered Location</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="padding-top: 0;">
+            <!-- <select id="locality_dropdown" class="form-control ui dropdown" [(ngModel)]="selectedlocality" name="selectedlocality"
+              (change)="localitychange($event)">
+              <option value="" selected>Select Locality</option>
+              <option *ngFor="let local of locality" value="{{local.id}}">{{local.locality}}</option>
+            </select> -->
+
+            <p-dropdown id="locality_dropdown" appendTo="body" [virtualScroll]="true" [options]="locality"
+              placeholder="Select Locality" optionLabel="locality" (onChange)="localitychange($event)"
+              class="locality font-size12-familyPoppins"></p-dropdown>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;">Source</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="padding-top: 0;">
+            <p-dropdown id="sourceselect" appendTo="body" [options]="Sources" placeholder="Select Source"
+              optionLabel="source" (onChange)="onSourceChange($event)"
+              class="sourcename ui dropdown font-size12-familyPoppins"></p-dropdown>
+          </ion-col>
+        </ion-row>
+
+
+        <!-- <div class="form-group col-md-6 input_cmn_div">
+            <label>Priority</label>
+            <div class="wrapper">
+              <input type="radio" class="radiocheck" name="select4" value="1" id="option-24"
+                (click)="prioritychange($event)">
+              <input type="radio" class="radiocheck" name="select4" value="2" id="option-25"
+               (click)="prioritychange($event)">
+              <input type="radio" class="radiocheck" name="select4" value="3" id="option-26"
+                (click)="prioritychange($event)">
+              <label for="option-24" class="option option-24">
+                <span>HOT</span>
+              </label>
+              <label for="option-25" class="option option-25">
+                <span>WARM</span>
+              </label>
+              <label for="option-26" class="option option-26">
+                <span>COLD</span>
+              </label>
+            </div>
+            <input type="hidden" id="priorityselect">
+          </div> -->
+
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;"> Priority</ion-col>
+        </ion-row>
+
+        <ion-row class="wrapper">
+          <ion-col style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck " name="select4" value="1" id="option-24"
+                (click)="prioritychange($event)">
+              <label for="option-24" class="option option-24">
+                <span class="content_center font-size12-familyPoppins">HOT</span>
+              </label>
+            </div>
+          </ion-col>
+
+          <ion-col style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck " name="select4" value="2" id="option-25"
+                (click)="prioritychange($event)">
+              <label for="option-25" class="option option-25">
+                <span class="content_center font-size12-familyPoppins">WARM</span>
+              </label>
+            </div>
+          </ion-col>
+
+          <ion-col style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck " name="select4" value="3" id="option-26"
+                (click)="prioritychange($event)">
+              <label for="option-26" class="option option-26">
+                <span class="content_center font-size12-familyPoppins">COLD</span>
+              </label>
+            </div>
+          </ion-col>
+        </ion-row>
+        <input type="hidden" id="priorityselect">
+
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;"> Type</ion-col>
+        </ion-row>
+        <ion-row class="wrapper">
+          <ion-col style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck " name="select1" value="1" id="option-1"
+                (click)="typeselection($event)">
+              <label for="option-1" class="option option-1">
+                <span class="content_center font-size12-familyPoppins">Apartment</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck" name="select1" value="2" id="option-2"
+                (click)="typeselection($event)">
+              <label for="option-2" class="option option-2">
+                <span class="content_center font-size12-familyPoppins">Villa</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck" name="select1" value="3" id="option-3"
+                (click)="typeselection($event)">
+              <label for="option-3" class="option option-3">
+                <span class="content_center font-size12-familyPoppins">Plot</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck" name="select1" value="4" id="option-19"
+                (click)="typeselection($event)">
+              <label for="option-19" class="option option-19">
+                <span class="content_center font-size12-familyPoppins">Villament</span>
+              </label>
+            </div>
+          </ion-col>
+          <input type="hidden" id="proptypeselect">
+
+          <!-- <div class="wrapper input_cmn_div">
+              <input type="radio" class="radiocheck" name="select1" value="Apartment" id="option-1">
+              <input type="radio" class="radiocheck" name="select1" value="Villa" id="option-2">
+              <input type="radio" class="radiocheck" name="select1" value="Plot" id="option-3">
+              <input type="radio" class="radiocheck" name="select1" value="Villament" id="option-19">
+              <ion-col for="option-1" class="option option-1">
+                <span>Apartment</span>
+              </ion-col>
+              <ion-col for="option-2" class="option option-2">
+                <span>Villa</span>
+              </ion-col>
+              <ion-col for="option-3" class="option option-3">
+                <span>Plot</span>
+              </ion-col>
+              <ion-col for="option-19" class="option option-19">
+                <span>Villament</span>
+              </ion-col>
+            </div> -->
+          <input type="hidden" id="proptypeselect">
+        </ion-row>
+
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;">Possession With</ion-col>
+        </ion-row>
+        <ion-row class="wrapper">
+          <ion-col style="padding-top: 0;" size="4">
+            <div>
+              <input type="radio" class="radiocheck" name="select2" value="2" id="option-4"
+                (click)="possessionselection($event)">
+              <label for="option-4" class="option option-4">
+                <span class="content_center font-size12-familyPoppins">6 Months</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col style="padding-top: 0;" size="4">
+            <div>
+              <input type="radio" class="radiocheck" name="select2" value="3" id="option-5"
+                (click)="possessionselection($event)">
+              <label for="option-5" class="option option-5">
+                <span class="content_center font-size12-familyPoppins">1 Year</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col style="padding-top: 0;" size="4">
+            <div>
+              <input type="radio" class="radiocheck" name="select2" value="3" id="option-23"
+                (click)="possessionselection($event)">
+              <label for="option-23" class="option option-23">
+                <span class="content_center font-size12-familyPoppins">1-2 Year</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col style="padding-top: 0;" size="4.5">
+            <div>
+              <input type="radio" class="radiocheck" name="select2" value="4" id="option-6"
+                (click)="possessionselection($event)">
+              <label for="option-6" class="option option-6">
+                <span class="content_center font-size12-familyPoppins"> > 2 years</span>
+              </label>
+            </div>
+          </ion-col>
+          <input type="hidden" id="possessionselect">
+        </ion-row>
+
+        <span [hidden]="model.propertytype == '3'">
+          <ion-row>
+            <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;">
+              Select Size
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="wrapper">
+            <ion-col style="padding-top: 0;" [hidden]="model.propertytype == '2' || model.propertytype == '4'" size="3">
+              <div>
+                <input type="radio" class="radiocheck" name="select3" value="1 BHK" id="option-7"
+                  (click)="sizeselection($event)">
+                <label for="option-7" class="option option-7">
+                  <span class="content_center font-size12-familyPoppins">1 BHK</span>
+                </label>
+              </div>
+            </ion-col>
+
+            <ion-col style="padding-top: 0;" [hidden]="model.propertytype == '2' || model.propertytype == '4'" size="3">
+              <div>
+                <input type="radio" class="radiocheck" name="select3" value="2 BHK" id="option-8"
+                  (click)="sizeselection($event)">
+                <label for="option-8" class="option option-8">
+                  <span class="content_center font-size12-familyPoppins">2 BHK</span>
+                </label>
+              </div>
+            </ion-col>
+
+            <ion-col style="padding-top: 0;" size="3">
+              <div>
+                <input type="radio" class="radiocheck" name="select3" value="3 BHK" id="option-9"
+                  (click)="sizeselection($event)">
+                <label for="option-9" class="option option-9">
+                  <span class="content_center font-size12-familyPoppins">3 BHK</span>
+                </label>
+              </div>
+            </ion-col>
+
+            <ion-col style="padding-top: 0;" [hidden]="model.propertytype == undefined || model.propertytype == '1'"
+              size="3">
+              <div>
+                <input type="radio" class="radiocheck" name="select3" value="3.5 BHK" id="option-20"
+                  (click)="sizeselection($event)">
+                <label for="option-20" class="option option-20">
+                  <span class="content_center font-size12-familyPoppins">3.5 BHK</span>
+                </label>
+              </div>
+            </ion-col>
+
+            <ion-col style="padding-top: 0;" size="3">
+              <div>
+                <input type="radio" class="radiocheck" name="select3" value="4 BHK" id="option-10"
+                  (click)="sizeselection($event)">
+                <label for="option-10" class="option option-10">
+                  <span class="content_center font-size12-familyPoppins">4 BHK</span>
+                </label>
+              </div>
+            </ion-col>
+
+
+            <ion-col style="padding-top: 0;" [hidden]="model.propertytype == undefined || model.propertytype == '1'"
+              size="3">
+              <div>
+                <input type="radio" class="radiocheck" name="select3" value="4.5 BHK" id="option-21"
+                  (click)="sizeselection($event)">
+                <label for="option-21" class="option option-21">
+                  <span class="content_center font-size12-familyPoppins">4.5 BHK</span>
+                </label>
+              </div>
+            </ion-col>
+
+            <ion-col style="padding-top: 0;" size="3">
+              <div>
+                <input type="radio" class="radiocheck" name="select3" value="5 BHK" id="option-11"
+                  (click)="sizeselection($event)">
+                <label for="option-11" class="option option-11">
+                  <span class="content_center font-size12-familyPoppins">5 BHK</span>
+                </label>
+              </div>
+            </ion-col>
+
+            <ion-col style="padding-top: 0;" [hidden]="model.propertytype == undefined || model.propertytype == '1'"
+              size="3">
+              <div>
+                <input type="radio" class="radiocheck" name="select3" value="5.5 BHK" id="option-22"
+                  (click)="sizeselection($event)">
+                <label for="option-22" class="option option-22">
+                  <span class="content_center font-size12-familyPoppins">5.5 BHK</span>
+                </label>
+              </div>
+            </ion-col>
+            <input type="hidden" id="sizeselect">
+          </ion-row>
+        </span>
+
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;">
+            Budget
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="wrapper">
+          <ion-col size="3" style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck" name="select" value="< 60L" id="option-13"
+                (click)="budgetselection($event)">
+              <label for="option-13" class="option option-13">
+                <span class="content_center font-size12-familyPoppins">
+                  < 60L</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col size="3" style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck" name="select" value="60L - 80L" id="option-14"
+                (click)="budgetselection($event)">
+              <label for="option-14" class="option option-14">
+                <span class="content_center font-size12-familyPoppins">60L - 80L</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col size="3" style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck" name="select" value="80L - 1Cr" id="option-15"
+                (click)="budgetselection($event)">
+              <label for="option-15" class="option option-15">
+                <span class="content_center font-size12-familyPoppins">80L - 1Cr</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col size="3" style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck" name="select" value="1Cr - 1.2Cr" id="option-16"
+                (click)="budgetselection($event)">
+              <label for="option-16" class="option option-16">
+                <span class="content_center font-size12-familyPoppins">1Cr-1.2Cr</span>
+              </label>
+            </div>
+          </ion-col>
+          <ion-col size="3" style="padding-top: 0;">
+            <div>
+              <input type="radio" class="radiocheck" name="select" value="> 1.2Cr" id="option-17"
+                (click)="budgetselection($event)">
+              <label for="option-17" class="option option-17">
+                <span class="content_center font-size12-familyPoppins"> > 1.2Cr</span>
+              </label>
+            </div>
+          </ion-col>
+          <!-- <ion-col size="3" style="padding-top: 0;">
+               <div>
+                <input type="radio" class="radiocheck" name="select" value="Above 1Cr" id="option-18" 
+                (click)="budgetselection($event)">
+                <label for="option-18" class="option option-18">
+                  <span class="content_center font-size12-familyPoppins">Above 1Cr</span>
+                </label>
+               </div>
+            </ion-col> -->
+          <input type="hidden" id="budgetselect">
+        </ion-row>
+
+        <ion-row>
+          <ion-col class="font-size14-familyPoppins" style="padding-bottom: 0;">
+            Address
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col style="padding-top: 0;">
+            <div>
+              <textarea class="form-control addleadtextarea font-size12-familyPoppins" id="address"
+                [(ngModel)]="model.address" #address="ngModel" name="address"></textarea>
+            </div>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="saveLead">
+          <ion-col (click)="addenquiry()" class="font-size14-familyPoppins content_center">
+            <div class="bg_textColor">
+              Save
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+
+<!-- FOOTER SECTION -->
+<ion-icon *ngIf="!isChecked && !isAtBottom" class="addleadicon" name="add-circle"
+  (click)="openToaddLeadModal()"></ion-icon>
+
+
+<span *ngIf="!isChecked">
+  <!-- <div expand="block" class="content_center ion-filter-icon" 
+    style="margin-left: 40%;margin-right: 40%;" (click)="bottomModal.present()">
+    <ion-img src="../../assets/CRMimages/assignIcon.svg"></ion-img>
+  </div> -->
+  <!-- <div expand="block" class="content_center assign-icon" 
+    style="margin-left: 38%;margin-right: 38%;" (click)="handleClick()">
+    <ion-img src="../../assets/CRMimages/assignIcon.svg"></ion-img>
+  </div> -->
+
+  <div class="addleadicon1" *ngIf="!isChecked && !isAtBottom">
+    <ion-img src="../../assets/CRMimages/assign-icon.svg" (click)="handleClick()"></ion-img>
+  </div>
+
+  <app-common-footer></app-common-footer>
+</span>
+
+<ion-footer>
+  <!-- IF CHECKBOX CHCKED -->
+  <div *ngIf="isChecked" class="assigningLead">
+    <ion-row class="assigncountleads">
+      <ion-col (click)="onSelectLeadCount('manual')" [ngClass]="isManual?'active_text_borederColor':''"
+        class="content_center font-size12-familyPoppins paddingZero">
+        <span>Manual</span>
+      </ion-col>
+      <ion-col [ngClass]="temporaryLeadIds.length === 10?'active_text_borederColor':''"
+        class="font-size12-familyPoppins content_center font-weight400 paddingZero" (click)="onSelectLeadCount(10)">10
+        Leads</ion-col>
+      <ion-col [ngClass]="temporaryLeadIds.length === 25?'active_text_borederColor':''"
+        class="font-size12-familyPoppins content_center font-weight400 paddingZero" (click)="onSelectLeadCount(25)">25
+        Leads</ion-col>
+      <ion-col [ngClass]="temporaryLeadIds.length === 50?'active_text_borederColor':''"
+        class="font-size12-familyPoppins content_center font-weight400 paddingZero" (click)="onSelectLeadCount(50)">50
+        Leads</ion-col>
+
+      <ion-col
+        [ngClass]="!isManual && (temporaryLeadIds.length != 10 && temporaryLeadIds.length != 25 && temporaryLeadIds.length != 50)?'active_text_borederColor':''">
+        <ion-select (ionChange)="onSelectLeadCount($event.detail.value)"
+          [interfaceOptions]="{ cssClass: 'custom-popover-height' }" style="min-height:20px"
+          class="always-flip font-size12-familyPoppins paddingZero" [(ngModel)]="selectedCount"
+          toggleIcon="caret-down-sharp" interface="popover" placeholder="More">
+          <ion-select-option value="75" class="font-size12-familyPoppins"> 75 Leads</ion-select-option>
+          <ion-select-option value="100" class="font-size12-familyPoppins"> 100 Leads</ion-select-option>
+          <ion-select-option value="150" class="font-size12-familyPoppins"> 150 Leads</ion-select-option>
+        </ion-select>
+      </ion-col>
+    </ion-row>
+
+    <ion-row style="margin-top: 5px;">
+      <ion-col *ngIf="isChecked" class="ion-text-right" (click)="openAssignLeadsModal()">
+        <span class="assignLeadbutton">Assign Selected Leads <ion-icon name="checkmark-outline"></ion-icon></span>
+        <!-- <p-dropdown class="retailMandate" [options]="retailMandate" (onChange)="openAssignLeadsModal()" optionLabel="assign"  placeholder="Assign Selected Leads" />                    -->
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-footer>
+
+<div (click)="navigateToFilter()">
+  <ion-img class="ion-filter-icon" src="../../assets/CRMimages/filter.svg" *ngIf="!isChecked && !isAtBottom"> </ion-img>
+</div>
+
+
+
+<!-- FILTER MODAL -->
+<ion-modal #filterModal>
+  <ng-template>
+    <ion-header class="header_footerHeight">
+      <ion-row>
+        <ion-col size="2" class="content_center" (click)="filterModal.dismiss();dateRange=''">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="content_center">Filters</ion-col>
+        <ion-col size="2" class="content_center" (click)="this.tempFilteredValues = {};reset_filter();dateRange=''">
+          <ion-icon name="refresh"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+
+    <div style="height: 100%;">
+      <ion-row class="split-layout">
+        <div class="left-column">
+          <ion-row *ngIf="!isFresh"
+            [ngClass]="isLeftFilterActive=='date'?'bg_textColor':(this.tempFilteredValues.fromDate&& this.tempFilteredValues.toDate == '')?'text_color_red':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('date')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Date</span>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!localStorage.getItem('ranavPropId')"
+            [ngClass]="isLeftFilterActive=='property'?'bg_textColor':''" class="content_center borderBottom_background"
+            (click)="onFilterValues('property')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Property</span>
+            </ion-col>
+          </ion-row>
+          <ion-row [ngClass]="isLeftFilterActive=='source'?'bg_textColor':''"
+            class="content_center borderBottom_background" (click)="onFilterValues('source')">
+            <ion-col>
+              <span class="font-size12-familyPoppins">Source</span>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="divider"></div>
+        <div class="right-column">
+          <ion-row *ngIf="isLeftFilterActive=='date'">
+            <ion-row>
+              <ion-col class="font-size12-familyPoppins" style="padding-bottom: 0;">
+                Select Date Range {{this.tempFilteredValues.fromDate!='' && this.tempFilteredValues.toDate == ''}}
+              </ion-col>
+            </ion-row>
+            <ion-row style="width: 100%;">
+              <ion-col class=" filterIcon height35px">
+                <label for="enquiryDateRange" style="width: 100%;">
+                  <div class="date_range"
+                    [ngClass]="this.tempFilteredValues.fromDate!='' && this.tempFilteredValues.toDate == ''?'border_color_red':''">
+                    <div><span>{{daterange()}}</span></div>
+                    <div>
+                      <ion-img src="../assets/CRMimages/calendar-edit-outline.png"></ion-img>
+                    </div>
+                  </div>
+                </label>
+              </ion-col>
+            </ion-row>
+
+            <p-calendar [touchUI]="true" inputId="enquiryDateRange" [(ngModel)]="dateRange" selectionMode="range"
+              appendTo="body" [dateFormat]="'yy-mm-dd'" (onSelect)="onFilterSelection('date', $event)"></p-calendar>
+          </ion-row>
+
+          <!-- Property  -->
+          <span *ngIf="isLeftFilterActive=='property'">
+            <ion-searchbar [(ngModel)]="propertySearchTerm" (ionInput)="setFilteredProperty()">
+            </ion-searchbar>
+            <ion-content style="height:70vh;" #propScrollContent>
+              <ion-row class="filterButtons" (click)="onFilterSelection('property','all')"
+                [ngClass]="{'backgroundLightColor': (tempFilteredValues?.propertyname === '')}">
+                <span>All</span></ion-row>
+              <ion-row class="filterButtons" *ngFor="let property of propertyList1"
+                (click)="onFilterSelection('property',property.propertyname)" [id]="property.propertyname"
+                [ngClass]="{'backgroundLightColor': (tempFilteredValues?.propname === property.propertyname)}">
+                <span>{{property.propertyname}}</span>
+              </ion-row>
+            </ion-content>
+          </span>
+
+          <!-- SOURCE FILTER -->
+          <span *ngIf="isLeftFilterActive=='source'">
+            <ion-searchbar [(ngModel)]="sourceSearchTerm" (ionInput)="setFilteredSource()"></ion-searchbar>
+            <ion-content style="height:70vh ;" #sourceScrollContent>
+              <ion-row class="filterButtons" (click)="onFilterSelection('source','all')"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues?.source === ''}">
+                <span>All</span></ion-row>
+              <ion-row class="filterButtons" *ngFor="let source of sourceList1"
+                (click)="onFilterSelection('source',source.source)" [id]="source.source"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues?.source === source.source}">
+                <span>{{source.source == 'GR - Microsite'?'GR - campaign':source.source}}</span>
+              </ion-row>
+            </ion-content>
+          </span>
+        </div>
+      </ion-row>
+    </div>
+
+    <ion-footer class="header_footerHeight">
+      <ion-row>
+        <ion-col class="content_center font-size14-familyPoppins">
+          <ion-button fill="clear" (click)="filterModal.dismiss();confirmSelection()" [disabled]="!isenabled"
+            class="showresultButton">Show Results</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

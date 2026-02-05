@@ -1,0 +1,522 @@
+::ng-deep .mainSearch .searchbar-input-container {
+  border-radius: 4px;
+  --background: rgba(247, 245, 244, 1);
+}
+
+ion-searchbar {
+  --box-shadow: none;
+  --placeholder-color: #98a2b3;
+  --icon-color: #98a2b3;
+}
+
+::ng-deep .searchbar-search-icon.sc-ion-searchbar-md {
+  width: 20px;
+  height: 20px;
+}
+
+ion-searchbar .searchbar-search-icon {
+  color: red;
+  font-size: 1rem;
+}
+
+::ng-deep .searchbar-input.sc-ion-searchbar-md {
+  padding-inline-end: 2rem;
+  padding-inline-start: 2.6em;
+  font-size: 3.8vw;
+}
+
+::ng-deeep .searchbar-search-icon {
+  inset-inline-start: 9px !important;
+}
+
+.bg_textColor {
+  background: rgba(231, 252, 227, 1) !important;
+  color: rgba(0, 128, 105, 1) !important;
+}
+
+.inactive_bg_textColor {
+  background: rgba(240, 242, 245, 1) !important;
+  color: rgba(84, 101, 111, 1);
+}
+
+.menu_icon {
+  color: #39ae41;
+}
+
+.chat_filters div {
+  width: 100%;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 1);
+  padding: 4px;
+}
+
+.chat_filters {
+  display: flex;
+  overflow-x: scroll;
+  width: 100%;
+}
+
+::ng-deep p-dropdown.exec .p-inputwrapper span {
+  padding: 5px;
+  font-family: "Poppins";
+}
+
+::ng-deep p-dropdown.exec .p-inputwrapper span {
+  padding: 5px;
+  font-size: 12px;
+  font-family: "Poppins";
+  color: rgb(0, 128, 105) !important;
+}
+
+::ng-deep .bg_textColor p-dropdown.exec .p-inputwrapper span {
+  color: rgba(0, 128, 105, 1) !important;
+}
+
+::ng-deep p-dropdown.exec .p-inputwrapper {
+  width: 100% !important;
+  border-radius: 30px;
+  background-color: rgb(231, 252, 227) !important;
+}
+
+::ng-deep .bg_textColor p-dropdown.exec .p-inputwrapper {
+  background: rgba(231, 252, 227, 1) !important;
+}
+
+::ng-deep
+  .bg_textColor
+  p-dropdown.exec
+  .p-inputwrapper
+  .p-dropdown-trigger
+  chevrondownicon {
+  width: 12px;
+  color: rgba(0, 128, 105, 1) !important;
+}
+
+::ng-deep p-dropdown.exec .p-inputwrapper .p-dropdown-trigger {
+  width: 30px !important;
+}
+
+::ng-deep p-dropdown.exec .p-inputwrapper .p-dropdown-trigger chevrondownicon {
+  width: 12px;
+  color: rgba(84, 101, 111, 1) !important;
+}
+
+::ng-deep
+  .bg_textColor
+  p-dropdown.exec
+  .p-inputwrapper
+  .p-dropdown-trigger
+  chevrondownicon {
+  width: 12px;
+  color: rgba(0, 128, 105, 1) !important;
+}
+
+::ng-deep .exec .p-element .p-dropdown-item {
+  padding: 5px !important;
+  font-size: 12px;
+}
+
+.borderBottom {
+  border-bottom: 1px solid rgb(219 217 217);
+}
+
+.profile-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-image-wrapper {
+  position: relative;
+  width: 40px; // Adjust as needed
+  height: 40px;
+}
+
+.chat-message-preview ion-row:first-child ion-col:first-child {
+  span {
+    font-size: 18px;
+    font-family: "Poppins";
+    color: rgba(52, 52, 52, 1);
+  }
+
+  padding: 0 5px 0 5px;
+}
+
+.chat-message-preview ion-row:first-child ion-col:nth-child(2) {
+  span {
+    font-size: 12px;
+    font-family: "Poppins";
+    color: rgba(106, 113, 117, 1);
+  }
+
+  padding: 0 4px 0 4px;
+}
+
+.chat-message-preview ion-row:nth-child(2) ion-col:first-child {
+  padding: 0 0 0 5px;
+}
+
+.chat-message-preview ion-row:nth-child(2) ion-col:nth-child(2) {
+  ion-img {
+    width: 22px;
+    height: 22px;
+  }
+
+  span {
+    font-size: 12px;
+    font-family: "Poppins";
+    color: rgba(106, 113, 117, 1);
+  }
+
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.ellipse_span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.latest_message_content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unreadChat_count {
+  border: 1px solid;
+  border-radius: 48px;
+  height: 16px;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  color: white;
+  background-color: green;
+  font-family: "Poppins";
+  justify-content: center;
+  top: -7px;
+  left: 23px;
+  font-size: 9px;
+  padding: 2px 4px;
+  border-radius: 10px;
+  font-family: "Poppins", sans-serif;
+  white-space: nowrap;
+  z-index: 2;
+  line-height: 1.2;
+}
+
+::ng-deep .p-element .p-dropdown-item {
+  padding: 5px !important;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+
+.loader {
+  --background: none;
+  --spinner-color: white;
+}
+
+.grow {
+  align-items: flex-end !important;
+}
+
+.message-row ion-textarea {
+  max-height: 95px;
+  min-height: 0;
+  border-radius: 4px;
+  width: 100%;
+  overflow-y: auto;
+  --padding-top: 8px !important;
+}
+
+.message-row {
+  border-radius: 50px;
+}
+
+.bg-img {
+  background-image: url("../../assets/CRMimages/whatsappChat_bg_img.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  --background: none;
+}
+
+ion-footer.bg-img ion-row ion-col:first-child ion-row {
+  background: #ffffff;
+  padding: 4px;
+  border-radius: 30px;
+
+  ion-icon {
+    color: #606165;
+  }
+}
+
+ion-footer.bg-img {
+  box-shadow: none !important;
+}
+
+.sender-message-bubble {
+  margin-left: auto;
+}
+
+.chat-align {
+  display: flex;
+  align-items: flex-start;
+}
+
+.chat-wrapper {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+}
+
+.message-text {
+  font-size: 12px;
+  font-family: "Poppins", sans-serif;
+  color: #000;
+  flex: 1;
+}
+
+.received-chat-card {
+  background: rgb(255, 255, 255);
+  position: relative;
+  z-index: 0;
+  max-width: 250px;
+  border-radius: 0 6px 6px 6px;
+  background: rgb(255, 255, 255);
+  position: relative;
+  z-index: 0;
+  max-width: 250px;
+  float: right;
+  line-height: 14px;
+}
+
+.timestamp {
+  font-size: 10px;
+  font-family: "Poppins";
+  color: gray;
+  float: right;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0 5px;
+}
+
+.selected-match {
+  background-color: rgba(189, 219, 234, 0.3) !important;
+  border-radius: 4px !important;
+  transition: background-color 0.5s ease !important;
+}
+
+ion-searchbar.addMemberSearch {
+  flex: 1;
+}
+
+::ng-deep .addMemberSearch .searchbar-cancel-button {
+  display: none !important;
+}
+
+::ng-deep .addMemberSearch .searchbar-input {
+  padding: 5px !important;
+}
+
+.addMemberSearch {
+  --border-radius: 25px;
+  background: none;
+  --box-shadow: none;
+  padding: 0;
+}
+
+ion-radio.radio-checked::part(container) {
+  border-color: #1dc9a0;
+  --color-checked: #1dc9a0;
+}
+
+.font-colorgreen {
+  color: #39ae41;
+  font-style: italic;
+}
+
+.fa-paper-plane {
+  font-size: 18px;
+  transform: rotate(50deg);
+  padding: 8px;
+  color: white;
+  font-size: 20px;
+  background: #1dab61;
+  border-radius: 20px;
+  padding: 8px;
+}
+.mic {
+  font-size: 5vh;
+  background: #1dab61;
+  color: white;
+  border-radius: 23px;
+  padding: 9px;
+}
+.send-chat-card {
+  background: #d9fdd3;
+  // margin-top: 10px;
+  position: relative;
+  z-index: 0;
+  max-width: 250px;
+  border-radius: 6px 0 6px 6px;
+  float: right;
+  line-height: 14px;
+  margin-right: 9px;
+  padding: 4px;
+}
+.pointerEvent {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+audio::-webkit-media-controls-panel {
+  background: rgba(183, 216, 233, 1);
+}
+
+.voice-message {
+  display: flex;
+  align-items: center;
+  background: #dcf8c6;
+  /* WhatsApp green bubble */
+  padding: 8px 12px;
+  border-radius: 20px;
+  max-width: 280px;
+}
+
+.play-btn {
+  background: none;
+  border: none;
+  color: #6f8171;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.duration {
+  font-size: 12px;
+  color: #6f8171;
+  min-width: 40px;
+  text-align: right;
+}
+.audioRange {
+  padding: 0 10px;
+  height: 20px;
+  --bar-background-active: #6f8171;
+}
+.audio_row {
+  width: 200px !important;
+}
+
+.mic {
+  transition: transform 0.3s ease;
+  /* smooth grow/shrink */
+}
+
+.mic.grow {
+  transform: scale(2);
+  border-radius: 48%;
+  padding: 3vw;
+  font-size: 6vw;
+}
+
+.slide-in-left {
+  transform: translateX(100%);
+  opacity: 0;
+  animation: slideIn 0.5s forwards;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 30px;
+  align-items: center;
+  max-height: 9vh !important;
+}
+.slide-in-left div {
+  padding-right: 30px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide_out {
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.emoji-picker-container {
+  position: relative;
+  width: 24px;
+  height: 24px;
+
+  button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+
+    svg {
+      display: flex;
+      width: 24px;
+      height: 24px;
+
+      path {
+        fill: var(--str-chat__message-input-tools-color);
+      }
+    }
+  }
+
+  .picker {
+    z-index: 3;
+    position: absolute;
+    bottom: 100%;
+    transform: scale(0.8);
+    right: 0;
+    transform-origin: bottom right;
+  }
+
+  @media only screen and (min-device-width: 1024px) {
+    .picker {
+      transform: scale(1);
+    }
+  }
+}
+
+::ng-deep .emoji-mart {
+  width: 100% !important;
+}
+
+::ng-deep .emoji-mart-scroll {
+  padding: 0 6px 35px 6px;
+}
+
+::ng-deep .emoji-mart-bar {
+  position: fixed;
+  bottom: 10px;
+  z-index: 99999;
+  background: white;
+}
+::ng-deep .emoji-mart-category-label {
+  font-family: "Poppins";
+  font-size: 12px;
+}
+
+.emoji-modal::part(content) {
+  position: fixed !important;
+  bottom: 0 !important;
+  top: auto !important;
+  border-radius: 16px 16px 0 0;
+  height: 40vh !important;
+  /* adjust height */
+  z-index: 9999;
+  /* stays above footer/input */
+}

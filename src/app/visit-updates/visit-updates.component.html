@@ -1,0 +1,577 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+<!-- <ion-loading class="custom-loading"  *ngIf="showSpinner" trigger="open-loading" message="Loading..." [duration]="3000"></ion-loading> -->
+
+<app-header *ngIf="!isOnCallDetailsPage"></app-header>
+
+
+<div *ngIf="isPropertyList && !isOnCallDetailsPage">
+  <!-- REQUIRED -->
+  <!-- <ion-row>
+    <ion-col *ngIf="isEnchanting" class="ion-text-center">
+      <ion-img src="../../assets/CRMimages/enchanting-img.png" (click)="onPropertylist('enchanting');isFeatchData=true;isPropertyList=false"></ion-img>
+    </ion-col>
+    <ion-col *ngIf="isGRSamskruthi" class="ion-text-center">
+      <ion-img src="../../assets/CRMimages/gr-samskruthi-img.png" (click)="onPropertylist('samskruthi');isFeatchData=true;isPropertyList=false"></ion-img>
+    </ion-col>
+    <ion-col *ngIf="(!isGRSithara && isGRSamskruthi)||(isGRSithara && !isGRSamskruthi)"></ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col *ngIf="isGRSithara" class="ion-text-center">
+      <ion-img src="../../assets/CRMimages/gr-sithara-img.png" (click)="onPropertylist('sitara'); isFeatchData=true;isPropertyList=false"></ion-img>
+    </ion-col>
+    <ion-col *ngIf="isMSR" class="ion-text-center">
+      <ion-img src="../../assets/CRMimages/MSR-logo.png" (click)="onPropertylist('msr'); isFeatchData=true;isPropertyList=false"></ion-img>
+    </ion-col>
+    <ion-col  *ngIf="!isMSR" ></ion-col>
+  </ion-row>  -->
+
+  <ion-row *ngIf=" !isOnCallDetailsPage">
+    <ion-col size="6" *ngIf="isGRSithara" class="ion-text-center">
+      <ion-img src="../../assets/CRMimages/gr-sithara-img.png"
+        (click)="onPropertylist('sitara'); isFeatchData=true;isPropertyList=false"></ion-img>
+    </ion-col>
+    <ion-col size="6" *ngIf="isGRSwara" class="ion-text-center">
+      <ion-img src="../../assets/CRMimages/grswara.visit.png" style="padding: 5px;"
+        (click)="onPropertylist('swara'); isFeatchData=true;isPropertyList=false"></ion-img>
+    </ion-col>
+    <ion-col size="6" *ngIf="isRanavGroup">
+      <ion-img src="../../assets/CRMimages/ranavGroup.svg"
+        (click)="onPropertylist('ranav');isFeatchData=true;isPropertyList=false"></ion-img>
+    </ion-col>
+    <ion-col size="6" *ngIf="isGRSamskruthi" class="ion-text-center">
+      <ion-img src="../../assets/CRMimages/gr-samskruthi-img.png"
+        (click)="onPropertylist('samskruthi');isFeatchData=true;isPropertyList=false"></ion-img>
+    </ion-col>
+    <ion-col size="6" *ngIf="isReviva" class="ion-text-center">
+      <ion-img src="../../assets/CRMimages/reviva-img.png"
+        (click)="onPropertylist('reviva');isFeatchData=true;isPropertyList=false"></ion-img>
+    </ion-col>
+  </ion-row>
+
+</div>
+
+<!-- <p style="z-index: -1;color: #ffff;">{{isFeatchData}}</p> -->
+<div *ngIf="isFeatchData && !isOnCallDetailsPage" [ngStyle]="isSitaraLogo ? { 'background-image': 'url(../../assets/CRMimages/sithara-bg.png)' } :
+   isSamskruthiLogo?{'background-image': 'url(../../assets/CRMimages/samskruthi-bg.png)'}: 
+   isEnchantingLogo?{'background-image': 'url(../../assets/CRMimages/enchanting-bg.png)'}:
+   isRanavGrouplogo?{'background-image': 'url(../../assets/CRMimages/ranavgroup-bg.svg)'}:
+   isSwaraGroupLogo?{'background-image': 'url(../../assets/CRMimages/samskruthi-bg.png)'}:
+   isRevivaLogo?{'background-image': 'url(../../assets/CRMimages/reviva-bg.png)'}
+   :{}"
+  style="height: 100%;
+   background-repeat: no-repeat;background-size: contain;background-position-x: center;position: relative;bottom: 75px;z-index: -1;">
+
+  <ion-row>
+    <ion-col class="content_center" *ngIf="isSitaraLogo">
+      <ion-img style="width: 280px; position: relative;top: 137px;" src="../../assets/CRMimages/Asset 3.png"></ion-img>
+    </ion-col>
+    <ion-col class="content_center" *ngIf="isSamskruthiLogo">
+      <ion-img style="width: 264px;top: 100px;position: absolute;" src="../../assets/CRMimages/Asset 2.png"></ion-img>
+    </ion-col>
+    <ion-col class="content_center" *ngIf="isSwaraGroupLogo">
+      <ion-img style="width: 264px;top: 100px;position: absolute;" src="../../assets/CRMimages/swaralogo.svg"></ion-img>
+    </ion-col>
+    <ion-col class="content_center" *ngIf="isEnchantingLogo">
+      <ion-img class="propertyLogo" style="position: relative;right: 20px;"
+        src="../../assets/CRMimages/Asset 1.png"></ion-img>
+    </ion-col>
+    <ion-col class="content_center" *ngIf="isMSRlogo">
+      <ion-img class="propertyLogo" style="position: relative;top: 100px;"
+        src="../../assets/CRMimages/Assets-4.png"></ion-img>
+    </ion-col>
+    <ion-col class="content_center" *ngIf="isRanavGrouplogo">
+      <ion-img class="propertyLogo" style="position: relative;top: 100px;width: 172px;"
+        src="../../assets/CRMimages/ranavgrouplogo.svg"></ion-img>
+    </ion-col>
+    <ion-col class="content_center" *ngIf="isRevivaLogo">
+      <ion-img class="propertyLogo" style="position: relative;top: 100px;width: 172px;"
+        src="../../assets/CRMimages/revivaLogo.png"></ion-img>
+    </ion-col>
+  </ion-row>
+
+  <div class="reg-main">
+    <span>
+      <ion-row>
+        <ion-label>Name:</ion-label>
+        <ion-input placeholder="Enter the Client Name" [(ngModel)]="mailsend.clientname"></ion-input>
+      </ion-row>
+      <ion-row style="margin-top: 30px;">
+        <ion-label>Number:</ion-label>
+      </ion-row>
+      <ion-row>
+        <ion-input placeholder="Enter the Contact Number" inputmode="numeric" pattern="[0-9]*"
+          [(ngModel)]="mailsend.contact" (input)="validateContact($event);"></ion-input>
+      </ion-row>
+    </span>
+  </div>
+  <div style="position: absolute;bottom: 0;bottom: -20px;left: 35%;right: 35%;">
+    <!-- <p class="font-size12-familyPoppins font-weight600">Powered By</p> -->
+    <ion-img src="../../assets/CRMimages/powered by vsnap technology_final.jpg"></ion-img>
+  </div>
+</div>
+
+<ion-content *ngIf="!isOnCallDetailsPage" #mainscrollContainer (ionScroll)="onScroll($event)" scrollEvents="true">
+  <!-- <ion-col class="content_center">
+      <ion-img class="propertyLogo" src="../../assets/CRMimages/MSR-logo.png"></ion-img>
+    </ion-col> -->
+  <div *ngIf="isFreshvisitvisiblesection || isRevisitvisiblesection" style="margin: 20px;padding: 10px;">
+    <ion-row>
+      <ion-col class="content_center" *ngIf="isSitaraLogo">
+        <ion-img class="propertyLogo" src="../../assets/CRMimages/gr-homes247-1.jpg"></ion-img>
+      </ion-col>
+
+      <ion-col class="content_center" *ngIf="isSamskruthiLogo">
+        <ion-img class="propertyLogo" src="../../assets/CRMimages/samskruthi.jpg"></ion-img>
+      </ion-col>
+
+      <ion-col class="content_center" *ngIf="isSwaraGroupLogo">
+        <ion-img class="propertyLogo" src="../../assets/CRMimages/Grswara.png"></ion-img>
+      </ion-col>
+
+      <ion-col class="content_center" *ngIf="isEnchantingLogo">
+        <ion-img class="propertyLogo" src="../../assets/CRMimages/poorvi-homes247-5.jpg"></ion-img>
+      </ion-col>
+
+      <ion-col class="content_center" *ngIf="isMSRlogo">
+        <ion-img class="propertyLogo" src="../../assets/CRMimages/MSRLogo.jpg"></ion-img>
+      </ion-col>
+
+      <ion-col class="content_center" *ngIf="isRanavGrouplogo">
+        <ion-img class="ranavpropertyLogo" src="../../assets/CRMimages/ranavgrouplogo.svg"></ion-img>
+        <ion-img class="ranavpropertyLogo1" src="../../assets/CRMimages/ranavtranquil-logo.png"></ion-img>
+
+        <!-- <ion-img class="propertyLogo" src="../../assets/CRMimages/ranav_Vsnap_logo.jpeg"></ion-img>
+        <ion-img class="propertyLogo" src="../../assets/CRMimages/ranav_Vsnap_logo.jpeg"></ion-img> -->
+      </ion-col>
+
+      <ion-col class="content_center" *ngIf="isRevivaLogo">
+        <ion-img class="propertyLogo" src="../../assets/CRMimages/reviva-vsnap-logo.png"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>Name:</ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col><ion-input [(ngModel)]="mailsend.clientname" name="clientname"></ion-input></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="paddingLeft5px">No:</ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <!-- <ion-input [(ngModel)]="mailsend.contact" inputmode="numeric" pattern="[0-9]*" maxlength="10" name="contact"></ion-input> -->
+        <ion-input placeholder="Enter the Contact Number" inputmode="numeric" pattern="[0-9]*"
+          [(ngModel)]="mailsend.contact" (input)="validateContact($event);" name="contact"></ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="isRevisitvisiblesection">
+      <ion-col>
+        RSV - {{rsvcount}} Times Visited
+      </ion-col>
+    </ion-row>
+
+    <!-- Fresh Visit Section -->
+    <div *ngIf="isFreshvisitvisiblesection">
+      <form (ngSubmit)="adminsubmit()">
+        <!-- <ion-row>
+        <ion-col>Name:</ion-col>
+        <ion-col>No:</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col><ion-input [(ngModel)]="mailsend.clientname" name="clientname"></ion-input></ion-col>
+        <ion-col><ion-input [(ngModel)]="mailsend.contact" inputmode="numeric" pattern="[0-9]*" maxlength="10" name="contact"></ion-input></ion-col>
+      </ion-row> -->
+
+        <ion-row>
+          <ion-col>Email:</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col><ion-input [(ngModel)]="mailsend.clientmail" name="clientmail"></ion-input></ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>Select Size:</ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col *ngIf="isSamskruthiLogo">
+            <ion-button [ngClass]="isSelect1BHK?'backgroundColor':'backgroundColorNone'" fill="clear"
+              class="height_Width_100 paddingZero marginZero" (click)="sizeselection('1BHK')">1 BHK</ion-button>
+          </ion-col>
+          <ion-col *ngIf="isSamskruthiLogo || isMSRlogo">
+            <ion-button [ngClass]="isSelect2BHK?'backgroundColor':'backgroundColorNone'" fill="clear"
+              class="height_Width_100 paddingZero marginZero" (click)="sizeselection('2BHK')">2 BHK</ion-button>
+          </ion-col>
+          <ion-col *ngIf="!isRanavGrouplogo && !isSwaraGroupLogo">
+            <ion-button [ngClass]="isSelect3BHK?'backgroundColor':'backgroundColorNone'" fill="clear"
+              class="height_Width_100 paddingZero marginZero" (click)="sizeselection('3BHK')">3 BHK</ion-button>
+          </ion-col>
+          <ion-col *ngIf="isRanavGrouplogo || isSwaraGroupLogo">
+            <ion-button [ngClass]="isSelect4BHK?'backgroundColor':'backgroundColorNone'" fill="clear"
+              class="height_Width_100 paddingZero marginZero" (click)="sizeselection('4BHK')">4 BHK</ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>Budget:</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="paddingZero">
+            <ion-row *ngIf="isSitaraLogo">
+              <ion-col><ion-button fill="clear" [ngClass]="is1CrBudget?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('1Cr - 1.2Cr')">1Cr - 1.2Cr</ion-button></ion-col>
+              <ion-col><ion-button fill="clear" [ngClass]="isAbove1_2CrBudget?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('Sitara1.2Cr - Above')">1.2Cr -
+                  Above</ion-button></ion-col>
+            </ion-row>
+            <ion-row *ngIf="isMSRlogo">
+              <ion-col>
+                <ion-button fill="clear" [ngClass]="is80L_1Cr?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('80L-1Cr')">80L-1Cr</ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="isSwaraGroupLogo">
+              <ion-col>
+                <ion-button fill="clear" [ngClass]="is4Cr ?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('4CR - Above')">4Cr - Above</ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="isSamskruthiLogo">
+              <ion-col>
+                <ion-button fill="clear" [ngClass]="is50L_60L?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('50L-60L')">50L-60L</ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-button fill="clear" [ngClass]="is70L_80L?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('70L-80L')">70L-80L</ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-button fill="clear" [ngClass]="is80L_Above?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('80L-Above')">80L-Above</ion-button>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="isEnchantingLogo">
+              <ion-col>
+                <ion-button fill="clear" [ngClass]="is80L_90L?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('80L-90L')">80L-90L</ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-button fill="clear" [ngClass]="is90L_1_2Cr?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('90L-1.2Cr')">90L-1.2Cr</ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-button fill="clear" [ngClass]="is1_2Cr_Above?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('1.2Cr - Above')">1.2Cr & Above</ion-button>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="isRanavGrouplogo">
+              <ion-col><ion-button fill="clear"
+                  [ngClass]="islessthan2_5CrBudget?'backgroundColor':'backgroundColorNone'" class="height_Width_100"
+                  (click)="budgetselection('BELOW - 2.5Cr')">Below - 2.5 Cr</ion-button></ion-col>
+              <ion-col><ion-button fill="clear" [ngClass]="is2_5CrBudget?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('2.5Cr - 3Cr')">2.5Cr - 3Cr</ion-button></ion-col>
+              <ion-col><ion-button fill="clear" [ngClass]="is3CrBudget?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('3Cr - 3.5Cr')">3Cr - 3.5Cr</ion-button>
+              </ion-col>
+              <ion-col><ion-button fill="clear" [ngClass]="is3_5To4CrBudget?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('3.5Cr - 4Cr')">3.5Cr - 4Cr</ion-button>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="isRevivaLogo">
+              <ion-col>
+                <ion-button fill="clear" [ngClass]="is75L_1Cr?'backgroundColor':'backgroundColorNone'"
+                  class="height_Width_100" (click)="budgetselection('75L_1Cr')">75L-1Cr</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+
+        <div *ngIf="localStorage.getItem('Role')==='1'">
+          <ion-row>
+            <ion-col>Assisting Manager</ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select interface="popover" placeholder="Select RM" class="marginZero"
+                [(ngModel)]="mailsend.propertymodel" name="propertymodel" (ionChange)='selectexecutive($event)'>
+                <ion-select-option *ngFor="let executive of mandateexecutives"
+                  value={{executive.id}},{{executive.name}}>{{executive.name}}</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <ion-row>
+          <ion-col>Source:</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button fill="clear" [ngClass]="isHomes247_Walkin?'backgroundColor':'backgroundColorNone'"
+              (click)="selectsource('Homes247-Walkin')">Homes247</ion-button>
+            <ion-button fill="clear" [ngClass]="isMagicbricks_Walkin?'backgroundColor':'backgroundColorNone'"
+              (click)="selectsource('Magicbricks-Walkin')">Magicbricks</ion-button>
+            <ion-button fill="clear" [ngClass]="isHousing_Walkin?'backgroundColor':'backgroundColorNone'"
+              (click)="selectsource('Housing-Walkin')">Housing</ion-button>
+            <ion-button fill="clear" [ngClass]="is99acres_Walkin?'backgroundColor':'backgroundColorNone'"
+              (click)="selectsource('99acres-Walkin')">99acres</ion-button>
+            <ion-button fill="clear" [ngClass]="isWalkin?'backgroundColor':'backgroundColorNone'"
+              (click)="selectsource('Walkin')">Walkin</ion-button>
+            <ion-button fill="clear" [ngClass]="isChannelPartner?'backgroundColor':'backgroundColorNone'"
+              (click)="selectsourcecpclik('channelPartner')">Channel Partner</ion-button>
+            <ion-button fill="clear" [ngClass]="isReference?'backgroundColor':'backgroundColorNone'"
+              (click)="selectsourcecpclik('reference')">Reference</ion-button>
+            <ion-button fill="clear" [ngClass]="isHoardings?'backgroundColor':'backgroundColorNone'"
+              (click)="selectsourcecpclik('hoardings')">Hoardings</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="ischannelPatner" style="margin: 0 5px 15px 5px;">
+          <ion-searchbar style="padding: 0;" class="font-size12-familyPoppins custom-searchbar font-weight400"
+            placeholder="Select CP" (ionInput)="handleInput($event)" [(ngModel)]="mailsend.cpname"
+            name="mailsend"></ion-searchbar>
+          <div *ngIf="mailsend.cpname && mailsend.cpname.trim() !== ''"
+            style="box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 27px 0 rgba(0, 0, 0, 0.12);  margin-top:3px; overflow: scroll;width:100%; max-height:200px;height: auto;">
+            <ion-list class="ion-border"
+              style="box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);"
+              *ngFor="let execute of cplists1" (click)="slectCP(execute)">
+              <ion-label class="font-size12-familyPoppins font-weight400"> {{execute.CP_NAME}}</ion-label>
+            </ion-list>
+          </div>
+        </ion-row>
+
+        <ion-row *ngIf="ischannelPatnerName">
+          <ion-col>
+            <ion-input [placeholder]="placeholderValue" [(ngModel)]="mailsend.cpname" name="cpname"></ion-input>
+          </ion-col>
+        </ion-row>
+
+
+        <div>
+          <ion-row>
+            <ion-col class="pb-0">Priority</ion-col>
+          </ion-row>
+          <ion-row class="priorityOption">
+            <ion-col [ngClass]="mailsend.priority == '1'?'activeSaveButton':''" (click)="onPriority('1')">
+              <span>HOT</span>
+            </ion-col>
+            <ion-col [ngClass]="mailsend.priority == '2'?'activeSaveButton':''"
+              (click)="onPriority('2')"><span>WORM</span></ion-col>
+            <ion-col [ngClass]="mailsend.priority == '3'?'activeSaveButton':''"
+              (click)="onPriority('3')"><span>COLD</span></ion-col>
+            <ion-col [ngClass]="mailsend.priority == '4'?'activeSaveButton':''"
+              (click)="onPriority('4')"><span>JUNK</span></ion-col>
+          </ion-row>
+        </div>
+        <ion-row>
+          <ion-col>Visit Remark(Optional):</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-textarea [(ngModel)]="mailsend.visitremarks" name="visitremarks"></ion-textarea>
+          </ion-col>
+        </ion-row>
+
+
+
+        <ion-row>
+          <ion-col>
+            <ion-button fill="clear" type="Submit" class="height_Width_100"
+              [disabled]="localStorage.getItem('Name') == 'demo'">Submit</ion-button>
+          </ion-col>
+        </ion-row>
+      </form>
+      <ion-img style="width:100px; float:right" *ngIf="isRanavGrouplogo"
+        src="../../assets/CRMimages/powered by vsnap technology_final.jpg"></ion-img>
+    </div>
+
+    <!-- ReVisit section -->
+    <div *ngIf="isRevisitvisiblesection">
+      <form (ngSubmit)="adminsubmitrsv()">
+        <ion-row>
+          <ion-col>First Visited On:</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-input [(ngModel)]="visiteddate" name="visiteddate" class="custom-disabled-input" disabled></ion-input>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>Last Visited On:</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-input [(ngModel)]="lastvisiteddate" name="lastvisiteddate" class="custom-disabled-input"
+            disabled></ion-input>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>Assisted Manager:</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-input [(ngModel)]="mailsend.execselectmodel" name="execselectmodel" class="custom-disabled-input"
+            disabled></ion-input>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>Source:</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-input [(ngModel)]="mailsend.sourceselectmodel" name="sourceselectmodel" class="custom-disabled-input"
+            disabled></ion-input>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>Last Remarks:</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-textarea [(ngModel)]="lastremark" name="lastremark" class="custom-disabled-input"
+            disabled></ion-textarea>
+        </ion-row>
+
+        <div *ngIf="localStorage.getItem('Role')==='1'">
+          <ion-row>
+            <ion-col>Assisting Manager:</ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select interface="popover" placeholder="Select RM" class="marginZero"
+                [(ngModel)]="mailsend.propertymodel" name="propertymodel" (ionChange)='selectexecutive($event)'>
+                <ion-select-option *ngFor="let executive of mandateexecutives"
+                  value={{executive.id}},{{executive.name}}>{{executive.name}}</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div>
+          <ion-row>
+            <ion-col class="pb-0">Priority</ion-col>
+          </ion-row>
+          <ion-row class="priorityOption">
+            <ion-col [ngClass]="mailsend.priority == '1'?'activeSaveButton':''" (click)="onPriority('1')">
+              <span>HOT</span>
+            </ion-col>
+            <ion-col [ngClass]="mailsend.priority == '2'?'activeSaveButton':''"
+              (click)="onPriority('2')"><span>WORM</span></ion-col>
+            <ion-col [ngClass]="mailsend.priority == '3'?'activeSaveButton':''"
+              (click)="onPriority('3')"><span>COLD</span></ion-col>
+            <ion-col [ngClass]="mailsend.priority == '4'?'activeSaveButton':''"
+              (click)="onPriority('4')"><span>JUNK</span></ion-col>
+          </ion-row>
+        </div>
+
+        <ion-row>
+          <ion-col>Visit Remark(Optional):</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-textarea [(ngModel)]="mailsend.visitremarksrsv" name="visitremarks"></ion-textarea>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <ion-button fill="clear" type="Submit" class="height_Width_100"
+              [disabled]="localStorage.getItem('Name') == 'demo'">Submit</ion-button>
+          </ion-col>
+        </ion-row>
+      </form>
+
+      <ion-img style="width:100px; float:right" *ngIf="isRanavGrouplogo"
+        src="../../assets/CRMimages/powered by vsnap technology_final.jpg"></ion-img>
+
+      <!-- <ng-otp-input style="width: 100%;display: flex;align-items: center;justify-content: center;" [config]="{length:4,allowNumbersOnly:true}" (onInputChange)="otpValidation($event)" ></ng-otp-input> -->
+    </div>
+  </div>
+
+  <ion-modal #modal trigger="open-modal" style="z-index: 999;" [backdropDismiss]="false">
+    <ng-template>
+      <!-- <ion-content> -->
+      <ion-grid style="margin: 0;">
+        <ion-row (click)="onEditNumber()">
+          <ion-img src="../../assets/CRMimages/OTP.png" style="width: 100%;"></ion-img>
+        </ion-row>
+        <ion-row>
+          <ion-col class="ion-text-center"
+            style="font-size: 20px;font-weight: 500px;font-family: 'Poppins';color: #0B7AB2;">OTP Verification</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="ion-text-center"
+            style="padding: 0;font-size: 14px;font-weight: 400px;font-family: 'Poppins';">Enter the OTP Sent
+            to</ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="ion-text-center font-size12-familyPoppins font-weight400">+91{{mailsend.contact}}<u
+              class="font-size12-familyPoppins font-weight400" style="color: #2196F3;"
+              (click)="onEditNumber()">Edit</u></ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ng-otp-input style="width: 100%;display: flex;align-items: center;justify-content: center;"
+              [config]="{length:4,allowNumbersOnly:true}" (onInputChange)="otpValidation($event)"></ng-otp-input>
+          </ion-col>
+        </ion-row>
+        <div style="font-size: 10px;font-family: 'Poppins';font-weight: 400;">
+          <ion-row *ngIf="!otpResend">
+            <ion-col class="ion-text-center font-size12-familyPoppins font_color_orange">Resend the otp in <span
+                class="font_color_red" style="color: red;"> {{display }} </span> Seconds</ion-col>
+          </ion-row>
+          <ion-row *ngIf="otpResend">
+            <ion-col class="ion-text-center font-size12-familyPoppins font_color_orange">This Visit will auto submit
+              without otp in <span style="color: red;"> {{display }} </span>Seconds </ion-col>
+          </ion-row>
+        </div>
+        <!-- <ion-row>
+            <ion-col class="ion-text-center" style="margin-top:20px; font-size: 14px;font-family: 'Poppins';font-weight: 400;" (click)="verifyWithoutOTP()"><u>Verify without OTP</u></ion-col>
+          </ion-row> -->
+      </ion-grid>
+      <!-- </ion-content> -->
+    </ng-template>
+  </ion-modal>
+</ion-content>
+
+
+
+<ion-modal #existingExecutive class="existingExecutive">
+  <ng-template>
+    <!-- <div class="content_center loader" *ngIf="showSpinner">
+      <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+    </div> -->
+    <ion-row class="main_header">
+      <ion-col size="10" class="d-flex fs-5  align-items-center justify-content-center"><span>Confirm Lead
+          Handling</span></ion-col>
+      <ion-col (click)="existingExecutive.dismiss();showSpinner = false" size="2"
+        class="d-flex fs-5 align-items-center justify-content-center"><ion-icon name="close"></ion-icon></ion-col>
+    </ion-row>
+    <ion-row class="existingExecutive-header">
+      <ion-col size="3.5" class="d-flex  align-items-center justify-content-center"> Executive Name</ion-col>
+      <ion-col size="1.5" class="d-flex  align-items-center justify-content-center">Status</ion-col>
+      <ion-col size="4" class="d-flex  align-items-center justify-content-center">Last Updated On</ion-col>
+      <ion-col size="3" class="d-flex  align-items-center justify-content-center">Lead Access</ion-col>
+    </ion-row>
+    <ion-radio-group (ionChange)="existingExecutiveSelect($event)" [value]="selectedExec">
+      <ion-row *ngFor="let exe of existingExecutivesList">
+        <ion-col size="3.5" class="d-flex  align-items-center justify-content-center">{{ exe.execname }}</ion-col>
+        <ion-col size="1.5" class="d-flex  align-items-center justify-content-center">{{ exe.Lead_stage }}</ion-col>
+        <ion-col size="4" class="d-flex  align-items-center justify-content-center">{{ exe.lastupdated }}</ion-col>
+        <ion-col size="3" class="d-flex  align-items-center justify-content-center">
+          <ion-radio [value]="exe"></ion-radio>
+        </ion-col>
+      </ion-row>
+    </ion-radio-group>
+    <ion-row>
+      <ion-col class="d-flex fs-5  align-items-center justify-content-center">
+        <ion-button fill="clear"
+          (click)=" existingExecutive.dismiss();  this.isFreshvisitvisiblesection? formsubmition():formsubmitionrsv()">Confirm
+          and
+          continue</ion-button></ion-col>
+    </ion-row>
+  </ng-template>
+</ion-modal>
+
+<app-common-footer></app-common-footer>

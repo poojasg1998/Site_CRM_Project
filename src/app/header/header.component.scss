@@ -1,0 +1,104 @@
+.retailMandate {
+  border: 1px solid #0b7ab2;
+  border-radius: 25px;
+  color: #0b7ab2;
+  width: 100%;
+}
+.activeHtype {
+  border: 1px solid white;
+  border-radius: 25px;
+  background: #0b7ab2;
+  color: white;
+}
+.view_details_text {
+  span {
+    color: white;
+  }
+}
+
+.call_icon {
+  span {
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: "Poppins";
+  }
+}
+.view_details_text {
+  color: white;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: "Poppins";
+  ion-icon {
+    font-size: 18px;
+  }
+}
+.logo::part(image) {
+  border-radius: 3px !important;
+  width: 30px;
+  height: 30px;
+}
+.leads_visits {
+  width: 100%;
+  border-radius: 30px;
+  border: 1px solid #bebebe;
+  ion-col span {
+    font-size: 12px;
+    font-family: "Poppins";
+  }
+}
+.rightBorder {
+  border-right: 1px solid #bebebe;
+  border-radius: 30px;
+  background: #0b7ab2;
+  color: #ffff !important;
+  font-family: "Poppins";
+}
+.leftBorder {
+  border-left: 1px solid #bebebe;
+  border-radius: 30px;
+  background: #0b7ab2;
+  color: #ffff !important;
+  font-family: "Poppins";
+}
+
+// .headerbackground {
+//   background: url("../../assets/CRMimages/headerbg-img.svg");
+// }
+.horizontal-ellipse {
+  color: white;
+  background-color: #5485b2;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unique_duplicate_ctn {
+  display: flex;
+  align-items: end;
+  gap: 5px;
+  justify-content: end;
+  border: 1px solid #1c6ea4;
+  border-radius: 20px;
+  padding: 2px;
+  p {
+    font-size: 0.9rem;
+    color: #1c6ea4;
+    padding: 2px 4px;
+  }
+}
+.rightBorder {
+  border-right: 1px solid #1c6ea4;
+  border-radius: 20px;
+  background-color: #0b7ab2 !important;
+  color: white !important;
+}
+.leftBorder {
+  border-right: 1px solid #1c6ea4;
+  border-radius: 20px;
+  background-color: #0b7ab2;
+  color: white !important;
+}

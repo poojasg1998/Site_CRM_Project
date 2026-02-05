@@ -1,0 +1,531 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+<ion-header>
+  <ion-row *ngIf="!isChecked">
+    <ion-col class="content_center" size="2" (click)="onBackButton()">
+      <ion-icon name="arrow-back">back</ion-icon>
+    </ion-col>
+    <ion-col size="8" class="content_center">
+      <span class="font-size16-familyPoppins">
+        Total Leads -
+        {{' '+leadcounts}}<br>
+        {{"(Unique- "+ uniqueCounts+")"}}
+      </span>
+    </ion-col>
+    <ion-col size="2" (click)="openEndMenu()" class="content_center">
+      <ion-icon name="menu" class="menu_icon"></ion-icon>
+    </ion-col>
+  </ion-row>
+  <ion-row *ngIf="isChecked" style="margin-top: 5px;">
+    <ion-col size="2" class="content_center" (click)="isChecked = false">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-col>
+    <ion-col size="2" class="ion-text-left">{{ temporaryLeadIds.length}}</ion-col>
+    <ion-col size="8" size="8" class="ion-text-left">
+      <span class="font-size16-familyPoppins">Leads Selected</span>
+    </ion-col>
+  </ion-row>
+</ion-header>
+
+<ion-row class="uniqueDuplcateCss" *ngIf="!isChecked">
+  <ion-col class="ion-text-center font-familyPoppins font-weight400" style="padding: 5px 0;"
+    (click)="onUniqueDuplcate('')">
+    <p [ngClass]="filteredParams.duplicateValue === ''?'bg_textColor':''">Unique Leads- {{uniqueCounts}}</p>
+  </ion-col>
+  <ion-col class="ion-text-center font-familyPoppins font-weight400" (click)="onUniqueDuplcate('1')">
+    <p [ngClass]="filteredParams.duplicateValue === '1'?'bg_textColor':''">Duplicate Leads- {{duplicateCounts}}</p>
+  </ion-col>
+</ion-row>
+
+<!-- <ion-row class="uniqueDuplcateCss">
+  <ion-col  class="ion-text-center font-familyPoppins font-weight400" (click)="changeOption('')">
+    <p [ngClass]="filteredParams.duplicateValue === ''?'bg_textColor':''"> Unique Leads- {{uniqueCounts}}</p>
+  </ion-col>
+  <ion-col class="ion-text-center font-familyPoppins font-weight400" (click)="changeOption('1')" >
+    <p [ngClass]="filteredParams.duplicateValue === '1'?'bg_textColor':''">  Duplicate Leads- {{duplicateCounts}}</p>
+  </ion-col>
+</ion-row>   -->
+<!-- FILTERED CHIPS -->
+<ion-row class="filteredChips">
+  <ion-col>
+    <div>
+      <ion-button *ngIf="filteredParams.propname && localStorage.getItem('PropertyId') != '28773'" fill="clear" (click)="filteredParams.propname = '';
+        addQueryParams()">
+        <span *ngFor="let prop of propertyList">
+          <span *ngIf="prop.propertyname == filteredParams.propname">
+            {{prop.propertyname}}
+          </span>
+        </span>
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+
+      <ion-button *ngIf="filteredParams.source" fill="clear" (click)="filteredParams.source = '';
+        addQueryParams()">
+        <span *ngFor="let source of sourceList">
+          <span *ngIf="filteredParams.source === source.source">
+            {{source.source}}
+          </span>
+        </span>
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+
+      <ion-button *ngIf="filteredParams.FromDate" fill="clear" (click)="onFilterDateremove()">
+        <span> {{filteredParams.FromDate +" To "+ filteredParams.ToDate}} </span>
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+
+      <ion-button *ngIf="filteredParams.assignid" fill="clear" (click)="filteredParams.assignid = '';addQueryParams()">
+        <span> {{filteredParams.assignid == '1'?'Assigned':'Not Assigned'}} </span>
+        <ion-icon slot="end" name="close"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-col>
+</ion-row>
+
+<ion-content #mainScrollContent (ionScroll)="onScroll($event)" scrollEvents="true">
+  <!-- CARD LEAD DETAILS -->
+  <div *ngFor="let lead of enquiries;let i=index" class="lead-info">
+    <ion-row>
+      <!-- {{i}} -->
+      <ion-col [size]="isManual || i < temporaryLeadIds.length?1:''" class="content_center" *ngIf="isChecked">
+        <!-- <ion-checkbox  #freshleadsCheckboxes [id]="lead.LeadID + ' ' + lead.ExecId"
+        class="form-check-input"   (ionChange)="checkedLeads($event,lead.customer_IDPK)" [checked]="assignedLeadIds && assignedLeadIds.includes(lead.customer_IDPK)"   ></ion-checkbox> -->
+        <ion-checkbox *ngIf="isManual || i < temporaryLeadIds.length" #freshleadsCheckboxes
+          (ionChange)="checkedLeads($event)" name="programming" [disabled]="!isManual && i<temporaryLeadIds.length"
+          [checked]="temporaryLeadIds && temporaryLeadIds.includes(lead.customer_IDPK)"
+          class="form-check-input"></ion-checkbox>
+      </ion-col>
+      <ion-col [size]="isManual || i<temporaryLeadIds.length?11:12" [routerLink]="['../assigned-leads-detail']"
+        [queryParams]="{ leadId: lead.customer_IDPK }">
+        <ion-row class="info-row-heading">
+          <ion-col size="6">
+            <div>Lead Name</div>
+            <div><span class="info-row-value">{{lead.name}}</span></div>
+          </ion-col>
+
+          <ion-col size="6">
+            <div>Mobile No</div>
+            <div>
+              <div *ngIf="localStorage.getItem('Name') != 'demo'" style="width: 100%;display: flex;">
+                {{lead.number}}
+                <ion-img *ngIf="lead?.qualified_leads == '2'" style="width: 14px;padding-left: 2px;"
+                  src="../../assets/CRMimages/qualified.svg"></ion-img>
+                <ion-img *ngIf="lead?.qualified_leads == '3'" style="width: 14px;padding-left: 2px;"
+                  src="../../assets/CRMimages/not_qualified.svg"></ion-img>
+              </div>
+              <span *ngIf="localStorage.getItem('Name') == 'demo'" class="info-row-value">xxxxxxxxxx</span>
+            </div>
+          </ion-col>
+          <ion-col size="6" *ngIf="!isCP">
+            <div>Source</div>
+            <div><span class="info-row-value">{{lead.customer_source}}</span></div>
+          </ion-col>
+          <ion-col size="6">
+            <div>Property</div>
+            <div><span class="info-row-value">{{lead.propertyname?lead.propertyname:'--'}}</span></div>
+          </ion-col>
+          <ion-col size="6">
+            <div>Status</div>
+            <div>
+              <span *ngIf="filteredParams.assignid == '1'" class="info-row-value" style="color:green">Assigned</span>
+              <span *ngIf="filteredParams.assignid == '2'" class="info-row-value font-colorBlue">
+                Not Assigned
+              </span>
+            </div>
+          </ion-col>
+          <ion-col>
+            <div>Date</div>
+            <div class="info-row-value" *ngIf="lead.datetime"> {{lead.datetime| date:'dd-MMM-yyyy hh:mm a'}}</div>
+            <div class="info-row-value">{{lead.date?lead.date + ", " :''}}
+              <span *ngIf="lead.time != undefined" class="info-row-value">{{lead.time}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <!-- <ion-row *ngIf="((this.filteredParams.duplicateValue === '1' && ((enquiries&&this.enquiries.length) < this.duplicateCounts )) || (this.filteredParams.duplicateValue === '' && ((enquiries && this.enquiries.length) < this.uniqueCounts)))">
+    <ion-col (click)="getLeads(true)">
+      Load More
+    </ion-col>
+  </ion-row> -->
+  <ion-row *ngIf="(enquiries && enquiries.length===0)"
+    class="textStyle ion-justify-content-center ion-align-items-center">
+    <ion-col class="ion-text-center"><span>No Leads Found...</span></ion-col>
+  </ion-row>
+  <ion-infinite-scroll *ngIf="showInfiniteScroll" [disabled]="false" threshold="100px" #infiniteScroll
+    (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+
+
+<!-- FILTER MODAL -->
+<ion-modal #filterModal>
+  <ng-template>
+    <ion-header class="header_footerHeight">
+      <ion-row style="height: 45px;">
+        <ion-col size="2" class="content_center" (click)="filterModal.dismiss();dateRange=''">
+          <ion-icon name="close"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="content_center">Filters</ion-col>
+        <ion-col size="2" class="content_center" (click)="reset_filter()">
+          <ion-icon name="refresh"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-header>
+    <div style="height: 100%;">
+      <ion-row class="split-layout">
+        <div class="left-column">
+          <ion-row *ngIf="!isCP && (!localStorage.getItem('ranavPropId'))"
+            [ngClass]="{'bg_textColor': isPropertySection}" class="content_center borderBottom_background"
+            (click)="onFilterValues('property')">
+            <ion-col>
+              <span>Property</span>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!isCP" [ngClass]="{'bg_textColor': isSourceSection}"
+            class="content_center borderBottom_background" (click)="onFilterValues('source')">
+            <ion-col>
+              <span>Source</span>
+            </ion-col>
+          </ion-row>
+          <ion-row [ngClass]="{'bg_textColor': isdateSection}" class="content_center borderBottom_background"
+            (click)="onFilterValues('date')">
+            <ion-col>
+              <span>Date</span>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!isCP" [ngClass]="{'bg_textColor': isStatusSection}"
+            class="content_center borderBottom_background" (click)="onFilterValues('status')">
+            <ion-col>
+              <span>Status</span>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="divider"></div>
+        <div class="right-column">
+          <div *ngIf="isPropertySection" class="property">
+            <ion-searchbar [(ngModel)]="propertySearchedName" (ionInput)="setFilteredProperty()">
+            </ion-searchbar>
+            <ion-content style="height:70vh;" #propScrollContent>
+              <ion-row class="filterButtons" *ngFor="let property of propertyList1" #propertyRef
+                (click)="onFilterSelection('property',property.propertyname)" [id]="property.propertyname"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues.propname === property.propertyname}">
+                <span>{{property.propertyname}}</span>
+              </ion-row>
+            </ion-content>
+          </div>
+
+          <span *ngIf="isSourceSection">
+            <ion-searchbar [(ngModel)]="sourceSearchTerm" (ionInput)="setFilteredSource()"></ion-searchbar>
+            <ion-content style="height:70vh;" #sourceScrollContent>
+              <ion-row class="filterButtons" (click)="onFilterSelection('source','all')"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues.source === ''}">
+                <span>All</span>
+              </ion-row>
+              <ion-row class="filterButtons" *ngFor="let source of sourceList1"
+                (click)="onFilterSelection('source',source.source)" [id]="source.source"
+                [ngClass]="{'backgroundLightColor': tempFilteredValues.source === source.source}">
+                <span>{{source.source}}</span>
+              </ion-row>
+            </ion-content>
+          </span>
+
+          <span *ngIf="isStatusSection">
+            <ion-row (click)="onFilterSelection('status','1')"
+              [ngClass]="{'backgroundLightColor': tempFilteredValues.assignid === '1'}">
+              <span class="filterButtons">{{"Assigned"}}</span>
+            </ion-row>
+            <ion-row (click)="onFilterSelection('status','2')"
+              [ngClass]="{'backgroundLightColor': tempFilteredValues.assignid === '2'}">
+              <span class="filterButtons">{{"Not Assigned"}}</span>
+            </ion-row>
+          </span>
+
+          <ion-row *ngIf="isdateSection">
+            <ion-row>
+              <ion-col class="font-size12-familyPoppins" style="padding-bottom: 0;">
+                Select Date Range
+              </ion-col>
+            </ion-row>
+
+            <ion-row style="width: 100%;">
+              <ion-col class="filterIcon height35px">
+                <label for="complete_leads_dateRange" style="width: 100%;">
+                  <div class="date_range">
+                    <div><span>{{daterange()}}</span></div>
+                    <div>
+                      <ion-img src="../assets/CRMimages/calendar-edit-outline.png"></ion-img>
+                    </div>
+                  </div>
+                </label>
+              </ion-col>
+            </ion-row>
+
+            <p-calendar #calendar [touchUI]="true" inputId="complete_leads_dateRange" [(ngModel)]="dateRange"
+              selectionMode="range" appendTo="body" [dateFormat]="'yy-mm-dd'"
+              (onSelect)="onFilterSelection('date', $event)"></p-calendar>
+          </ion-row>
+        </div>
+      </ion-row>
+    </div>
+
+    <ion-footer class="header_footerHeight">
+      <ion-row>
+        <ion-col class="content_center font-size14-familyPoppins">
+          <ion-button fill="clear" class="showresultButton" (click)="confirmSelection()">Show Results</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<div>
+  <ion-img class="ion-filter-icon" src="../../assets/CRMimages/filter.svg" (click)="navigateToFilter()"
+    *ngIf="!isChecked && !isAtBottom"> </ion-img>
+</div>
+
+<!-- <div *ngIf="!isChecked" expand="block" class="content_center ion-filter-icon" 
+  style="margin-left: 38%;margin-right: 38%;" (click)="navigateToFilter()" >
+  <ion-img src="../../assets/CRMimages/filter.png"></ion-img>
+</div> -->
+
+
+<div class="addleadicon" *ngIf="!isChecked && localStorage.getItem('cpId') != '1' && !isAtBottom">
+  <ion-img src="../../assets/CRMimages/assign-icon.svg" (click)="onAssignLead()">
+  </ion-img>
+</div>
+
+<!-- <ion-img *ngIf="!isChecked" class="ion-filter-icon" src="../../assets/CRMimages/filter.svg"
+  (click)="navigateToFilter()"></ion-img> -->
+
+
+<ion-footer *ngIf="isChecked">
+  <ion-toolbar>
+    <div class="assigningLead">
+      <ion-row class="assigncountleads">
+        <!-- <ion-col 
+        class="font-size12-familyPoppins content_center font-weight400" size="3"
+        [ngClass]="this.assignedLeadIds.length === 5?'active_text_borederColor':''"
+        (click)="onSelectLeadCount(5)">5 Leads</ion-col>
+        <ion-col class="font-size12-familyPoppins content_center font-weight400" 
+        [ngClass]="this.assignedLeadIds.length === 10?'active_text_borederColor':''" size="3" 
+        (click)="onSelectLeadCount(10)">10 Leads</ion-col>
+        <ion-col class="font-size12-familyPoppins content_center font-weight400" size="3"
+        [ngClass]="this.assignedLeadIds.length === 15?'active_text_borederColor':''"
+        (click)="onSelectLeadCount(15)">15 Leads</ion-col>
+        <ion-col class="font-size12-familyPoppins content_center font-weight400" size="2"
+        [ngClass]="this.assignedLeadIds.length === enquiries.length?'active_text_borederColor':''"        
+        (click)="onSelectLeadCount(enquiries.length)">All</ion-col> -->
+
+        <ion-col (click)="onSelectLeadCount('manual')" [ngClass]="isManual?'active_text_borederColor':''"
+          class="content_center font-size12-familyPoppins paddingZero">
+          <span>Manual</span>
+        </ion-col>
+        <ion-col class="font-size12-familyPoppins content_center font-weight400 paddingZero"
+          [ngClass]="this.temporaryLeadIds.length === 10?'active_text_borederColor':''"
+          (click)="onSelectLeadCount(10)">10 Leads</ion-col>
+        <ion-col class="font-size12-familyPoppins content_center font-weight400 paddingZero"
+          [ngClass]="this.temporaryLeadIds.length === 25?'active_text_borederColor':''"
+          (click)="onSelectLeadCount(25)">25 Leads</ion-col>
+        <ion-col class="font-size12-familyPoppins content_center font-weight400 paddingZero"
+          [ngClass]="this.temporaryLeadIds.length === 50?'active_text_borederColor':''"
+          (click)="onSelectLeadCount(50)">50 Leads</ion-col>
+        <ion-col
+          [ngClass]="!isManual && (temporaryLeadIds.length != 10 && temporaryLeadIds.length != 25 && temporaryLeadIds.length != 50)?'active_text_borederColor':''">
+          <ion-select [interfaceOptions]="{ cssClass: 'custom-popover-height' }" style="min-height:20px"
+            class="always-flip font-size12-familyPoppins" [(ngModel)]="selectedCount"
+            (ionChange)="onSelectLeadCount($event.detail.value)" toggleIcon="caret-down-sharp" interface="popover"
+            placeholder="More">
+            <ion-select-option value="75" class="font-size12-familyPoppins">75 Leads </ion-select-option>
+            <ion-select-option value="100" class="font-size12-familyPoppins">100 Leads </ion-select-option>
+            <ion-select-option value="150" class="font-size12-familyPoppins">150 Leads </ion-select-option>
+          </ion-select>
+        </ion-col>
+      </ion-row>
+      <ion-row style="margin-top: 5px;">
+        <ion-col class="ion-text-right" (click)="openAssignLeadsModal()">
+          <span class="assignLeadbutton">Assign Selected Leads <ion-icon name="checkmark-outline"></ion-icon></span>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ion-toolbar>
+</ion-footer>
+
+
+<!-- FOOTER SECTION -->
+
+<app-common-footer *ngIf="!isChecked"></app-common-footer>
+
+
+
+<!-- ASSIGNED LEAD MODAL-->
+<ion-modal id="assignLeads-modal" #assignLeadsModal trigger="open-custom-dialog" [backdropDismiss]="false">
+  <ng-template>
+    <div class="content_center loader" *ngIf="showSpinner">
+      <ion-spinner name="circular" style="color: white;"></ion-spinner>
+    </div>
+    <ion-row class="assignTaskHeading">
+      <ion-col size="10">Assign the task</ion-col>
+      <ion-col size="2" class="content_center" (click)="assignLeadsModal.dismiss();showSpinner=false;reset();"><ion-icon
+          name="close"></ion-icon></ion-col>
+    </ion-row>
+    <ion-row *ngIf="checkedLeadsDetail.length === 1" style="background-color: #FFF3F7"
+      class="ion-justify-content-center">
+      <ion-img style="width: 135px;height: 135px;" src="../../assets/CRMimages/assignLead.png"></ion-img>
+    </ion-row>
+
+    <div style="width: 100%; display: flex;align-items: center; justify-content: center;">
+      <div style="width: 95%;">
+        <ion-row>
+          <ion-col style="padding: 0;">
+            {{checkedLeadsDetail.length === 1?'Leads Detail': ('Total Leads'+checkedLeadsDetail.length)}}</ion-col>
+        </ion-row>
+
+        <ion-content class="data-row"
+          [ngClass]="{'single-lead': checkedLeadsDetail.length === 1, 'multiple-leads': checkedLeadsDetail.length > 1}">
+          <div *ngFor="let assignedLead of checkedLeadsDetail">
+            <ion-row style="width: 100%;">
+              <ion-col>Lead Name</ion-col>
+              <ion-col>Project</ion-col>
+              <ion-col>Mobile Number</ion-col>
+              <ion-col>Visit Source</ion-col>
+            </ion-row>
+            <ion-row style="width: 100%;">
+              <ion-col>{{assignedLead.name}}</ion-col>
+              <ion-col>{{assignedLead.propertyname}}</ion-col>
+              <ion-col *ngIf="localStorage.getItem('Name') != 'demo'">{{assignedLead.number}}</ion-col>
+              <ion-col *ngIf="localStorage.getItem('Name') == 'demo'">+91 xxxxxxxxxx</ion-col>
+              <ion-col>{{assignedLead.source?assignedLead.source:'--'}}</ion-col>
+            </ion-row>
+          </div>
+        </ion-content>
+
+        <form>
+          <span *ngIf="!isCP">
+            <ion-row>
+              <ion-col class="paddingBottomLeft">
+                <span class="font-size14-familyPoppins">Select Team</span>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col id="teamSelectDropdown">
+                <p-dropdown class="teamSelectDropdown" [options]="team" optionLabel="name" [(ngModel)]="selectedTeam"
+                  appendTo="body" (onChange)="onAssignTeamSelect($event)" placeholder="Select a Team"
+                  name="teamSelect" />
+              </ion-col>
+            </ion-row>
+          </span>
+
+          <span *ngIf="selectedTeam">
+            <span *ngIf="isRetail">
+              <ion-row>
+                <ion-col class="paddingBottomLeft">
+                  <span class="font-size14-familyPoppins">Select Executive Team</span>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col id="teamSelectDropdown">
+                  <p-dropdown class="teamSelectDropdown" [(ngModel)]="selectedExecTeam" [options]="execTeam"
+                    optionLabel="name" appendTo="body" (onChange)="onExecTeamSelect($event)" placeholder="Select a Team"
+                    name="selectedExecTeam" />
+                </ion-col>
+              </ion-row>
+            </span>
+
+            <span *ngIf="!isRetail">
+              <ion-row>
+                <ion-col class="paddingBottomLeft">
+                  <span class="font-size14-familyPoppins">
+                    Select Mandate Project
+                  </span>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col id="teamSelectDropdown">
+                  <p-dropdown class="teamSelectDropdown" [options]="projectNames" [(ngModel)]="selectedProperty"
+                    optionLabel="property_info_name" name="selectedProperty" (onChange)="onPropertySelect($event)"
+                    placeholder="Select a Team" appendTo="body" />
+                </ion-col>
+              </ion-row>
+            </span>
+          </span>
+
+          <ion-row>
+            <ion-col class="paddingBottomLeft">
+              <span class="font-size14-familyPoppins">
+                Select Executives
+              </span>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col id="executiveDropdown" *ngIf="isRetail">
+              <p-multiSelect id="mandateExec_dropdown" [options]="executives" [filter]="true" optionLabel="ExecName"
+                [(ngModel)]="selectedExecutiveName" name="selectedExecutiveName" defaultLabel="Select Executives"
+                appendTo="body" [showHeader]="false" [showHeader]="false"></p-multiSelect>
+            </ion-col>
+
+            <ion-col id="executiveDropdown" *ngIf="!isRetail">
+              <p-multiSelect id="mandateExec_dropdown" [options]="executives" [filter]="true" optionLabel="name"
+                [(ngModel)]="selectedExecutiveName" name="selectedExecutiveName" defaultLabel="Select Executives"
+                [showHeader]="false" appendTo="body" [showHeader]="false"></p-multiSelect>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="randomleadAssign" *ngIf="temporaryLeadIds.length!==1">
+            <ion-col size="10">
+              <span>
+                Random Leads Assigns
+              </span>
+            </ion-col>
+            <ion-col size="2">
+              <ion-toggle [disabled]="temporaryLeadIds.length===1"
+                (ionChange)="toggle_random_assign($event)"></ion-toggle>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col>
+              <ion-button (click)="assignLead()" fill="clear" style="width: 100%;"
+                class="font-size14-familyPoppins bg_textColor">Assign</ion-button>
+            </ion-col>
+            <!-- <ion-col>
+              <ion-button (click)="reset();" fill="clear" style="width: 100%;" class="font-size14-familyPoppins bg_textColor"> Reset </ion-button>
+            </ion-col> -->
+          </ion-row>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+
+
+<ion-modal #viewAssignLeadDetail id="viewAssignLeadDetail" (willDismiss)="onWillDismiss($event)"
+  [backdropDismiss]="false">
+  <ng-template>
+    <ion-row class="assignTaskHeading1">
+      <ion-col size="10">Re-Assign Leads Details</ion-col>
+      <ion-col size="2" class="content_center" style="align-items:end;flex-direction: column-reverse;"
+        (click)="onViewAssignLeadDetailClose();"><ion-icon name="close"></ion-icon></ion-col>
+    </ion-row>
+
+    <div style="overflow: scroll;">
+      <ion-grid style="overflow: auto;">
+        <ion-row class="table-header">
+          <ion-col class="table-cell">Name</ion-col>
+          <ion-col class="table-cell">Already Exist</ion-col>
+          <ion-col class="table-cell">Fresh Assigned</ion-col>
+        </ion-row>
+        <ion-row *ngFor="let reassign of reassignedResponseInfo; let i = index">
+          <ion-col class="table-cell" style="border-left: 1px solid #4398c3;">{{reassign.execname}}</ion-col>
+          <ion-col class="table-cell">{{reassign.exsiting}}</ion-col>
+          <ion-col class="table-cell">{{reassign.fresh}}</ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </ng-template>
+</ion-modal>

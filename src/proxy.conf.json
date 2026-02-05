@@ -1,0 +1,8 @@
+{
+    "/images": {
+      "target": "https://lead247.in",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }

@@ -1,0 +1,238 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-spinner name="circular" style="color: white;"></ion-spinner>
+</div>
+
+<ion-header>
+  <ion-toolbar>
+    <ion-row>
+      <ion-col size="2"><ion-img src="../../assets/CRMimages/logo.png" class="logo"></ion-img></ion-col>
+      <ion-col class="content_center">
+        <span class="font-size20-familyPoppins">Call Dashboard</span>
+      </ion-col>
+      <ion-col size="2" (click)="openEndMenu()" class="content_center">
+        <ion-icon name="menu" class="menu_icon"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+
+<div class="m-2">
+  <ion-row>
+    <ion-col (click)="selectDateFilter('today')">
+      <div class="font-size12-familyPoppins content_center"
+        [ngClass]="filteredParams?.isDateFilter === 'today' ? 'bg_textColor' : 'text_borderColor'">
+        Today
+      </div>
+    </ion-col>
+    <ion-col (click)="selectDateFilter('lastsevenDay')">
+      <div [ngClass]="filteredParams.isDateFilter == 'lastsevendays' ? 'bg_textColor': 'text_borderColor'"
+        class="font-size12-familyPoppins content_center text_borderColor">Last 7 days</div>
+    </ion-col>
+    <ion-col>
+      <div [ngClass]="this.filteredParams?.isDateFilter == 'custom'?'bg_textColor':'text_borderColor'"
+        class="font-size12-familyPoppins content_center text_borderColor">
+        <label for="callDashboard_date_range">Custom</label>
+      </div>
+    </ion-col>
+    <ion-col size="1.4" (click)="reset()">
+      <div class="text_borderColor content_center">
+        <ion-icon class="icon-ion font-colorBlue" name="refresh-outline"></ion-icon>
+      </div>
+    </ion-col>
+
+    <p-calendar #calendar [ngStyle]="{ display: 'none' }" [hideOnDateTimeSelect]="true" [touchUI]="true"
+      inputId="callDashboard_date_range" [(ngModel)]="dateRange" selectionMode="range" appendTo="body"
+      [dateFormat]="'yy-mm-dd'" (onSelect)="selectDateFilter('custom')" [maxDate]="today"></p-calendar>
+  </ion-row>
+</div>
+
+<ion-row class="pl-2 pr-2" *ngIf="isAdmin">
+  <ion-col size="6" class="pt-0">
+    <p-dropdown [options]="executiveslist" (onChange)="onExecutive($event)" [(ngModel)]="selectedExecName"
+      optionLabel="Name" [filter]="true" filterBy="Name" placeholder="Select a Executive" class="exec_css">
+    </p-dropdown>
+  </ion-col>
+</ion-row>
+
+<ion-row class="filteredChips" *ngIf="filteredParams?.isDateFilter == 'custom'">
+  <ion-col>
+    <ion-button fill="clear"
+      (click)="filteredParams.isDateFilter = 'today';selectDateFilter('today'); addQueryParams()">
+      {{filteredParams.fromdate+" to "+filteredParams.todate}}
+      <ion-icon slot="end" name="close"></ion-icon>
+    </ion-button>
+  </ion-col>
+</ion-row>
+
+<ion-content>
+  <div class="mx-2">
+    <ion-row>
+      <ion-col class="call-status-card">
+        <ion-card class="m-0" (click)="navigateToListingPage('overall')">
+          <ion-img src="../../assets/CRMimages/total-calls-icon.svg"></ion-img>
+          <div>
+            <span>
+              <ion-card-subtitle>Total Calls</ion-card-subtitle>
+              <h2>{{allCallCounts?.overall}}</h2>
+            </span>
+          </div>
+        </ion-card>
+      </ion-col>
+      <ion-col class="call-status-card">
+        <ion-card class="m-0" (click)="navigateToListingPage('connected')">
+          <ion-img src="../../assets/CRMimages/conected-call-icon.svg"></ion-img>
+          <div>
+            <span>
+              <ion-card-subtitle>Connected Calls</ion-card-subtitle>
+              <h2>{{allCallCounts?.connected}}</h2>
+            </span>
+          </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="call-status-card">
+        <ion-card class="m-0" (click)="navigateToListingPage('active')">
+          <ion-img src="../../assets/CRMimages/active-call-icon.svg"></ion-img>
+          <div>
+            <span>
+              <ion-card-subtitle>Active Calls</ion-card-subtitle>
+              <h2>{{allCallCounts?.active}}</h2>
+            </span>
+          </div>
+        </ion-card>
+      </ion-col>
+
+      <ion-col class="call-status-card">
+        <ion-card class="m-0" (click)="navigateToListingPage('inactive')">
+          <ion-img src="../../assets/CRMimages/missed-call.svg"></ion-img>
+          <div>
+            <span>
+              <ion-card-subtitle>Inactive Calls</ion-card-subtitle>
+              <h2>{{allCallCounts?.inactive}}</h2>
+            </span>
+          </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="call-status-card">
+        <ion-card class="m-0" (click)="navigateToListingPage('missed')">
+
+          <!-- <ion-icon name="walk-outline"></ion-icon> -->
+          <ion-img src="../../assets/CRMimages/inactive-call.svg"></ion-img>
+          <div>
+            <span>
+              <ion-card-subtitle>Missed Calls</ion-card-subtitle>
+              <h2>{{allCallCounts?.missed}}</h2>
+            </span>
+            <span>
+              <p style="font-size: 10px;">Re-Connected: <span>{{ allCallCounts?.reconnected }}</span></p>
+            </span>
+          </div>
+        </ion-card>
+      </ion-col>
+      <ion-col class="call-status-card">
+        <ion-card class="m-0" (click)="navigateToListingPage('visitsfixed')">
+          <ion-img src="../../assets/CRMimages/visits-call-icon.svg"></ion-img>
+          <!-- <ion-icon name="person-outline"></ion-icon> -->
+          <div>
+            <span>
+              <ion-card-subtitle>Visits Fixed</ion-card-subtitle>
+              <h2>{{allCallCounts?.visitsfixed}}</h2>
+            </span>
+            <span>
+              <p style="visibility: hidden;">sdc</p>
+            </span>
+          </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </div>
+
+
+  <!-- <ion-icon name="call-outline"></ion-icon>
+  <ion-icon name="walk-outline"></ion-icon>
+  <ion-icon name="people-outline"></ion-icon>
+  <ion-icon name="person-outline"></ion-icon> -->
+
+  <div class="mx-2 card">
+    <ion-row class="allMissed-calls">
+      <ion-col (click)="onAllMissedsCalls('overall')"
+        [ngClass]="filteredParams?.callstage === 'overall' ? 'bg_textColor' : 'btn-inactive'">
+        <div class="font-size16-familyPoppins content_center">
+          All Calls
+        </div>
+      </ion-col>
+      <ion-col (click)="onAllMissedsCalls('missed')" class="missed-call-btn"
+        [ngClass]="filteredParams.callstage == 'missed' ? 'bg_textColor': 'btn-inactive'">
+        <div class="font-size16-familyPoppins content_center ">Missed Calls</div>
+      </ion-col>
+    </ion-row>
+
+    <ion-card *ngFor="let call of allCallsData" class="m-1">
+      <div class="px-2">
+        <ion-row>
+          <ion-col class="text-value"><span>{{call.leadname}}</span></ion-col>
+          <ion-col class="text-value text-right"><span>{{call.name}}</span></ion-col>
+        </ion-row>
+        <ion-row class="border_bottom">
+          <ion-col class="text-value number"><span>95474 85471</span></ion-col>
+          <ion-col class="text-label text-right pt-0 pb-1"><span>RM Executive</span></ion-col>
+        </ion-row>
+
+        <span *ngIf="filteredParams.callstage == 'overall'">
+          <ion-row>
+            <ion-col class="text-label"><span>Start Time</span></ion-col>
+            <ion-col class="text-label text-right"><span>End Time</span></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="text-value"><span>{{call.starttime}}</span></ion-col>
+            <ion-col class="text-value text-right"><span>{{call.endtime}}</span></ion-col>
+          </ion-row>
+        </span>
+
+        <ion-row>
+          <ion-col class="text-label" *ngIf="filteredParams.callstage == 'overall'"><span>Call Duration</span></ion-col>
+          <ion-col class="text-label" *ngIf="filteredParams.callstage == 'missed'">Missed On</ion-col>
+          <ion-col *ngIf="filteredParams.callstage == 'missed'" class="text-label text-right"><span>Call
+              Status</span></ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="text-value"
+            *ngIf="filteredParams.callstage == 'overall'"><span>{{call.answeredtime}}</span></ion-col>
+          <ion-col class="text-value" *ngIf="filteredParams.callstage == 'missed'">{{call.starttime}}</ion-col>
+
+          <ion-col class="text-value text-right" *ngIf="filteredParams.callstage == 'missed'">
+            <span class="answeredCall-span" *ngIf="call.missedid == '2'">Reconnected</span>
+            <span class="missedCall-span" *ngIf="call.missedid == '1'">Missed</span>
+          </ion-col>
+        </ion-row>
+      </div>
+      <ion-row class="audio" *ngIf="filteredParams.callstage == 'overall'">
+        <ion-col>
+          <audio controls style="width: 100% !important; height: 32px !important;">
+            <source type="audio/wav" [src]="call.filename">
+          </audio>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+
+    <ion-row *ngIf="allCallsData?.length == 0">
+      <ion-col class="content_center">
+        <span>No Data Found...</span>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <ion-infinite-scroll *ngIf="showInfiniteScroll" [disabled]="false" threshold="100px" #infiniteScroll
+    (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+</ion-content>
+
+
+
+<app-common-footer></app-common-footer>

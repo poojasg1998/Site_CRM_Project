@@ -1,0 +1,48 @@
+<div class="content_center loader" *ngIf="showSpinner">
+  <ion-img style="width: 300px; height: 70px" src="../assets/CRMimages/animation/loader.gif"></ion-img>
+</div>
+
+
+<div class="junkform margin-top-16">
+  <form (ngSubmit)="junkmoving()" ngNativeValidate #submitForm="ngForm">
+    <ion-row>
+      <p class="font-size12-familyPoppins font-colorBlack font-weight500">
+        Reasons to moving to Junk
+      </p>
+    </ion-row>
+
+    <ion-searchbar placeholder="Type Reason" (ionInput)="onJunkSearch()" [(ngModel)]="searchedName"
+      name="junksearch"></ion-searchbar>
+    <ion-row class="paddingTopLeft ">
+      <ion-content style="height: 200px;">
+        <ion-button *ngFor="let catogs of junkcategories1; let i = index" id="junkcheckbox{{i}}"
+          (click)="selectsuggested(i,catogs)" fill="clear"
+          [ngClass]="{'activeStatus': isJunkCategorySelected(i) && junkcatognames !== '', 'inActiveStatus': !isJunkCategorySelected(i) || junkcatognames === ''}"
+          class="inActiveStatus">
+          <ion-icon
+            [name]="(isJunkCategorySelected(i) && junkcatognames !== '')?'checkmark':'add'"></ion-icon>{{catogs.junk_categories}}</ion-button>
+      </ion-content>
+    </ion-row>
+
+    <ion-row class="margin-top-16">
+      <p class="font-size12-familyPoppins font-colorBlack font-weight500">Remarks</p>
+    </ion-row>
+    <ion-row class="custom-textArea">
+      <ion-textarea placeholder="Write remarks" id="junkremarks" [(ngModel)]="textarearemarks"
+        (ngModelChange)="checkAlphanumericSpaces()" name="remark" required></ion-textarea>
+    </ion-row>
+
+    <ion-row class="submitForm">
+      <ion-col class="paddingZero">
+        <ion-button fill="clear" type="reset">Cancel</ion-button>
+      </ion-col>
+      <ion-col class="paddingZero">
+        <ion-button fill="clear"
+          [ngClass]="(hasOnlySpaces) || (suggestchecked=='' || junkcatognames== '' || textarearemarks == '')?'saveButton':'activeSaveButton'"
+          type="submit"
+          [disabled]="(hasOnlySpaces) || (suggestchecked=='' || junkcatognames== '' || textarearemarks == '')">Save</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+
+</div>

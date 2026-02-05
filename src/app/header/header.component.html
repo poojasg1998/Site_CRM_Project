@@ -1,0 +1,172 @@
+<ion-header mode="md">
+  <ion-toolbar class="mainHeading">
+    <ion-grid>
+      <ion-row class="w-100 align-items-center">
+        <!-- LEFT : LOGO -->
+        <ion-col size="2" *ngIf="
+            router.url.includes('home') ||
+            router.url.includes('source-dashboard') ||
+            router.url.includes('overdues-dashboard') ||
+            router.url.includes('today-dashboard') ||
+            router.url.includes('junk-dashboard')
+          ">
+          <ion-img class="logo" src="../../assets/CRMimages/logo.png">
+          </ion-img>
+        </ion-col>
+
+        <!-- LEFT : BACK BUTTON -->
+        <ion-col size="2" class="content_center" (click)="onBackButton()" *ngIf="!(
+            router.url.includes('home') ||
+            router.url.includes('source-dashboard') ||
+            router.url.includes('overdues-dashboard') ||
+            router.url.includes('today-dashboard') ||
+            router.url.includes('junk-dashboard')
+          ) && depId != '10006'">
+          <ion-icon name="arrow-back"></ion-icon>
+        </ion-col>
+
+        <!-- CENTER : TITLE -->
+        <ion-col class="ion-text-center content_center">
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('call-dashboard')">
+            Call Dashboard
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('all-call-listing')">
+            All Call
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('whatsapp-visits')">
+            Whatsapp Visits
+          </span>
+
+          <span class="font-size16-familyPoppins"
+            *ngIf="router.url.includes('leadassign') && router.url.includes('todaysvisits')">
+            Scheduled Activities
+          </span>
+
+          <span class="font-size16-familyPoppins"
+            *ngIf="router.url.includes('leadassign') && router.url.includes('todaysfollowups')">
+            Today Followups
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('mandate-lead-stages')">
+            {{ roleid == '1' || roleType == '1' ? 'All Leads' : 'My Lead' }}
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('mandate-visit-stages')">
+            {{ roleid == '1' || roleType == '1' ? 'All Visits' : 'My Visits' }}
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('mandate-myoverdues')">
+            {{ roleid == '1' || roleType == '1' ? 'All Overdues' : 'My Overdues' }}
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('mandate-plans')">
+            Week Plans
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('mymandatereports')">
+            {{ roleid == '1' || roleType == '1' ? 'All Activities' : 'My Activities' }}
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('mandate-inactive-junk')">
+            Inactive and Junk
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('mandate-feedback')">
+            Feedback calls
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('visit-updates')">
+            Visit Updates
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('addproperty')">
+            Add Property
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('hourly-report')">
+            Hourly Reports
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('attendance')">
+            {{
+            roleid == '1' && !execName
+            ? 'Executives Attendance'
+            : (roleid == '1' && execName)
+            ? execName + ' Logs'
+            : 'My Attendance'
+            }}
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('overdues-dashboard')">
+            Overdues Dashboard
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('switch-account')">
+            Switch Account
+          </span>
+
+          <span class="font-size14-familyPoppins" *ngIf="router.url.includes('today-dashboard')">
+            Today's Activity Dashboard
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('home')">
+            Dashboard
+          </span>
+
+          <span class="font-size16-familyPoppins" *ngIf="router.url.includes('source-dashboard')">
+            Source Dashboard
+          </span>
+
+          <!-- JUNK DASHBOARD TOGGLE -->
+          <ion-row *ngIf="router.url.includes('junk-dashboard')" class="w-100">
+            <ion-col class="d-flex justify-content-center">
+              <div class="unique_duplicate_ctn">
+                <p [ngClass]="junkStatus === 'junkleads' ? 'rightBorder' : ''" (click)="onJunkStatus('junkleads')">
+                  Junk Leads
+                </p>
+                <p [ngClass]="junkStatus === 'junkvisits' ? 'leftBorder' : ''" (click)="onJunkStatus('junkvisits')">
+                  Junk Visits
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
+
+        </ion-col>
+
+        <!-- RIGHT : MENU / MORE -->
+        <ion-col size="2" *ngIf="depId != '10006'" class="d-flex align-items-center justify-content-center"
+          (click)="openEndMenu()">
+
+          <ion-icon *ngIf="
+              !(router.url.includes('home')) &&
+              !(router.url.includes('source-dashboard')) &&
+              !(router.url.includes('overdues-dashboard')) &&
+              !(router.url.includes('today-dashboard')) &&
+              !(router.url.includes('junk-dashboard'))
+            " name="menu" class="menu_icon">
+          </ion-icon>
+
+          <ion-icon *ngIf="
+              (router.url.includes('home') ||
+              router.url.includes('source-dashboard') ||
+              router.url.includes('overdues-dashboard') ||
+              router.url.includes('today-dashboard') ||
+              router.url.includes('junk-dashboard'))
+              && depId != '10005'
+            " name="ellipsis-horizontal" class="horizontal-ellipse">
+          </ion-icon>
+
+          <ion-icon *ngIf="router.url.includes('source-dashboard') && depId == '10005'" name="power"
+            style="color:#d32536;font-size:32px;" (click)="logOut()">
+          </ion-icon>
+
+        </ion-col>
+
+      </ion-row>
+    </ion-grid>
+
+  </ion-toolbar>
+</ion-header>
