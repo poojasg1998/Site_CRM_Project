@@ -4657,4 +4657,42 @@ export class MandateCustomerDetailsComponent implements OnInit {
       }
     );
   }
+
+  revertToActive(exec) {
+    Swal.fire({
+      title: 'Convert Lead to Active?',
+      text: 'Are you sure you want to change this lead from inactive to active status?',
+      icon: 'info',
+      cancelButtonText: 'NO',
+      confirmButtonText: 'OK',
+      showCancelButton: true,
+      allowOutsideClick: false,
+    }).then((result) => {
+      if (result.value == true) {
+        this.showSpinner = true;
+        let param = {
+          execid: exec.RMID,
+          leadid: exec.customer_IDPK,
+        };
+
+        this._mandateService.revertBackToActive(param).subscribe((resp) => {
+          this.showSpinner = false;
+          if (resp['status'] == 'True') {
+            // let currentUrl = this.router.url;
+            // let pathWithoutQueryParams = currentUrl.split('?')[0];
+            // let currentQueryparams = this.route.snapshot.queryParams;
+            // this.router
+            //   .navigateByUrl('/', { skipLocationChange: true })
+            //   .then(() => {
+            //     this.router.navigate([pathWithoutQueryParams], {
+            //       queryParams: currentQueryparams,
+            //     });
+            //   });
+
+            location.reload();
+          }
+        });
+      }
+    });
+  }
 }

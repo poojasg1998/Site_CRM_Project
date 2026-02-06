@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.google.gms.google-services'
 android {
     namespace "io.lead247"
   compileSdkVersion 35
@@ -7,8 +7,8 @@ android {
         applicationId "io.lead247"
         minSdkVersion 22
         targetSdkVersion 35
- versionCode 150013
-versionName "15.0.13"
+        versionCode 150013
+        versionName "15.0.13"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -40,6 +40,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+    implementation platform('com.google.firebase:firebase-bom:34.8.0')
 }
 
 apply from: 'capacitor.build.gradle'

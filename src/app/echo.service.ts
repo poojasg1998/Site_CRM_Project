@@ -4,7 +4,6 @@ import io from 'socket.io-client';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { PushNotifications, Token } from '@capacitor/push-notifications';
-// import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { MenuController } from '@ionic/angular';
 @Injectable({ providedIn: 'root' })
 export class EchoService {
@@ -24,13 +23,13 @@ export class EchoService {
   private initEcho() {
     this.echo = new Echo({
       broadcaster: 'socket.io',
-      host: 'https://chat.right2shout.in:6001',
-      // host: 'https://test-chat.right2shout.in:6002',
+      // host: 'https://chat.right2shout.in:6001',
+      host: 'https://test-chat.right2shout.in:6002',
       transports: ['websocket'],
       forceTLS: true,
       // reconnectionAttempts: 5,
       // reconnectionDelay: 1000,
-      wssPort: 6001,
+      wssPort: 6002,
     });
     this.socket = this.echo.connector.socket;
 

@@ -735,7 +735,6 @@ callStatus == 'BUSY' || callStatus == 'Executive Busy' || callStatus == 'CONNECT
                 <span>Fix a Plan</span>
               </span>
             </ion-col>
-
           </span>
 
           <ion-col [ngClass]="isAdminExeActivity?'leftBorder':''" (click)="onStatusActivity('activity')"
@@ -743,7 +742,6 @@ callStatus == 'BUSY' || callStatus == 'Executive Busy' || callStatus == 'CONNECT
             <span>Activity</span>
           </ion-col>
         </ion-row>
-
 
         <div *ngIf="isAdminExceStatus" [ngClass]="visitAssigModalDismiss || (onCallLeadData?.direction != 'inbound' && 
           (callStatus != 'Answered by customer' && callStatus != '') )?'pointer-event-none opacity4':''">
@@ -1376,6 +1374,30 @@ callStatus == 'BUSY' || callStatus == 'Executive Busy' || callStatus == 'CONNECT
             <div class="" style="font-size: 12px;font-weight: 300;"></div>
             <div class="mt-3 btn_access" (click)="showSpinner = true;enableAccess()">Enable Access</div>
           </div>
+
+          <!-- <span *ngIf="rm.rnrcount >= 5" style="position: absolute;top: 50%;right: 50%;z-index: 999;">
+            <button type="button" class="btn btn-warning" (click)="revertToActive(rm)">Active Now</button>
+          </span>
+          
+          <span *ngIf="rm.reassign_visibility == 2" class="text_visiblity">
+            Access removed <br> because the lead was re-assigned.
+          </span>
+          
+          <span *ngIf="rm.reassign_visibility == 3" class="text_visiblity">
+            Access removed <br> because the lead was in overdue
+          </span>
+          
+          <span *ngIf="rm.reassign_visibility == 4" class="text_visiblity">
+            Access removed <br> because the Visit was attended by {{rm.visitaccompaniedby}}
+          </span>
+          
+          <span *ngIf="rm.reassign_visibility == 5" class="text_visiblity">
+            Access removed <br> because Visit was fixed with a Plan and is in now Overdue
+          </span>
+          
+          <span *ngIf="rm.reassign_visibility == 6" class="text_visiblity">
+            Access removed <br> because the Visit was fixed with a Plan.
+          </span> -->
         </div>
       </div>
 

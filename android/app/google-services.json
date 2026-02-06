@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "906963469136",
-    "project_id": "testnotification-2cedf",
-    "storage_bucket": "testnotification-2cedf.firebasestorage.app"
+    "project_number": "638624651088",
+    "project_id": "sitecrm-357c7",
+    "storage_bucket": "sitecrm-357c7.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:906963469136:android:2abb10a3a20bdd8da7a255",
+        "mobilesdk_app_id": "1:638624651088:android:4167f6583c3bdbe0393e55",
         "android_client_info": {
           "package_name": "io.lead247"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC5EWyIbyF6hN6_yYrswovQF9tQap03x4Y"
+          "current_key": "AIzaSyB3I_6dA4Y6H7uFAsfF8N5o854KneCfJ74"
         }
       ],
       "services": {

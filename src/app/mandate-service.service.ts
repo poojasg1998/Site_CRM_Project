@@ -1476,4 +1476,34 @@ export class MandateService {
       params,
     });
   }
+
+  revertBackToActive(param) {
+    let params = new HttpParams()
+      .set('LeadId', param.leadid)
+      .set('ExecId', param.execid);
+
+    let headers = new HttpHeaders().set(
+      'Content-Type',
+      'application/x-www-form-urlencoded'
+    );
+    return this.http.post(
+      this.mandate + '/revertrnrcounts',
+      params.toString(),
+      {
+        headers: headers,
+      }
+    );
+
+    // let urlSearchParams = new URLSearchParams();
+    // urlSearchParams.append('LeadId', param.leadid);
+    // urlSearchParams.append('ExecId', param.execid);
+    // var body = urlSearchParams.toString();
+
+    // var headers = new Headers();
+    // headers.append('Content-Type', 'application/x-www-form-urlencoded');
+
+    // return this._http
+    //   .post(this.mandateUrl + '/revertrnrcounts', body, { headers: headers })
+    //   .pipe(map((resp) => resp.json()));
+  }
 }
