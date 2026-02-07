@@ -1,20 +1,17 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Platform, ToastController } from '@ionic/angular';
 import { App } from '@capacitor/app';
 import { PrivacyScreen } from '@capacitor-community/privacy-screen';
-import { MandateService } from './mandate-service.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import Swal from 'sweetalert2';
-import { AuthServiceService } from './auth-service.service';
-import { SharedService } from './shared.service';
-import { RetailServiceService } from './retail-service.service';
-import { forkJoin, interval, Subscription, switchMap } from 'rxjs';
-import { StatusBar, Style } from '@capacitor/status-bar';
-import { CommonService } from './common.service';
-import { EchoService } from './echo.service';
-import { Network, NetworkStatus } from '@capacitor/network';
+import { forkJoin } from 'rxjs';
+import { StatusBar } from '@capacitor/status-bar';
+import { Network } from '@capacitor/network';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { Capacitor } from '@capacitor/core';
+import { CommonService } from './realEstate/common.service';
+import { SharedService } from './realEstate/shared.service';
+import { MandateService } from './realEstate/mandate-service.service';
+import { AuthServiceService } from './realEstate/auth-service.service';
+import { RetailServiceService } from './realEstate/retail-service.service';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +31,6 @@ export class AppComponent implements OnInit {
   isOnCallDetailsPage = false;
   callStatus: any;
   constructor(
-    private _echoService: EchoService,
     public commonService: CommonService,
     public sharedService: SharedService,
     private mandateService: MandateService,

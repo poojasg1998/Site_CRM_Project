@@ -6,17 +6,17 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { MandateService } from '../mandate-service.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { NgOtpInputComponent } from 'ng-otp-input';
-import { AuthServiceService } from '../auth-service.service';
-import { SharedService } from '../shared.service';
 import { App } from '@capacitor/app';
 import OneSignal from 'onesignal-cordova-plugin';
 import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { NativeBiometric } from 'capacitor-native-biometric';
-import { BiometricService } from '../biometric.service';
+import { AuthServiceService } from '../realEstate/auth-service.service';
+import { MandateService } from '../realEstate/mandate-service.service';
+import { SharedService } from '../realEstate/shared.service';
+import { BiometricService } from '../realEstate/biometric.service';
 
 declare var window: any;
 
